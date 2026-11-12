@@ -1,0 +1,19 @@
+{
+  "name": "@antiqua/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "match": "tsx src/cli-match.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"(cli) pas de tests : le match est couvert par packages/engine/test/game.test.ts\""
+  },
+  "dependencies": {
+    "@antiqua/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15"
+  }
+}
