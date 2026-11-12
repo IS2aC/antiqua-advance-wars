@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ANTIQUA — Guerre des Royaumes</title>
+    <style>
+      /* Police pixel m5x7 (Daniel Linssen) : public/fonts/m5x7.ttf. Absente → monospace. */
+      @font-face {
+        font-family: 'm5x7';
+        src: url('./fonts/m5x7.ttf') format('truetype');
+        font-display: block;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #1a1410;
+        overflow: hidden;
+      }
+      #game {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      canvas {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
