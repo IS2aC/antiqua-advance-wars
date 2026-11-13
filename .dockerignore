@@ -5,3 +5,8 @@ node_modules
 coverage
 .git
 art
+docs
+test-results
+playwright-report
+tools/asset-pipeline/report.html
+**/.vite
