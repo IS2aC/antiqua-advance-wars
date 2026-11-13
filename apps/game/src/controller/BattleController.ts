@@ -27,6 +27,7 @@ import type { EventPlayer } from '../animation/EventPlayer';
 import { clearSave, saveGame } from '../persistence/save';
 import type { EndChoice, EndScreen } from '../view/EndScreen';
 import type { ForecastPanel } from '../view/ForecastPanel';
+import type { PauseMenu } from '../view/PauseMenu';
 import type { ActionMenu, MenuItem } from '../view/ActionMenu';
 import type { Cursor } from '../view/Cursor';
 import type { Hud } from '../view/Hud';
@@ -46,7 +47,8 @@ const T = TILE_SIZE;
  * - ai : l'IA joue son tour (seule l'accélération est possible) ;
  * - over : partie terminée.
  */
-type Mode = 'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'over';
+type Mode =
+  'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'paused' | 'over';
 
 type Command = 'attack' | 'capture' | 'wait';
 
@@ -59,6 +61,7 @@ export interface ControllerViews {
   readonly player: EventPlayer;
   readonly forecast: ForecastPanel;
   readonly endScreen: EndScreen;
+  readonly pauseMenu: PauseMenu;
 }
 
 const same = (a: Position, b: Position) => a.x === b.x && a.y === b.y;
@@ -119,6 +122,13 @@ export class BattleController {
   // ——— Entrées ———
 
   onKey(code: string): void {
+    if (this.mode === 'paused') {
+      if (code === 'ArrowUp') this.views.pauseMenu.move(-1);
+      else if (code === 'ArrowDown') this.views.pauseMenu.move(1);
+      else if (code === 'Enter' || code === 'Space') this.views.pauseMenu.confirm();
+      else if (code === 'Escape' || code === 'Backspace') this.views.pauseMenu.cancel();
+      return;
+    }
     if (this.mode === 'ai') {
       if (code === 'Enter' || code === 'Space') this.toggleFast();
       return;
@@ -154,17 +164,19 @@ export class BattleController {
     } else if (code === 'Enter' || code === 'Space') {
       void this.confirm(this.views.cursor.position);
     } else if (code === 'Escape' || code === 'Backspace') {
-      this.cancel();
+      // Échap annule la sélection ; sans rien de sélectionné, il ouvre la pause.
+      if (this.mode === 'idle') void this.openPauseMenu();
+      else this.cancel();
     }
   }
 
   onPointerMove(worldX: number, worldY: number): void {
-    if (this.mode === 'menu' || this.mode === 'ai') return;
+    if (this.mode === 'menu' || this.mode === 'ai' || this.mode === 'paused') return;
     this.pointAt({ x: Math.floor(worldX / T), y: Math.floor(worldY / T) }, 0);
   }
 
   onPointerDown(worldX: number, worldY: number, rightButton: boolean): void {
-    if (this.mode === 'ai') return;
+    if (this.mode === 'ai' || this.mode === 'paused') return;
     if (rightButton) {
       if (this.mode === 'menu') this.views.menu.cancel();
       else this.cancel();
@@ -175,6 +187,25 @@ export class BattleController {
     if (!inBounds(this.state.map, tile.x, tile.y)) return;
     this.pointAt(tile, 0);
     void this.confirm(tile);
+  }
+
+  /**
+   * Pause (bouton du HUD ou Échap) : reprendre, sauvegarder et quitter, ou abandonner.
+   * Seulement quand la carte attend une commande : jamais pendant une animation, un menu
+   * ou le tour de l'IA, pour que l'état sauvegardé soit toujours un état stable.
+   */
+  async openPauseMenu(): Promise<void> {
+    if (this.mode !== 'idle' && this.mode !== 'inspecting') return;
+    this.clearSelection();
+    this.mode = 'paused';
+    const choice = await this.views.pauseMenu.open();
+    if (choice === 'reprendre') {
+      this.mode = 'idle';
+      return;
+    }
+    if (choice === 'quitter') saveGame(this.state, this.aiPlayers);
+    else clearSave();
+    this.onFinished('menu');
   }
 
   /** Bouton du HUD : « Fin de tour », ou « Accélérer » pendant le tour de l'IA. */
@@ -460,10 +491,12 @@ export class BattleController {
     while (this.isAiTurn()) {
       this.clearSelection();
       this.mode = 'ai';
+      this.views.hud.setPauseEnabled(false);
       this.views.hud.setButtonLabel('Accélérer');
       await this.playAiTurn();
       this.setFast(false);
       this.views.hud.setButtonLabel('Fin de tour');
+      this.views.hud.setPauseEnabled(true);
       if (this.state.status === 'finished') return;
     }
     this.mode = 'idle';

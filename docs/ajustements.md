@@ -14,7 +14,12 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
   plus seulement `GUE_DU_NIL`, et une sauvegarde de progression séparée de la sauvegarde de
   partie.
 
-## 2. Bouton pour quitter la partie
+## 2. Bouton pour quitter la partie — fait
+
+> Fait : bouton pause du HUD (ou Échap sur la carte) → Reprendre / Sauvegarder et quitter /
+> Abandonner la partie (avec confirmation). Quitter sauvegarde l'état du moment : « Continuer »
+> reprend en plein tour. Pause indisponible pendant le tour de l'IA.
+
 
 - Pendant la bataille, une action « Quitter » (menu de la carte ou bouton du HUD), avec
   confirmation, qui ramène à la page de garde (`goToCover()` dans `launch.ts`).
