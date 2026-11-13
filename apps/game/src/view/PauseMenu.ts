@@ -12,6 +12,9 @@ import { pinToScreen, uiText } from './text';
  */
 export type PauseChoice = 'reprendre' | 'quitter' | 'abandonner';
 
+/** Choix intermédiaire : bascule des scènes de combat (le menu reste ouvert). */
+type MenuValue = PauseChoice | 'scenes';
+
 const MENU_TOP = GRID * 21;
 /** Plus clair que le texte désactivé : il doit se lire sur le voile sombre. */
 const HINT_COLOR = '#d8c8a0';
@@ -55,20 +58,33 @@ export class PauseMenu {
     this.menu.cancel();
   }
 
-  /** Ouvre la pause et renvoie le choix du joueur (abandon confirmé à part). */
-  async open(): Promise<PauseChoice> {
+  /**
+   * Ouvre la pause et renvoie le choix du joueur (abandon confirmé à part).
+   * `combatScenes` / `onToggleScenes` : réglage des scènes de combat, modifiable sur place.
+   */
+  async open(
+    combatScenes: boolean,
+    onToggleScenes: (enabled: boolean) => void,
+  ): Promise<PauseChoice> {
+    let scenes = combatScenes;
     this.overlay.setVisible(true);
     try {
       for (;;) {
         this.hint.setText('Quitter garde la partie : « Continuer » la reprendra ici.');
-        const choice = await this.menu.open<PauseChoice>(
+        const choice = await this.menu.open<MenuValue>(
           [
             { value: 'reprendre', label: 'Reprendre' },
+            { value: 'scenes', label: 'Scènes de combat', detail: scenes ? 'oui' : 'non' },
             { value: 'quitter', label: 'Sauvegarder et quitter' },
             { value: 'abandonner', label: 'Abandonner la partie' },
           ],
           { top: MENU_TOP },
         );
+        if (choice === 'scenes') {
+          scenes = !scenes;
+          onToggleScenes(scenes);
+          continue;
+        }
         if (choice !== 'abandonner') return choice ?? 'reprendre';
 
         this.hint.setText('La partie sera perdue : impossible de la reprendre.');

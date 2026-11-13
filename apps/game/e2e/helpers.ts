@@ -17,7 +17,7 @@ export const SAVE_KEY = 'antiqua:sauvegarde';
 const TILE = 32;
 const LOGICAL_WIDTH = 640;
 
-export async function waitForScene(page: Page, key: 'Title' | 'Battle'): Promise<void> {
+export async function waitForScene(page: Page, key: 'Title' | 'Battle' | 'Combat'): Promise<void> {
   await expect
     .poll(() =>
       page.evaluate(

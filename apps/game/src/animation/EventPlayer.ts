@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { FACTIONS, displayHp, type GameEvent, type GameState } from '@antiqua/engine';
 import { TILE_SIZE } from '../config';
+import { buildCombatSetup, type CombatSetup } from '../combat/setup';
 import type { Hud } from '../view/Hud';
 import type { MapView } from '../view/MapView';
 import { TEAM_COLORS } from '../view/palette';
@@ -15,6 +16,13 @@ export interface BattleViews {
   readonly banner: TurnBanner;
 }
 
+/** Scènes de combat plein écran (fournies par la scène de bataille). */
+export interface CombatPresenter {
+  /** Réglage du joueur : scènes complètes, ou animation courte sur la carte. */
+  enabled(): boolean;
+  play(setup: CombatSetup): Promise<void>;
+}
+
 const T = TILE_SIZE;
 
 /**
@@ -27,12 +35,36 @@ export class EventPlayer {
   constructor(
     private readonly scene: Phaser.Scene,
     private readonly views: BattleViews,
+    private readonly combat: CombatPresenter | null = null,
   ) {}
 
-  /** Se résout quand tous les événements sont joués et la vue synchronisée sur `state`. */
-  play(events: readonly GameEvent[], state: GameState): Promise<void> {
+  /**
+   * Se résout quand tous les événements sont joués et la vue synchronisée sur `state`.
+   * `before` (l'état avant l'action) permet de composer une scène de combat même quand
+   * une unité est détruite.
+   */
+  play(events: readonly GameEvent[], state: GameState, before?: GameState): Promise<void> {
     this.queue = this.queue.then(async () => {
-      for (const event of events) await this.playEvent(event, state);
+      let combatShown = false;
+      for (const event of events) {
+        if (event.type === 'attackResolved' && before && this.combat?.enabled()) {
+          const counter = events.find(
+            (e): e is Extract<GameEvent, { type: 'counterResolved' }> =>
+              e.type === 'counterResolved',
+          );
+          const setup = buildCombatSetup(before, event, counter);
+          if (setup) {
+            await this.combat.play(setup);
+            combatShown = true;
+          }
+        }
+        if (combatShown && (event.type === 'attackResolved' || event.type === 'counterResolved')) {
+          // Déjà montré en plein écran : on recale seulement les PV sur la carte.
+          this.views.units.get(event.defenderId)?.setHp(event.defenderHp);
+          continue;
+        }
+        await this.playEvent(event, state);
+      }
       this.sync(state);
     });
     return this.queue;

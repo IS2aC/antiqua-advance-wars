@@ -33,7 +33,21 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
   « Nouvelle partie » ou « Continuer », jamais sur la page de garde seule.
 - Prévoir un réglage de volume et un bouton muet (rejoint l'étape 7, « Habillage »).
 
-## 4. Moteur d'animation des scènes de combat
+## 4. Moteur d'animation des scènes de combat — phase A faite
+
+> **Décision** : pas de vidéos ni d'API serveur. La scène est composée en direct dans le
+> navigateur, par couches (décor du terrain, figurants, bandeau), à partir des événements du
+> moteur. Code : `apps/game/src/combat/` (`setup.ts` pur, `CombatScene.ts` pour le rendu).
+>
+> **Phase A (faite)** : écran partagé, un figurant par PV (un pour 2 PV pour cavalerie, char,
+> catapulte), charge ou volée, impact, chutes, PV qui descendent, riposte. Figurants = sprites
+> de carte ×2, décors = tuiles de terrain. Clic ou Entrée pour passer ; réglage « Scènes de
+> combat : oui/non » dans la pause (mémorisé).
+>
+> **Suite** : B — packs de culture Koush et Carthage (figurants de combat 64×64 propres à
+> chaque peuple, décors par terrain) ; C — scènes de siège, de prise de bâtiment et
+> d'annexion du QG ; D — guide « ajouter un peuple ».
+
 
 Scènes de combat plein écran, dans l'esprit du genre : les deux camps face à face, tir,
 charge, impact, PV qui baissent.
