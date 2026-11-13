@@ -45,6 +45,8 @@ test('pause : reprendre, sauvegarder et quitter, puis continuer là où on en é
   // Échap ouvre aussi la pause ; « Sauvegarder et quitter » ramène au menu principal.
   await page.keyboard.press('Escape');
   await waitForMode(page, 'paused');
+  // Menu : Reprendre, Scènes de combat, Sauvegarder et quitter, Abandonner.
+  await page.keyboard.press('ArrowDown');
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
   await page.waitForURL((url) => !url.pathname.endsWith('jeu.html'));
@@ -70,17 +72,15 @@ test('pause : abandonner la partie efface la sauvegarde, après confirmation', a
 
   await page.keyboard.press('Escape');
   await waitForMode(page, 'paused');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Enter'); // « Abandonner la partie »
+  await page.keyboard.press('ArrowUp'); // le menu boucle : « Abandonner la partie » est le dernier
+  await page.keyboard.press('Enter');
   // Confirmation : « Non, revenir » est proposé en premier.
   await page.keyboard.press('Enter');
   await expect.poll(() => page.evaluate(() => location.pathname)).toContain('jeu.html');
   await waitForMode(page, 'paused');
 
   // Cette fois on confirme.
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowUp');
   await page.keyboard.press('Enter');
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter'); // « Oui, abandonner »

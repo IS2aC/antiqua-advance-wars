@@ -3,6 +3,9 @@ import { GUE_DU_NIL, createGame, type GameState, type PlayerId } from '@antiqua/
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
+import type { CombatSceneData } from '../combat/CombatScene';
+import type { CombatPresenter } from '../animation/EventPlayer';
+import { loadOptions } from '../persistence/options';
 import { BattleController } from '../controller/BattleController';
 import { onKeyDown } from '../ui/keyboard';
 import { createPanelTextures } from '../ui/panels';
@@ -72,7 +75,7 @@ export class BattleScene extends Phaser.Scene {
       () => controller?.requestEndTurn(),
       () => void controller?.openPauseMenu(),
     );
-    const player = new EventPlayer(this, { map, units, hud, banner });
+    const player = new EventPlayer(this, { map, units, hud, banner }, this.combatPresenter());
 
     controller = new BattleController(
       this,
@@ -111,5 +114,28 @@ export class BattleScene extends Phaser.Scene {
     }
 
     void controller.start();
+  }
+
+  /**
+   * Scènes de combat : la scène « Combat » se superpose à la carte, qui ne reçoit plus
+   * d'entrées le temps de la scène. Elle suit la vitesse du tour (accélération de l'IA).
+   */
+  private combatPresenter(): CombatPresenter {
+    return {
+      enabled: () => loadOptions().combatScenes,
+      play: (setup) =>
+        new Promise<void>((resolve) => {
+          this.input.enabled = false;
+          const data: CombatSceneData = {
+            setup,
+            speed: this.tweens.timeScale,
+            onDone: () => {
+              this.input.enabled = true;
+              resolve();
+            },
+          };
+          this.scene.launch('Combat', data);
+        }),
+    };
   }
 }

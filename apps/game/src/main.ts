@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BACKGROUND_COLOR, LOGICAL_HEIGHT, LOGICAL_WIDTH, integerZoom } from './config';
+import { CombatScene } from './combat/CombatScene';
 import { BattleScene } from './scenes/BattleScene';
 import { TitleScene } from './scenes/TitleScene';
 import { loadFonts } from './ui/font';
@@ -20,7 +21,8 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.NONE,
     zoom: integerZoom(window.innerWidth, window.innerHeight),
   },
-  scene: [TitleScene, BattleScene],
+  // Combat en dernier : la scène de combat s'affiche par-dessus la bataille.
+  scene: [TitleScene, BattleScene, CombatScene],
 });
 
 window.addEventListener('resize', () => {

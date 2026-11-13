@@ -29,6 +29,7 @@ Monorepo pnpm :
 
 - `controller/BattleController.ts` : seul endroit qui transforme les entrées en `Action`, appelle `applyAction` et remplace l'état courant. Annuler un déplacement = revenir à l'état d'avant le `MOVE` (le moteur n'a rien tiré au hasard).
 - `animation/EventPlayer.ts` : joue les `GameEvent` dans l'ordre, puis recale la vue sur l'état final (`sync`).
+- `combat/` : scènes de combat plein écran. `setup.ts` (pur) tire du résultat du moteur les deux camps, leurs PV avant/après et les coups ; `CombatScene.ts` les compose en direct (décor, un figurant par PV, bandeau). La scène illustre, elle ne calcule jamais. Réglage « Scènes de combat » dans la pause (`persistence/options.ts`).
 - IA adverse : `packages/engine/src/ai/greedy-ai.ts` (`chooseGreedyAction`, `planTurn`), gloutonne et déterministe. Le contrôleur joue le tour de l'IA action par action via l'`EventPlayer` (mode `ai`, bouton « Accélérer »). La sauvegarde garde les camps joués par l'IA (`aiPlayers`).
 - `view/` : objets d'affichage seulement (carte, unités, curseur, zones, flèche, menus, HUD, bandeau). Les éléments fixés à l'écran passent par `pinToScreen()` (contournement d'un bug de `Container.setScrollFactor` dans Phaser 4.2).
 - La carte vient du moteur (`GUE_DU_NIL`), pas d'un fichier Tiled : une seule source de vérité tant qu'on ne dessine pas les cartes dans Tiled.
