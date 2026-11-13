@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { FACTIONS, GUE_DU_NIL, createGame, type PlayerId } from '@antiqua/engine';
+import { FACTIONS, GUE_DU_NIL, createGame } from '@antiqua/engine';
+import { AI_OPPONENT, battleFromUrl } from '../launch';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, TILE_SIZE } from '../config';
 import { loadGame } from '../persistence/save';
 import { font } from '../ui/font';
@@ -11,9 +12,6 @@ import { uiText } from '../view/text';
 import { DISABLED_TEXT_COLOR } from '../view/palette';
 
 type TitleChoice = 'continuer' | 'ia' | 'deux';
-
-/** En partie contre l'IA, le joueur commande Koush et l'IA Carthage. */
-const AI_OPPONENT: PlayerId = 'carthage';
 
 /** Écran titre : « Continuer » (si une sauvegarde existe), « Contre l'IA » et « À deux ». */
 export class TitleScene extends Phaser.Scene {
@@ -27,6 +25,12 @@ export class TitleScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Arrivée depuis la page de garde avec un mode : on va droit à la bataille.
+    const launch = battleFromUrl();
+    if (launch) {
+      this.scene.start('Battle', launch);
+      return;
+    }
     createPanelTextures(this);
     createUnitAnimations(this);
 

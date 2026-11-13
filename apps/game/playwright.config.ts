@@ -6,6 +6,8 @@ export default defineConfig({
   timeout: 90_000,
   expect: { timeout: 10_000 },
   fullyParallel: false,
+  // Un seul navigateur à la fois : le WebGL logiciel (SwiftShader) sature le processeur.
+  workers: 1,
   reporter: process.env.CI ? 'line' : 'list',
   use: {
     baseURL: 'http://localhost:5173',

@@ -16,7 +16,7 @@ test('lancer une partie, produire, déplacer, attaquer, finir le tour', async ({
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
-  await page.goto('/');
+  await page.goto('/jeu.html');
   await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
   await page.reload();
 
@@ -106,7 +106,7 @@ test('contre l’IA : Carthage joue son tour puis rend la main', async ({ page }
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
-  await page.goto('/');
+  await page.goto('/jeu.html');
   await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
   await page.reload();
   await waitForScene(page, 'Title');

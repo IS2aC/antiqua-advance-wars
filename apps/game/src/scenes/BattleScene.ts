@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GUE_DU_NIL, createGame, type GameState, type PlayerId } from '@antiqua/engine';
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
+import { goToCover } from '../launch';
 import { BattleController } from '../controller/BattleController';
 import { createPanelTextures } from '../ui/panels';
 import { ActionMenu } from '../view/ActionMenu';
@@ -72,7 +73,7 @@ export class BattleScene extends Phaser.Scene {
       { cursor, overlay, arrow, menu, hud, player, forecast, endScreen },
       (choice) => {
         if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers });
-        else this.scene.start('Title');
+        else goToCover();
       },
       this.aiPlayers,
     );

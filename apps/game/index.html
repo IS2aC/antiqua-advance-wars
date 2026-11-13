@@ -3,36 +3,104 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>ANTIQUA — Guerre des Royaumes</title>
-    <style>
-      /* Police pixel m5x7 (Daniel Linssen) : public/fonts/m5x7.ttf. Absente → monospace. */
-      @font-face {
-        font-family: 'm5x7';
-        src: url('./fonts/m5x7.ttf') format('truetype');
-        font-display: block;
-      }
-      html,
-      body {
-        margin: 0;
-        height: 100%;
-        background: #1a1410;
-        overflow: hidden;
-      }
-      #game {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      canvas {
-        image-rendering: pixelated;
-        image-rendering: crisp-edges;
-      }
-    </style>
+    <title>Alkébulan — Rise of Kingdoms</title>
+    <meta
+      name="description"
+      content="Tactique au tour par tour dans l'Afrique antique : Koush contre Carthage sur la carte du Gué du Nil."
+    />
+    <meta name="theme-color" content="#fffefc" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preload" as="image" href="./assets/garde/jaquette.webp" />
   </head>
   <body>
-    <div id="game"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <main class="garde">
+      <div class="garde__art" aria-hidden="true">
+        <img
+          src="./assets/garde/jaquette.webp"
+          alt=""
+          width="1086"
+          height="1448"
+          decoding="async"
+        />
+      </div>
+
+      <section class="garde__panel" aria-labelledby="garde-titre">
+        <div class="garde__center">
+          <h1 id="garde-titre" class="garde__logo">
+            <img
+              src="./assets/garde/logo.webp"
+              alt="Alkébulan — Rise of Kingdoms"
+              width="900"
+              height="450"
+            />
+          </h1>
+          <p class="garde__pitch">
+            Koush contre Carthage sur la carte du Gué du Nil : capturez les villages, levez vos
+            armées, prenez le QG adverse.
+          </p>
+
+          <nav class="garde__menu" aria-label="Menu principal">
+            <a class="action action--primary" href="./jeu.html?mode=ia" data-mode="ia">
+              <span class="action__sheen" aria-hidden="true"></span>
+              <span class="action__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+              <span class="action__label">Nouvelle partie</span>
+              <span class="action__detail">contre l'IA</span>
+            </a>
+
+            <a
+              class="action"
+              href="./jeu.html?mode=continuer"
+              data-mode="continuer"
+              id="continuer"
+              hidden
+            >
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                />
+                <path d="M9 13h6" />
+              </svg>
+              <span class="action__label">Continuer la partie</span>
+              <span class="action__detail" id="continuer-detail"></span>
+            </a>
+
+            <a class="action" href="./jeu.html?mode=deux" data-mode="deux">
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 18L18 6M6 6l12 12" />
+                <path d="M8 4l2 2m4 4l2 2m-8 4l2 2m4-12l2 2" />
+              </svg>
+              <span class="action__label">À deux joueurs</span>
+              <span class="action__detail">même écran</span>
+            </a>
+
+            <button class="action" type="button" disabled>
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19h16M5 16l2-9 5 5 5-5 2 9H5z" />
+              </svg>
+              <span class="action__label">Campagne</span>
+              <span class="action__badge">Bientôt</span>
+            </button>
+          </nav>
+
+          <p class="garde__hint">
+            Souris ou clavier : flèches pour déplacer le curseur, Entrée pour valider, Échap pour
+            annuler.
+          </p>
+        </div>
+
+        <footer class="garde__footer">
+          <span>Prototype — Le Gué du Nil</span>
+          <span>Police du jeu : m5x7, Daniel Linssen</span>
+        </footer>
+      </section>
+    </main>
+    <script type="module" src="/src/garde/garde.ts"></script>
   </body>
 </html>

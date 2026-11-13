@@ -24,6 +24,8 @@ Monorepo pnpm :
 
 ### Client de jeu (`apps/game/src`)
 
+- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. La page de garde lance `jeu.html?mode=ia|deux|continuer` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
+
 - `controller/BattleController.ts` : seul endroit qui transforme les entrées en `Action`, appelle `applyAction` et remplace l'état courant. Annuler un déplacement = revenir à l'état d'avant le `MOVE` (le moteur n'a rien tiré au hasard).
 - `animation/EventPlayer.ts` : joue les `GameEvent` dans l'ordre, puis recale la vue sur l'état final (`sync`).
 - IA adverse : `packages/engine/src/ai/greedy-ai.ts` (`chooseGreedyAction`, `planTurn`), gloutonne et déterministe. Le contrôleur joue le tour de l'IA action par action via l'`EventPlayer` (mode `ai`, bouton « Accélérer »). La sauvegarde garde les camps joués par l'IA (`aiPlayers`).
@@ -57,6 +59,7 @@ pnpm lint             # ESLint + Prettier
 pnpm typecheck        # tsc sur tous les packages
 pnpm build            # build de tous les packages
 pnpm assets:build     # pipeline d'assets : art/raw → apps/game/public/assets/atlas + report.html
+pnpm assets:cover     # images de la page de garde : art/static → apps/game/public/assets/garde (WebP)
 pnpm match            # match aléatoire en ligne de commande (moteur seul)
 ```
 

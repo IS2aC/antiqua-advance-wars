@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build:assets": "tsx src/index.ts",
+    "build:cover": "tsx src/cover.ts",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
