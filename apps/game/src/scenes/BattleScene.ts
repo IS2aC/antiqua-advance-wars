@@ -4,6 +4,7 @@ import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
 import { BattleController } from '../controller/BattleController';
+import { onKeyDown } from '../ui/keyboard';
 import { createPanelTextures } from '../ui/panels';
 import { ActionMenu } from '../view/ActionMenu';
 import { createUnitAnimations } from '../view/art';
@@ -93,7 +94,7 @@ export class BattleScene extends Phaser.Scene {
         input.onPointerDown(pointer.worldX, pointer.worldY, pointer.rightButtonDown());
       },
     );
-    this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
+    onKeyDown(this, (event) => {
       if (event.code.startsWith('Arrow') || event.code === 'Space') event.preventDefault();
       input.onKey(event.code);
     });

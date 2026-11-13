@@ -1,6 +1,6 @@
 # ALKÉBULAN — Game design (source de vérité)
 
-> Extrait du README. Toute valeur de `packages/engine/src/data/` doit correspondre à ce fichier. En cas de conflit, ce fichier fait foi.
+> Extrait de la bible de production (`docs/bible-de-production.md`). Toute valeur de `packages/engine/src/data/` doit correspondre à ce fichier. En cas de conflit, ce fichier fait foi.
 
 ## Vision et périmètre du Stage 1
 

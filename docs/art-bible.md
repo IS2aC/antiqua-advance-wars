@@ -1,6 +1,6 @@
 # ALKÉBULAN — Bible artistique
 
-> Extrait du README. Référence pour le pipeline d'assets et toutes les générations d'images.
+> Extrait de la bible de production (`docs/bible-de-production.md`). Référence pour le pipeline d'assets et toutes les générations d'images.
 
 ## Stack graphique
 
@@ -59,7 +59,7 @@ Contour : `#2B1B17` (brun-noir, jamais de noir pur). Magenta `#FF00FF` = fond à
 4. Validation dans `tools/asset-pipeline/report.html` : accepter ou régénérer.
 5. Retouche manuelle facultative dans `art/clean/` (prioritaire sur l'automatique).
 
-Les prompts complets (blocs de style, fiches unités, terrains, bâtiments) sont dans le README, sections « Prompts sprites ».
+Les prompts complets (blocs de style, fiches unités, terrains, bâtiments) sont dans `docs/bible-de-production.md`, sections « Prompts sprites ».
 
 ## Pipeline d'assets : décisions d'implémentation (étape 4)
 

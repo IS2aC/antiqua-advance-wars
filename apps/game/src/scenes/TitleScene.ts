@@ -4,6 +4,7 @@ import { AI_OPPONENT, battleFromUrl } from '../launch';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, TILE_SIZE } from '../config';
 import { loadGame } from '../persistence/save';
 import { font } from '../ui/font';
+import { onKeyDown } from '../ui/keyboard';
 import { GRID, createPanelTextures } from '../ui/panels';
 import { ActionMenu, type MenuItem } from '../view/ActionMenu';
 import { createUnitAnimations, preloadArt } from '../view/art';
@@ -82,7 +83,7 @@ export class TitleScene extends Phaser.Scene {
     items.push({ value: 'deux', label: 'À deux joueurs', detail: 'même écran' });
 
     const menu = new ActionMenu(this, false);
-    this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
+    onKeyDown(this, (event) => {
       if (event.code === 'ArrowUp') menu.move(-1);
       else if (event.code === 'ArrowDown') menu.move(1);
       else if (event.code === 'Enter' || event.code === 'Space') menu.confirm();
