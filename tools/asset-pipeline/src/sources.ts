@@ -16,7 +16,7 @@ export const UNIT_SHEETS: Readonly<Record<UnitType, string>> = {
   catapulte: 'sprites-unités/catapulte-rouge.png',
 };
 
-/** Gabarit des planches d'unités (README) : 4×4 cases, une ligne par animation. */
+/** Gabarit des planches d'unités (docs/bible-de-production.md) : 4×4 cases, une ligne par animation. */
 export const UNIT_GRID = { cols: 4, rows: 4 } as const;
 export const UNIT_ROWS = [
   { anim: 'idle', direction: null, frames: 3 },

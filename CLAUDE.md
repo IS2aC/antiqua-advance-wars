@@ -1,7 +1,7 @@
 # ALKÉBULAN — règles du projet pour Claude Code
 
 Jeu de tactique au tour par tour sur grille, dans le navigateur, avec des armées antiques (Afrique, Méditerranée).
-Bible complète : `README.md`. Règles et données : `docs/game-design.md` (source de vérité). Art : `docs/art-bible.md`.
+Présentation et architecture : `README.md`. Bible de production (prompts, étapes) : `docs/bible-de-production.md`. Règles et données : `docs/game-design.md` (source de vérité). Art : `docs/art-bible.md`.
 Idées pour plus tard (à ne pas implémenter sans demande) : `docs/ajustements.md`.
 
 ## Architecture
