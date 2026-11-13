@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
-import { FACTIONS, TERRAINS, UNITS, type TerrainType } from '@antiqua/engine';
+import { FACTIONS, TERRAINS, UNITS } from '@antiqua/engine';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../config';
 import { GRID, panel } from '../ui/panels';
-import { TERRAIN_ATLAS, hasUnitArt, idleAnimation, unitAtlas, walkAnimation } from '../view/art';
-import { OUTLINE_COLOR, TEAM_COLORS, darken } from '../view/palette';
+import { idleAnimation, walkAnimation } from '../view/art';
+import { OUTLINE_COLOR, TEAM_COLORS } from '../view/palette';
 import { uiText } from '../view/text';
-import { decorFor, figureAnimation, figureAtlas, hasFigure, type FigureAnim } from './packs';
+import { figureAnimation, type FigureAnim } from './packs';
+import { HUD_H, SCALE, createFigure, drawBackdrop } from './stage';
+import { StagedScene } from './StagedScene';
 import { soldierCount, type CombatSetup, type CombatSide, type Side, type Strike } from './setup';
 
 export interface CombatSceneData {
@@ -25,11 +27,7 @@ export interface CombatSceneData {
  */
 
 const HALF = LOGICAL_WIDTH / 2;
-const SCALE = 2;
-const HUD_H = GRID * 7;
-const HORIZON = 168;
 const ARROW_TEXTURE = 'combat-arrow';
-const SKY = [0x5f9fd8, 0x74afe0, 0x8cbfe6, 0xa6cfeb, 0xbfdcee, 0xd6e8ef] as const;
 
 /** Emplacements des figurants (moitié gauche, pieds au sol), du premier rang vers l'arrière. */
 const SLOTS_SMALL: readonly (readonly [number, number])[] = [
@@ -52,38 +50,6 @@ const SLOTS_LARGE: readonly (readonly [number, number])[] = [
   [50, 356],
 ];
 
-/** Décor d'horizon par terrain : la tuile qui se répète au loin. */
-function horizonFrame(terrain: TerrainType): string | null {
-  switch (terrain) {
-    case 'foret':
-      return 'terrain/foret/0';
-    case 'montagne':
-      return 'terrain/montagne/0';
-    case 'colline':
-      return 'terrain/colline/1';
-    case 'marais':
-      return 'terrain/marais/1';
-    case 'desert':
-      return null;
-    default:
-      return 'terrain/foret/2';
-  }
-}
-
-/** Sol au premier plan par terrain. */
-function groundFrame(terrain: TerrainType): string {
-  switch (terrain) {
-    case 'foret':
-    case 'colline':
-    case 'montagne':
-    case 'desert':
-    case 'marais':
-      return `terrain/${terrain === 'montagne' ? 'colline' : terrain}/0`;
-    default:
-      return 'terrain/plaine/0';
-  }
-}
-
 interface Figure {
   readonly sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
   readonly homeX: number;
@@ -98,22 +64,13 @@ interface HalfView {
   readonly root: Phaser.GameObjects.Container;
 }
 
-export class CombatScene extends Phaser.Scene {
-  private skipped = false;
-  private skipResolve: () => void = () => undefined;
-  private skipSignal: Promise<void> = Promise.resolve();
-
+export class CombatScene extends StagedScene {
   constructor() {
     super('Combat');
   }
 
   create(data: CombatSceneData): void {
-    this.skipped = false;
-    this.skipSignal = new Promise((resolve) => {
-      this.skipResolve = resolve;
-    });
-    this.tweens.timeScale = data.speed;
-    this.time.timeScale = data.speed;
+    this.beginStage(data.speed);
     this.createArrowTexture();
 
     const halves: Record<Side, HalfView> = {
@@ -121,13 +78,6 @@ export class CombatScene extends Phaser.Scene {
       right: this.buildHalf(data.setup.right),
     };
     this.drawDivider();
-
-    // Un clic, Entrée, Espace ou Échap passent la scène.
-    const skip = () => this.skip();
-    this.input.on('pointerdown', skip);
-    this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
-      if (['Enter', 'Space', 'Escape'].includes(event.code)) skip();
-    });
 
     void this.run(data, halves);
   }
@@ -154,10 +104,7 @@ export class CombatScene extends Phaser.Scene {
     }
 
     await this.wait(450);
-    this.cameras.main.fadeOut(150, 0, 0, 0);
-    await this.wait(160);
-    data.onDone();
-    this.scene.stop();
+    await this.endStage(data.onDone);
   }
 
   private async playStrike(strike: Strike, from: HalfView, to: HalfView): Promise<void> {
@@ -289,9 +236,7 @@ export class CombatScene extends Phaser.Scene {
     const objects: Phaser.GameObjects.GameObject[] = [];
 
     // Décor du pack s'il existe ; sinon ciel en bandes, horizon et sol en tuiles (phase A).
-    const decor = decorFor(this, side.terrain);
-    if (decor) objects.push(this.add.image(x0, 0, decor).setOrigin(0));
-    else objects.push(...this.tiledBackdrop(side, x0));
+    objects.push(...drawBackdrop(this, side.terrain, x0, HALF));
 
     // Figurants : un par PV (un pour 2 PV pour montures et engins), tournés vers l'ennemi.
     const count = soldierCount(side.unitType, side.hpBefore);
@@ -304,8 +249,15 @@ export class CombatScene extends Phaser.Scene {
       const slot = slots[i];
       if (!slot) break;
       const homeX = left ? slot[0] : LOGICAL_WIDTH - slot[0];
-      const sprite = this.makeFigure(side, homeX, slot[1]);
-      figures.push({ sprite, homeX, pack: hasFigure(this, side.owner, side.unitType) });
+      const { sprite, pack } = createFigure(
+        this,
+        side.owner,
+        side.unitType,
+        homeX,
+        slot[1],
+        side.side === 'right',
+      );
+      figures.push({ sprite, homeX, pack });
       objects.push(sprite);
     }
 
@@ -342,82 +294,6 @@ export class CombatScene extends Phaser.Scene {
 
     const root = this.add.container(0, 0, objects);
     return { side, figures, hpText, root };
-  }
-
-  /** Phase A : ciel en bandes (dégradé « pixel »), horizon et sol faits des tuiles du terrain. */
-  private tiledBackdrop(side: CombatSide, x0: number): Phaser.GameObjects.GameObject[] {
-    const objects: Phaser.GameObjects.GameObject[] = [];
-    const sky = this.add.graphics();
-    const bandH = Math.ceil((HORIZON - HUD_H + 40) / SKY.length);
-    SKY.forEach((color, i) =>
-      sky.fillStyle(color, 1).fillRect(x0, HUD_H - 40 + i * bandH, HALF, bandH),
-    );
-    sky.fillStyle(SKY[0], 1).fillRect(x0, 0, HALF, HUD_H - 40);
-    objects.push(sky);
-
-    // Horizon et sol : tuiles du terrain, agrandies ×2 et répétées.
-    const horizon = horizonFrame(side.terrain);
-    if (horizon) {
-      objects.push(
-        this.add
-          .tileSprite(x0, HORIZON - 64, HALF, 64, TERRAIN_ATLAS, horizon)
-          .setOrigin(0)
-          .setTileScale(SCALE),
-      );
-    }
-    objects.push(
-      this.add
-        .tileSprite(
-          x0,
-          HORIZON,
-          HALF,
-          LOGICAL_HEIGHT - HORIZON,
-          TERRAIN_ATLAS,
-          groundFrame(side.terrain),
-        )
-        .setOrigin(0)
-        .setTileScale(SCALE),
-    );
-
-    return objects;
-  }
-
-  private makeFigure(
-    side: CombatSide,
-    x: number,
-    y: number,
-  ): Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle {
-    const facingLeft = side.side === 'right';
-    if (hasFigure(this, side.owner, side.unitType)) {
-      const sprite = this.add
-        .sprite(x, y, figureAtlas(side.owner), `figure/${side.unitType}/idle/0`)
-        .setOrigin(0.5, 1)
-        .setFlipX(facingLeft)
-        .setDepth(y);
-      const idle = figureAnimation(side.owner, side.unitType, 'idle');
-      if (this.anims.exists(idle))
-        sprite.play({ key: idle, startFrame: Phaser.Math.Between(0, 3) });
-      return sprite;
-    }
-    if (hasUnitArt(this, side.owner)) {
-      const sprite = this.add
-        .sprite(x, y, unitAtlas(side.owner), `unit/${side.unitType}/idle/0`)
-        .setOrigin(0.5, 1)
-        .setScale(SCALE)
-        .setFlipX(facingLeft)
-        .setDepth(y);
-      sprite.play({
-        key: idleAnimation(side.owner, side.unitType),
-        startFrame: Phaser.Math.Between(0, 3),
-      });
-      return sprite;
-    }
-    // Sans atlas : silhouette de couleur (placeholder).
-    return this.add
-      .rectangle(x, y, 40, 48, TEAM_COLORS[side.owner])
-      .setOrigin(0.5, 1)
-      .setStrokeStyle(2, darken(TEAM_COLORS[side.owner]))
-      .setDepth(y);
   }
 
   /** Bande sombre en biais au milieu : sépare les deux moitiés et cache le raccord. */
@@ -497,31 +373,5 @@ export class CombatScene extends Phaser.Scene {
     }
     sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
     this.time.delayedCall(90, () => sprite.clearTint());
-  }
-
-  private skip(): void {
-    if (this.skipped) return;
-    this.skipped = true;
-    this.skipResolve();
-  }
-
-  /** Attente, interrompue si le joueur passe la scène. */
-  private wait(ms: number): Promise<void> {
-    if (this.skipped) return Promise.resolve();
-    return Promise.race([
-      new Promise<void>((resolve) => this.time.delayedCall(ms, resolve)),
-      this.skipSignal,
-    ]);
-  }
-
-  /** Tween, terminé d'un coup si le joueur passe la scène. */
-  private tween(config: Phaser.Types.Tweens.TweenBuilderConfig): Promise<void> {
-    if (this.skipped) return Promise.resolve();
-    return Promise.race([
-      new Promise<void>((resolve) => {
-        this.tweens.add({ ...config, onComplete: () => resolve() });
-      }),
-      this.skipSignal,
-    ]);
   }
 }

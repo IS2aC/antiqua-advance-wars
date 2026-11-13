@@ -1,7 +1,12 @@
 import type Phaser from 'phaser';
 import { FACTIONS, displayHp, type GameEvent, type GameState } from '@antiqua/engine';
 import { TILE_SIZE } from '../config';
-import { buildCombatSetup, type CombatSetup } from '../combat/setup';
+import {
+  buildCaptureSetup,
+  buildCombatSetup,
+  type CaptureSetup,
+  type CombatSetup,
+} from '../combat/setup';
 import type { Hud } from '../view/Hud';
 import type { MapView } from '../view/MapView';
 import { TEAM_COLORS } from '../view/palette';
@@ -21,6 +26,8 @@ export interface CombatPresenter {
   /** Réglage du joueur : scènes complètes, ou animation courte sur la carte. */
   enabled(): boolean;
   play(setup: CombatSetup): Promise<void>;
+  /** Scène de siège, de prise de bâtiment ou d'annexion du QG. */
+  capture(setup: CaptureSetup): Promise<void>;
 }
 
 const T = TILE_SIZE;
@@ -46,7 +53,27 @@ export class EventPlayer {
   play(events: readonly GameEvent[], state: GameState, before?: GameState): Promise<void> {
     this.queue = this.queue.then(async () => {
       let combatShown = false;
+      let captureShown = false;
       for (const event of events) {
+        if (event.type === 'captureProgress' && before && this.combat?.enabled()) {
+          const captured = events.find(
+            (e): e is Extract<GameEvent, { type: 'buildingCaptured' }> =>
+              e.type === 'buildingCaptured' && e.x === event.x && e.y === event.y,
+          );
+          const setup = buildCaptureSetup(before, event, captured);
+          if (setup) {
+            await this.combat.capture(setup);
+            captureShown = true;
+          }
+        }
+        if (
+          captureShown &&
+          (event.type === 'captureProgress' || event.type === 'buildingCaptured')
+        ) {
+          // Déjà montré en plein écran : la carte prend seulement l'état final du bâtiment.
+          this.views.map.sync(state);
+          continue;
+        }
         if (event.type === 'attackResolved' && before && this.combat?.enabled()) {
           const counter = events.find(
             (e): e is Extract<GameEvent, { type: 'counterResolved' }> =>

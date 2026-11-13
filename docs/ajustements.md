@@ -49,6 +49,13 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 > (`art/raw/combat/decors/<terrain>.png`), et la scène les utilise dès qu'ils existent.
 > Gabarits et prompts : `docs/art-combat.md`.
 >
+> **Phase C (faite)** : scène de siège (les troupes marchent sur le bâtiment, la jauge de
+> capture baisse cran par cran), prise de bâtiment (le drapeau change de camp, « Capturé ! »)
+> et annexion du QG (« Annexion du QG ! », puis écran de victoire). Code :
+> `apps/game/src/combat/CaptureScene.ts` ; décor et figurants partagés avec les combats
+> (`combat/stage.ts`), mécanique commune de passage (`combat/StagedScene.ts`). Même réglage
+> « Scènes de combat » dans la pause.
+>
 > **Suite** : B — produire les planches Koush et Carthage (figurants de combat 64×64 propres à
 > chaque peuple, décors par terrain) ; C — scènes de siège, de prise de bâtiment et
 > d'annexion du QG ; D — guide « ajouter un peuple ».

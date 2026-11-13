@@ -122,3 +122,49 @@ export function buildCombatSetup(
   const right = attackerSide === 'left' ? sides.defenseur : sides.attaquant;
   return { left, right, strikes };
 }
+
+// ——— Capture ———
+
+export interface CaptureSetup {
+  /** Camp et unité qui capturent. */
+  readonly owner: PlayerId;
+  readonly unitType: UnitType;
+  /** PV affichés de l'unité qui capture (nombre de figurants). */
+  readonly unitHp: number;
+  readonly building: 'village' | 'caserne' | 'qg';
+  /** Propriétaire du bâtiment avant la capture (null = neutre). */
+  readonly previousOwner: PlayerId | null;
+  readonly pointsBefore: number;
+  readonly pointsAfter: number;
+  /** Le bâtiment change de camp à l'issue de ce tour de capture. */
+  readonly captured: boolean;
+  /** Prise d'un QG adverse : annexion, fin de partie. */
+  readonly annexation: boolean;
+}
+
+type ProgressEvent = Extract<GameEvent, { type: 'captureProgress' }>;
+type CapturedEvent = Extract<GameEvent, { type: 'buildingCaptured' }>;
+
+/** Compose la scène de siège (et de prise) à partir de l'état AVANT la capture. */
+export function buildCaptureSetup(
+  before: GameState,
+  progress: ProgressEvent,
+  captured: CapturedEvent | undefined,
+): CaptureSetup | null {
+  const unit = before.units.find((candidate) => candidate.id === progress.unitId);
+  const building = before.buildings.find(
+    (candidate) => candidate.x === progress.x && candidate.y === progress.y,
+  );
+  if (!unit || !building) return null;
+  return {
+    owner: unit.owner,
+    unitType: unit.type,
+    unitHp: displayHp(unit.hp),
+    building: building.type,
+    previousOwner: building.owner,
+    pointsBefore: building.capturePoints,
+    pointsAfter: progress.capturePoints,
+    captured: captured !== undefined,
+    annexation: captured !== undefined && building.type === 'qg' && building.owner !== null,
+  };
+}

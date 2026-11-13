@@ -3,6 +3,7 @@ import { GUE_DU_NIL, createGame, type GameState, type PlayerId } from '@antiqua/
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
+import type { CaptureSceneData } from '../combat/CaptureScene';
 import type { CombatSceneData } from '../combat/CombatScene';
 import { createFigureAnimations } from '../combat/packs';
 import type { CombatPresenter } from '../animation/EventPlayer';
@@ -123,21 +124,25 @@ export class BattleScene extends Phaser.Scene {
    * d'entrées le temps de la scène. Elle suit la vitesse du tour (accélération de l'IA).
    */
   private combatPresenter(): CombatPresenter {
+    const launch = (
+      key: 'Combat' | 'Capture',
+      setup: CombatSceneData['setup'] | CaptureSceneData['setup'],
+    ) =>
+      new Promise<void>((resolve) => {
+        this.input.enabled = false;
+        this.scene.launch(key, {
+          setup,
+          speed: this.tweens.timeScale,
+          onDone: () => {
+            this.input.enabled = true;
+            resolve();
+          },
+        });
+      });
     return {
       enabled: () => loadOptions().combatScenes,
-      play: (setup) =>
-        new Promise<void>((resolve) => {
-          this.input.enabled = false;
-          const data: CombatSceneData = {
-            setup,
-            speed: this.tweens.timeScale,
-            onDone: () => {
-              this.input.enabled = true;
-              resolve();
-            },
-          };
-          this.scene.launch('Combat', data);
-        }),
+      play: (setup) => launch('Combat', setup),
+      capture: (setup) => launch('Capture', setup),
     };
   }
 }
