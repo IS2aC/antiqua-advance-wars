@@ -87,7 +87,7 @@ function main(): void {
   let actions = 0;
   let actionsThisTurn = 0;
 
-  console.log(`ANTIQUA — match aléatoire sur « ${GUE_DU_NIL.name} » (graine ${gameSeed})\n`);
+  console.log(`ALKÉBULAN — match aléatoire sur « ${GUE_DU_NIL.name} » (graine ${gameSeed})\n`);
   console.log(render(state));
   console.log();
 

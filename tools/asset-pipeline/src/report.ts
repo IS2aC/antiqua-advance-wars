@@ -73,7 +73,7 @@ export function renderReport(data: ReportData): string {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ANTIQUA — rapport d'assets</title>
+<title>Alkébulan — rapport d'assets</title>
 <style>
   :root { color-scheme: dark; --bg: #1a1410; --panel: #2a201a; --text: #fff4c8; --muted: #b8a888; --warn: #ffb35a; }
   body { margin: 0; padding: 16px; background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, sans-serif; }

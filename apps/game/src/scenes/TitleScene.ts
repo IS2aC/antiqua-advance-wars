@@ -44,12 +44,12 @@ export class TitleScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(20);
 
-    uiText(this, LOGICAL_WIDTH / 2, GRID * 8, 'ANTIQUA', 'title', { outline: true })
+    uiText(this, LOGICAL_WIDTH / 2, GRID * 8, 'ALKÉBULAN', 'title', { outline: true })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(30)
       .setColor('#ffd166');
-    uiText(this, LOGICAL_WIDTH / 2, GRID * 14, 'Guerre des Royaumes', 'large', { outline: true })
+    uiText(this, LOGICAL_WIDTH / 2, GRID * 14, 'Rise of Kingdoms', 'large', { outline: true })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(30);

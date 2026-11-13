@@ -1,4 +1,4 @@
-# ANTIQUA — Bible artistique
+# ALKÉBULAN — Bible artistique
 
 > Extrait du README. Référence pour le pipeline d'assets et toutes les générations d'images.
 

@@ -1,4 +1,4 @@
-# antiqua-advance-wars
+# Alkébulan — Rise of Kingdoms
 ------------------------------------------------------------------
 ## Jeu tactique Antique — Bible de production (Stage 1)
 
@@ -8,7 +8,7 @@ Nov 12, 2026 · @Is2ac
 
 On construit un jeu de stratégie au tour par tour, case par case, jouable dans le navigateur, avec des armées de l'Antiquité (Afrique et Méditerranée) à la place des tanks. Le Stage 1 = une seule carte jouable de bout en bout : 2 factions, 6 unités, 9 terrains et 3 bâtiments, production, capture, combat, victoire.
 
-**Nom du jeu — à changer avant toute publication.** « Advance Wars » est une marque de Nintendo : on peut s'inspirer librement des mécaniques (grille, tour par tour, capture, production), mais ni le nom, ni le logo, ni les sprites, ni les personnages ne doivent être repris ou imités. « Advance Wars Antique » ou « Advance Wars Africa » exposent à un retrait de la page ou de l'hébergement dès qu'il y a de la visibilité. Ce document utilise le nom de travail **ANTIQUA — Guerre des Royaumes** ; autres pistes : *Royaumes de Bronze*, *Kemet Tactics*, *Lances & Sables*.
+**Nom du jeu — à changer avant toute publication.** « Advance Wars » est une marque de Nintendo : on peut s'inspirer librement des mécaniques (grille, tour par tour, capture, production), mais ni le nom, ni le logo, ni les sprites, ni les personnages ne doivent être repris ou imités. « Advance Wars Antique » ou « Advance Wars Africa » exposent à un retrait de la page ou de l'hébergement dès qu'il y a de la visibilité. Nom retenu : **Alkébulan — Rise of Kingdoms** (logo dans `art/static/`). L'ancien nom de travail, *ANTIQUA*, ne subsiste que dans les identifiants techniques (`@antiqua/*`, clé de sauvegarde `antiqua:sauvegarde`). À vérifier avant publication : « Rise of Kingdoms » est déjà le titre d'un jeu mobile commercial ; *Alkébulan* seul, ou un autre sous-titre, éviterait toute confusion.
 
 Même logique pour les prompts d'images : ils décrivent un style (pixel art 32 px façon consoles portables 2001–2005, proportions trapues, contours sombres) sans jamais nommer le jeu de Nintendo. Ton planche « Africa Campaign » sert de référence d'ambiance, pas de modèle à copier.
 
@@ -39,7 +39,7 @@ Video game box art, portrait 3:4, vibrant hand-painted anime illustration in the
 Wide 16:9 pixel art key visual, 320x180 pixel resolution upscaled with nearest-neighbor, limited palette of 32 colors, crisp pixels, no anti-aliasing, no gradients. A tactical battlefield seen from a high 3/4 angle: blue army on the left (spear infantry with oval shields, archers, horse cavalry, a war elephant), red army on the right (infantry, catapult, chariot), a river with a wooden bridge in the middle, savanna grass, acacia trees, rocky hills, a mud-brick fortress with a blue flag on the left and a red flag on the right. Chibi proportions, units about 2 heads tall, dark 1-pixel outlines, warm sunset lighting. Leave the center-top area empty for a title. No text, no UI, no letters.
 ```
 
-**Logo** : typo display épaisse type *Lilita One* ou *Bungee* (licences OFL), contour sombre 4 px, dégradé or vers ocre, bandeau rouge sous le titre pour « Guerre des Royaumes ». Garde l'icône Afrique de ta planche, c'est une bonne idée et elle est à toi.
+**Logo** : typo display épaisse type *Lilita One* ou *Bungee* (licences OFL), contour sombre 4 px, dégradé or vers ocre, bandeau rouge sous le titre pour « Rise of Kingdoms ». Garde l'icône Afrique de ta planche, c'est une bonne idée et elle est à toi.
 
 ## Étapes de développement
 
@@ -247,7 +247,7 @@ Un prompt par étape, à lancer dans l'ordre, chacun dans une session neuve. Ava
 **Prompt 1 — Fondations**
 
 ```text
-Tu es lead dev d'un jeu web de stratégie au tour par tour sur grille (genre "tactics" GBA), nom de code ANTIQUA. Lis docs/game-design.md et docs/art-bible.md.
+Tu es lead dev d'un jeu web de stratégie au tour par tour sur grille (genre "tactics" GBA), nom de code ALKÉBULAN. Lis docs/game-design.md et docs/art-bible.md.
 
 Objectif : initialiser le monorepo.
 - pnpm workspaces : packages/engine (TS pur), apps/game (Vite + Phaser 4), apps/site (Astro, page vide pour l'instant), tools/asset-pipeline.
@@ -348,7 +348,7 @@ Lis CLAUDE.md. Construis apps/site en Astro : page d'accueil avec la pochette en
 
 **Recommandation : GPT pour la pochette et la planche de style, une API pixel art dédiée (PixelLab, Retro Diffusion) pour les sprites finaux, nettoyage 100 % automatique par le pipeline. Pas de retouche manuelle : un sprite raté se régénère.** GPT produit du « style pixel art » : bords lissés, gros pixels de tailles inégales, des centaines de couleurs. Le pipeline corrige une partie de ces défauts, mais les API dédiées partent d'une grille propre.
 
-| Outil | Ce qu'il fait bien | Accès | Usage dans ANTIQUA |
+| Outil | Ce qu'il fait bien | Accès | Usage dans Alkébulan |
 | --- | --- | --- | --- |
 | [PixelLab](https://api.pixellab.ai/v2/llms.txt) | Personnages en 4 ou 8 directions, animations, tilesets, objets de carte, retouche (inpaint, rotation) | API REST, serveur MCP pour Claude Code, extension Aseprite ([docs](https://www.pixellab.ai/docs/ways-to-use-pixellab)) | Unités (4 directions + marche), tilesets d'autotiling |
 | [Retro Diffusion](https://github.com/Retro-Diffusion/api-examples) | Vrai pixel art aligné sur la grille, palette contrôlée, fond transparent ; style *low\_res* de 16 à 128 px | API HTTP, serveur MCP ([détails](https://mcpservers.org/fr/servers/retro-diffusion/retro-diffusion-mcp)) ; environ 0,015 à 0,18 $ par image ([source](https://skillsmp.com/skills/playableintelligence-game-creator-skills-retrodiffusion-skill-md)) | Terrains, bâtiments, icônes d'UI |

@@ -1,5 +1,5 @@
 /**
- * Pipeline d'assets ANTIQUA (`pnpm assets:build`) :
+ * Pipeline d'assets d'Alkébulan (`pnpm assets:build`) :
  * planches brutes (art/raw) → palette → quantification → découpe → réduction 32 px →
  * nettoyage automatique → couleurs d'équipe → atlas Phaser (apps/game/public/assets/atlas)
  * + rapport de contrôle (tools/asset-pipeline/report.html).

@@ -1,4 +1,4 @@
-# ANTIQUA — Game design (source de vérité)
+# ALKÉBULAN — Game design (source de vérité)
 
 > Extrait du README. Toute valeur de `packages/engine/src/data/` doit correspondre à ce fichier. En cas de conflit, ce fichier fait foi.
 
@@ -6,7 +6,7 @@
 
 On construit un jeu de stratégie au tour par tour, case par case, jouable dans le navigateur, avec des armées de l'Antiquité (Afrique et Méditerranée) à la place des tanks. Le Stage 1 = une seule carte jouable de bout en bout : 2 factions, 6 unités, 9 terrains et 3 bâtiments, production, capture, combat, victoire.
 
-**Nom du jeu — à changer avant toute publication.** « Advance Wars » est une marque de Nintendo : on peut s'inspirer librement des mécaniques (grille, tour par tour, capture, production), mais ni le nom, ni le logo, ni les sprites, ni les personnages ne doivent être repris ou imités. « Advance Wars Antique » ou « Advance Wars Africa » exposent à un retrait de la page ou de l'hébergement dès qu'il y a de la visibilité. Ce document utilise le nom de travail **ANTIQUA — Guerre des Royaumes** ; autres pistes : *Royaumes de Bronze*, *Kemet Tactics*, *Lances & Sables*.
+**Nom du jeu — à changer avant toute publication.** « Advance Wars » est une marque de Nintendo : on peut s'inspirer librement des mécaniques (grille, tour par tour, capture, production), mais ni le nom, ni le logo, ni les sprites, ni les personnages ne doivent être repris ou imités. « Advance Wars Antique » ou « Advance Wars Africa » exposent à un retrait de la page ou de l'hébergement dès qu'il y a de la visibilité. Nom retenu : **Alkébulan — Rise of Kingdoms** (logo dans `art/static/`). L'ancien nom de travail, *ANTIQUA*, ne subsiste que dans les identifiants techniques (`@antiqua/*`, clé de sauvegarde `antiqua:sauvegarde`). À vérifier avant publication : « Rise of Kingdoms » est déjà le titre d'un jeu mobile commercial ; *Alkébulan* seul, ou un autre sous-titre, éviterait toute confusion.
 
 Même logique pour les prompts d'images : ils décrivent un style (pixel art 32 px façon consoles portables 2001–2005, proportions trapues, contours sombres) sans jamais nommer le jeu de Nintendo. Ton planche « Africa Campaign » sert de référence d'ambiance, pas de modèle à copier.
 
