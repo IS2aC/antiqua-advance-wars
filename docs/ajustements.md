@@ -44,7 +44,12 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 > de carte ×2, décors = tuiles de terrain. Clic ou Entrée pour passer ; réglage « Scènes de
 > combat : oui/non » dans la pause (mémorisé).
 >
-> **Suite** : B — packs de culture Koush et Carthage (figurants de combat 64×64 propres à
+> **Phase B (système prêt, art à produire)** : le pipeline découvre les planches de figurants
+> (`art/raw/peuples/<peuple>/combat/<unité>.png`, gabarit 4×5 en 64 px) et les décors
+> (`art/raw/combat/decors/<terrain>.png`), et la scène les utilise dès qu'ils existent.
+> Gabarits et prompts : `docs/art-combat.md`.
+>
+> **Suite** : B — produire les planches Koush et Carthage (figurants de combat 64×64 propres à
 > chaque peuple, décors par terrain) ; C — scènes de siège, de prise de bâtiment et
 > d'annexion du QG ; D — guide « ajouter un peuple ».
 

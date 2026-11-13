@@ -37,6 +37,7 @@ import {
   type UnitType,
 } from './sources';
 import { DIRECTIONS, maskName } from './autotile';
+import { findDecors, findFigureSheets, processDecor, processFigure } from './combat';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
 const RAW = join(ROOT, 'art/raw');
@@ -163,6 +164,31 @@ async function main(): Promise<void> {
   );
   await applyCleanOverrides(buildings, palette, true);
 
+  // Scènes de combat : figurants par peuple et décors, découverts dans art/raw.
+  const figures = new Map<Faction, Map<string, IndexedImage>>();
+  for (const [people, sheets] of await findFigureSheets(RAW, warnings)) {
+    const frames = new Map<string, IndexedImage>();
+    for (const sheet of sheets) {
+      const processed = processFigure(
+        people,
+        sheet.key,
+        quantize(await loadImage(sheet.path), palette, { team: true }),
+        palette,
+      );
+      await applyCleanOverrides(processed, palette, true);
+      collect(processed);
+      for (const [name, frame] of processed.frames) frames.set(name, frame);
+    }
+    figures.set(people, frames);
+  }
+  const decors = new Map<string, IndexedImage>();
+  for (const decor of await findDecors(RAW, warnings)) {
+    const processed = collect(
+      processDecor(decor.key, quantize(await loadImage(decor.path), palette, { team: false })),
+    );
+    for (const [name, frame] of processed.frames) decors.set(name, frame);
+  }
+
   // ——— Atlas ———
   // On vide le dossier sans le supprimer : un serveur de dev Vite en cours le surveille.
   await mkdir(OUT, { recursive: true });
@@ -192,6 +218,28 @@ async function main(): Promise<void> {
       [...units.values()].flatMap((processed) => asAtlasFrames(processed.frames, colors)),
     );
   }
+
+  // Figurants : un atlas par peuple, dans sa couleur. Décors : une image chacun (320×384,
+  // trop grands pour partager un atlas). combat.json dit au jeu ce qui existe.
+  for (const [people, frames] of figures) {
+    await writeAtlas(`combat-${people}`, asAtlasFrames(frames, factionColors(palette, people)));
+  }
+  for (const [name, frame] of decors) {
+    await writeFile(
+      join(OUT, `${name.replace('/', '-')}.png`),
+      await encodePng(toRgba(frame, palette.colors)),
+    );
+  }
+  const manifest = {
+    peoples: Object.fromEntries(
+      [...figures].map(([people, frames]) => [
+        people,
+        [...new Set([...frames.keys()].map((name) => name.split('/')[1]))].sort(),
+      ]),
+    ),
+    decors: [...decors.keys()].map((name) => name.split('/')[1]).sort(),
+  };
+  await writeFile(join(OUT, 'combat.json'), `${JSON.stringify(manifest, null, 1)}\n`);
 
   // ——— Rapport ———
   const colorsOf = (faction: Faction) => factionColors(palette, faction);
@@ -242,6 +290,21 @@ async function main(): Promise<void> {
       terrain: terrainImages,
       seams: baseTerrains,
       buildings: buildingImages,
+      combat: {
+        figures: await Promise.all(
+          [...figures].map(async ([people, frames]) => ({
+            people,
+            images: await Promise.all(
+              [...frames].map(([name, frame]) =>
+                reportImage(name, frame, factionColors(palette, people)),
+              ),
+            ),
+          })),
+        ),
+        decors: await Promise.all(
+          [...decors].map(([name, frame]) => reportImage(name, frame, palette.colors)),
+        ),
+      },
       autotiles: [
         autotileSummary('route', terrain, 'terrain/route/'),
         autotileSummary('rivière', terrain, 'terrain/riviere/'),
@@ -260,6 +323,9 @@ async function main(): Promise<void> {
   );
   console.log(
     `[assets] palette : ${created ? 'créée' : 'chargée'} (${PALETTE_PNG.replace(`${ROOT}/`, '')})`,
+  );
+  console.log(
+    `[assets] combat : ${figures.size} peuple(s) (${[...figures.keys()].join(', ') || 'aucun'}), ${decors.size} décor(s)`,
   );
   for (const line of info) console.log(`  · ${line}`);
   for (const line of warnings) console.log(`  ! ${line}`);

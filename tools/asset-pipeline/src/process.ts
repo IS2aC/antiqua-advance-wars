@@ -38,26 +38,38 @@ function isDarkFactory(palette: Palette): (index: number) => boolean {
   return (index) => (palette.labs[index]?.[0] ?? 100) < 24;
 }
 
+/** Gabarit d'une planche animée : grille, et nombre d'images utiles par ligne. */
+export interface SheetLayout {
+  readonly cols: number;
+  readonly rows: readonly { readonly frames: number; readonly name: (index: number) => string }[];
+  /** Cadre de sortie (carré) et taille utile du personnage, marge du contour comprise. */
+  readonly frame: number;
+  readonly useful: number;
+}
+
 /**
- * Unité : même échelle pour toutes ses images (sinon l'animation « respire »), centrage
- * par ligne d'animation, contour, pieds sur la dernière ligne.
+ * Planche animée (unité de carte, figurant de combat) : même échelle pour toutes les images
+ * (sinon l'animation « respire »), centrage par ligne d'animation, contour, pieds en bas.
+ * `label` sert aux messages ; `checkCorner` signale un coin des PV chargé (unités de carte).
  */
-export function processUnit(
-  type: UnitType,
+export function processAnimatedSheet(
+  label: string,
   sheet: IndexedImage,
   palette: Palette,
-): ProcessedFrames {
+  layout: SheetLayout,
+  checkCorner: boolean,
+): ProcessedFrames & { readonly scale: number; readonly teamPixels: number } {
   const frames = new Map<string, IndexedImage>();
   const warnings: string[] = [];
-  const cells = gridCells(sheet.width, sheet.height, UNIT_GRID.cols, UNIT_GRID.rows);
+  const cells = gridCells(sheet.width, sheet.height, layout.cols, layout.rows.length);
   const isDark = isDarkFactory(palette);
 
-  const rows = UNIT_ROWS.map((row, r) => {
-    const rowCells = cells.slice(r * UNIT_GRID.cols, r * UNIT_GRID.cols + row.frames);
+  const rows = layout.rows.map((row, r) => {
+    const rowCells = cells.slice(r * layout.cols, r * layout.cols + row.frames);
     const local: Box[] = [];
     rowCells.forEach((cell, i) => {
       const box = contentBox(sheet, cell);
-      if (!box) warnings.push(`${type} : case ${r + 1}.${i + 1} vide`);
+      if (!box) warnings.push(`${label} : case ${r + 1}.${i + 1} vide`);
       else local.push({ x: box.x - cell.x, y: box.y - cell.y, w: box.w, h: box.h });
     });
     const union = local.reduce<Box | null>((acc, b) => {
@@ -75,9 +87,7 @@ export function processUnit(
   });
 
   const largest = Math.max(...rows.map(({ union }) => (union ? Math.max(union.w, union.h) : 0)));
-  const scale = largest / UNIT_USEFUL;
-  const firstCell = cells[0];
-  const pixelSize = firstCell ? estimatePixelSize(sheet, firstCell) : 0;
+  const scale = largest / layout.useful;
 
   for (const { row, rowCells, union } of rows) {
     if (!union) continue;
@@ -91,30 +101,56 @@ export function processUnit(
       );
       removeSpecks(small, 3);
       const frame = dropToFloor(
-        addOutline(placeInFrame(small, UNIT_FRAME, UNIT_FRAME), palette.outlineIndex, isDark),
+        addOutline(placeInFrame(small, layout.frame, layout.frame), palette.outlineIndex, isDark),
       );
-      const name =
-        row.direction === null
-          ? `unit/${type}/${row.anim}/${i}`
-          : `unit/${type}/${row.anim}/${row.direction}/${i}`;
+      const name = row.name(i);
       frames.set(name, frame);
-      const load = cornerLoad(frame);
+      const load = checkCorner ? cornerLoad(frame) : 0;
       if (load > 0.5) warnings.push(`${name} : coin des PV chargé à ${Math.round(load * 100)} %`);
     });
   }
 
-  const idle = frames.get(`unit/${type}/idle/0`);
-  const teamPixels = idle ? countIndices(idle, (index) => index >= palette.teamStart) : 0;
-  if (idle && teamPixels < 8) {
+  const first = frames.values().next().value;
+  const teamPixels = first ? countIndices(first, (index) => index >= palette.teamStart) : 0;
+  if (first && teamPixels < 8) {
     warnings.push(
-      `${type} : presque pas de rouge d'équipe détecté (${teamPixels} px) — les couleurs de camp seront peu visibles`,
+      `${label} : presque pas de rouge d'équipe détecté (${teamPixels} px) — les couleurs de camp seront peu visibles`,
     );
   }
+  return { frames, warnings, info: [], scale, teamPixels };
+}
+
+/** Unité de la carte : planche 4×4 (repos, puis marche à droite, de dos, de face), 32 px. */
+export function processUnit(
+  type: UnitType,
+  sheet: IndexedImage,
+  palette: Palette,
+): ProcessedFrames {
+  const result = processAnimatedSheet(
+    type,
+    sheet,
+    palette,
+    {
+      cols: UNIT_GRID.cols,
+      rows: UNIT_ROWS.map((row) => ({
+        frames: row.frames,
+        name: (i: number) =>
+          row.direction === null
+            ? `unit/${type}/${row.anim}/${i}`
+            : `unit/${type}/${row.anim}/${row.direction}/${i}`,
+      })),
+      frame: UNIT_FRAME,
+      useful: UNIT_USEFUL,
+    },
+    true,
+  );
+  const firstCell = gridCells(sheet.width, sheet.height, UNIT_GRID.cols, UNIT_GRID.rows)[0];
+  const pixelSize = firstCell ? estimatePixelSize(sheet, firstCell) : 0;
   return {
-    frames,
-    warnings,
+    frames: result.frames,
+    warnings: result.warnings,
     info: [
-      `${type} : échelle 1/${scale.toFixed(1)}, gros pixel IA ≈ ${pixelSize} px, ${teamPixels} px d'équipe`,
+      `${type} : échelle 1/${result.scale.toFixed(1)}, gros pixel IA ≈ ${pixelSize} px, ${result.teamPixels} px d'équipe`,
     ],
   };
 }

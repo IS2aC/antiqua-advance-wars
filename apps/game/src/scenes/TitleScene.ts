@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { FACTIONS, GUE_DU_NIL, createGame } from '@antiqua/engine';
 import { AI_OPPONENT, battleFromUrl } from '../launch';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, TILE_SIZE } from '../config';
+import { createFigureAnimations, preloadCombatPacks } from '../combat/packs';
 import { loadGame } from '../persistence/save';
 import { font } from '../ui/font';
 import { onKeyDown } from '../ui/keyboard';
@@ -23,6 +24,7 @@ export class TitleScene extends Phaser.Scene {
   /** Atlas produits par `pnpm assets:build` ; s'ils manquent, le jeu garde les placeholders. */
   preload(): void {
     preloadArt(this);
+    preloadCombatPacks(this);
   }
 
   create(): void {
@@ -34,6 +36,7 @@ export class TitleScene extends Phaser.Scene {
     }
     createPanelTextures(this);
     createUnitAnimations(this);
+    createFigureAnimations(this);
 
     // La carte du Gué du Nil en fond, assombrie.
     const preview = createGame(GUE_DU_NIL, { seed: 1 });

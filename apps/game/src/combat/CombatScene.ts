@@ -5,6 +5,7 @@ import { GRID, panel } from '../ui/panels';
 import { TERRAIN_ATLAS, hasUnitArt, idleAnimation, unitAtlas, walkAnimation } from '../view/art';
 import { OUTLINE_COLOR, TEAM_COLORS, darken } from '../view/palette';
 import { uiText } from '../view/text';
+import { decorFor, figureAnimation, figureAtlas, hasFigure, type FigureAnim } from './packs';
 import { soldierCount, type CombatSetup, type CombatSide, type Side, type Strike } from './setup';
 
 export interface CombatSceneData {
@@ -86,6 +87,8 @@ function groundFrame(terrain: TerrainType): string {
 interface Figure {
   readonly sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
   readonly homeX: number;
+  /** Figurant du pack de culture (animations idle, walk, attack, hit, death). */
+  readonly pack: boolean;
 }
 
 interface HalfView {
@@ -160,6 +163,9 @@ export class CombatScene extends Phaser.Scene {
   private async playStrike(strike: Strike, from: HalfView, to: HalfView): Promise<void> {
     const direction = from.side.side === 'left' ? 1 : -1;
     if (strike.ranged) {
+      // Les tireurs bandent l'arc (ou arment l'engin), puis la volée part.
+      for (const figure of from.figures) void this.animate(figure, from.side, 'attack');
+      await this.wait(from.figures.some((f) => f.pack) ? 220 : 0);
       await this.volley(from, to, from.side.unitType === 'catapulte');
     } else {
       // Charge : les figurants avancent vers la ligne de front, frappent, puis reviennent.
@@ -174,6 +180,8 @@ export class CombatScene extends Phaser.Scene {
           }),
         ),
       );
+      // Arrivés au contact : le coup est porté (animation d'attaque du pack).
+      await Promise.all(from.figures.map((figure) => this.animate(figure, from.side, 'attack')));
     }
 
     await this.impact(to, strike);
@@ -246,17 +254,28 @@ export class CombatScene extends Phaser.Scene {
 
     const remaining = soldierCount(target.side.unitType, strike.targetHpAfter);
     const fallen = target.figures.splice(remaining);
+    for (const figure of target.figures) {
+      void this.animate(figure, target.side, 'hit').then(() =>
+        this.animate(figure, target.side, 'idle'),
+      );
+    }
     const falls = fallen.map((figure, index) =>
-      this.wait(80 * index).then(() =>
-        this.tween({
+      this.wait(80 * index).then(async () => {
+        if (figure.pack) {
+          // Animation de mort du pack, puis le corps s'efface.
+          await this.animate(figure, target.side, 'death');
+          await this.tween({ targets: figure.sprite, alpha: 0, duration: 260, delay: 120 });
+          return;
+        }
+        await this.tween({
           targets: figure.sprite,
           angle: target.side.side === 'left' ? -80 : 80,
           alpha: 0,
           y: figure.sprite.y + 6,
           duration: 380,
           ease: 'Quad.easeIn',
-        }),
-      ),
+        });
+      }),
     );
     await Promise.all([countdown, ...falls]);
     target.hpText.setText(String(strike.targetHpAfter));
@@ -269,38 +288,10 @@ export class CombatScene extends Phaser.Scene {
     const x0 = left ? 0 : HALF;
     const objects: Phaser.GameObjects.GameObject[] = [];
 
-    // Ciel en bandes (dégradé « pixel »).
-    const sky = this.add.graphics();
-    const bandH = Math.ceil((HORIZON - HUD_H + 40) / SKY.length);
-    SKY.forEach((color, i) =>
-      sky.fillStyle(color, 1).fillRect(x0, HUD_H - 40 + i * bandH, HALF, bandH),
-    );
-    sky.fillStyle(SKY[0], 1).fillRect(x0, 0, HALF, HUD_H - 40);
-    objects.push(sky);
-
-    // Horizon et sol : tuiles du terrain, agrandies ×2 et répétées.
-    const horizon = horizonFrame(side.terrain);
-    if (horizon) {
-      objects.push(
-        this.add
-          .tileSprite(x0, HORIZON - 64, HALF, 64, TERRAIN_ATLAS, horizon)
-          .setOrigin(0)
-          .setTileScale(SCALE),
-      );
-    }
-    objects.push(
-      this.add
-        .tileSprite(
-          x0,
-          HORIZON,
-          HALF,
-          LOGICAL_HEIGHT - HORIZON,
-          TERRAIN_ATLAS,
-          groundFrame(side.terrain),
-        )
-        .setOrigin(0)
-        .setTileScale(SCALE),
-    );
+    // Décor du pack s'il existe ; sinon ciel en bandes, horizon et sol en tuiles (phase A).
+    const decor = decorFor(this, side.terrain);
+    if (decor) objects.push(this.add.image(x0, 0, decor).setOrigin(0));
+    else objects.push(...this.tiledBackdrop(side, x0));
 
     // Figurants : un par PV (un pour 2 PV pour montures et engins), tournés vers l'ennemi.
     const count = soldierCount(side.unitType, side.hpBefore);
@@ -314,7 +305,7 @@ export class CombatScene extends Phaser.Scene {
       if (!slot) break;
       const homeX = left ? slot[0] : LOGICAL_WIDTH - slot[0];
       const sprite = this.makeFigure(side, homeX, slot[1]);
-      figures.push({ sprite, homeX });
+      figures.push({ sprite, homeX, pack: hasFigure(this, side.owner, side.unitType) });
       objects.push(sprite);
     }
 
@@ -353,12 +344,61 @@ export class CombatScene extends Phaser.Scene {
     return { side, figures, hpText, root };
   }
 
+  /** Phase A : ciel en bandes (dégradé « pixel »), horizon et sol faits des tuiles du terrain. */
+  private tiledBackdrop(side: CombatSide, x0: number): Phaser.GameObjects.GameObject[] {
+    const objects: Phaser.GameObjects.GameObject[] = [];
+    const sky = this.add.graphics();
+    const bandH = Math.ceil((HORIZON - HUD_H + 40) / SKY.length);
+    SKY.forEach((color, i) =>
+      sky.fillStyle(color, 1).fillRect(x0, HUD_H - 40 + i * bandH, HALF, bandH),
+    );
+    sky.fillStyle(SKY[0], 1).fillRect(x0, 0, HALF, HUD_H - 40);
+    objects.push(sky);
+
+    // Horizon et sol : tuiles du terrain, agrandies ×2 et répétées.
+    const horizon = horizonFrame(side.terrain);
+    if (horizon) {
+      objects.push(
+        this.add
+          .tileSprite(x0, HORIZON - 64, HALF, 64, TERRAIN_ATLAS, horizon)
+          .setOrigin(0)
+          .setTileScale(SCALE),
+      );
+    }
+    objects.push(
+      this.add
+        .tileSprite(
+          x0,
+          HORIZON,
+          HALF,
+          LOGICAL_HEIGHT - HORIZON,
+          TERRAIN_ATLAS,
+          groundFrame(side.terrain),
+        )
+        .setOrigin(0)
+        .setTileScale(SCALE),
+    );
+
+    return objects;
+  }
+
   private makeFigure(
     side: CombatSide,
     x: number,
     y: number,
   ): Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle {
     const facingLeft = side.side === 'right';
+    if (hasFigure(this, side.owner, side.unitType)) {
+      const sprite = this.add
+        .sprite(x, y, figureAtlas(side.owner), `figure/${side.unitType}/idle/0`)
+        .setOrigin(0.5, 1)
+        .setFlipX(facingLeft)
+        .setDepth(y);
+      const idle = figureAnimation(side.owner, side.unitType, 'idle');
+      if (this.anims.exists(idle))
+        sprite.play({ key: idle, startFrame: Phaser.Math.Between(0, 3) });
+      return sprite;
+    }
     if (hasUnitArt(this, side.owner)) {
       const sprite = this.add
         .sprite(x, y, unitAtlas(side.owner), `unit/${side.unitType}/idle/0`)
@@ -421,10 +461,31 @@ export class CombatScene extends Phaser.Scene {
 
   private walk(figure: Figure, side: CombatSide, walking: boolean): void {
     if (!(figure.sprite instanceof Phaser.GameObjects.Sprite)) return;
+    if (figure.pack) {
+      void this.animate(figure, side, walking ? 'walk' : 'idle');
+      return;
+    }
     const key = walking
       ? walkAnimation(side.owner, side.unitType, 'right')
       : idleAnimation(side.owner, side.unitType);
     figure.sprite.play(key, true);
+  }
+
+  /**
+   * Joue une animation du pack de culture ; se résout à la fin (immédiatement pour une
+   * boucle, ou si le figurant n'a pas de pack ou pas cette animation).
+   */
+  private animate(figure: Figure, side: CombatSide, anim: FigureAnim): Promise<void> {
+    const sprite = figure.sprite;
+    if (!figure.pack || !(sprite instanceof Phaser.GameObjects.Sprite)) return Promise.resolve();
+    const key = figureAnimation(side.owner, side.unitType, anim);
+    if (!this.anims.exists(key)) return Promise.resolve();
+    sprite.play(key, true);
+    if (anim === 'idle' || anim === 'walk' || this.skipped) return Promise.resolve();
+    return Promise.race([
+      new Promise<void>((resolve) => sprite.once('animationcomplete', () => resolve())),
+      this.skipSignal,
+    ]);
   }
 
   private flash(figure: Figure): void {

@@ -25,6 +25,11 @@ export interface ReportData {
     found: readonly string[];
     missing: readonly string[];
   }[];
+  /** Scènes de combat : figurants par peuple, décors par terrain. */
+  readonly combat?: {
+    readonly figures: readonly { people: string; images: readonly ReportImage[] }[];
+    readonly decors: readonly ReportImage[];
+  };
   readonly warnings: readonly string[];
   readonly info: readonly string[];
 }
@@ -119,6 +124,28 @@ ${onTerrain}
 
 <h2>Autotiling</h2>
 <ul>${data.autotiles.map((a) => `<li><b>${escape(a.kind)}</b> : ${a.found.length} pièces (${escape(a.found.join(' '))})${a.missing.length ? ` — manquantes : ${escape(a.missing.join(' '))}` : ''}</li>`).join('')}</ul>
+
+<h2>Scènes de combat</h2>
+${
+  data.combat && (data.combat.figures.length > 0 || data.combat.decors.length > 0)
+    ? `${data.combat.figures
+        .map(
+          (f) =>
+            `<h3>${escape(f.people)}</h3><div class="row">${f.images
+              .map(
+                (image) =>
+                  `<figure class="checker" style="--w:64px">${sprite(image, 1)}${sprite(image, 2)}</figure>`,
+              )
+              .join('')}</div>`,
+        )
+        .join('')}<div class="row">${data.combat.decors
+        .map(
+          (d) =>
+            `<figure>${sprite(d, 1, 'style="width:320px;height:auto"')}<figcaption>${escape(d.label)}</figcaption></figure>`,
+        )
+        .join('')}</div>`
+    : '<p style="color:var(--muted)">Aucune planche de combat dans art/raw/peuples ni art/raw/combat/decors.</p>'
+}
 
 <h2>Toutes les tuiles</h2>
 <div class="row">${data.terrain.map((t) => `<figure>${sprite(t, 2)}<figcaption>${escape(t.label.replace('terrain/', ''))}</figcaption></figure>`).join('')}</div>

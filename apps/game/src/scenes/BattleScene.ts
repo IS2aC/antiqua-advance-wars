@@ -4,6 +4,7 @@ import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
 import type { CombatSceneData } from '../combat/CombatScene';
+import { createFigureAnimations } from '../combat/packs';
 import type { CombatPresenter } from '../animation/EventPlayer';
 import { loadOptions } from '../persistence/options';
 import { BattleController } from '../controller/BattleController';
@@ -53,6 +54,7 @@ export class BattleScene extends Phaser.Scene {
   create(): void {
     createPanelTextures(this);
     createUnitAnimations(this);
+    createFigureAnimations(this);
     const state =
       this.initial ?? createGame(GUE_DU_NIL, { seed: Math.floor(Math.random() * 2 ** 31) });
 
