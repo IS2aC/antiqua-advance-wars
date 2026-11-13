@@ -11,6 +11,7 @@ import { createUnitAnimations } from '../view/art';
 import { Cursor } from '../view/Cursor';
 import { EndScreen } from '../view/EndScreen';
 import { ForecastPanel } from '../view/ForecastPanel';
+import { PauseMenu } from '../view/PauseMenu';
 import { Hud } from '../view/Hud';
 import { MapView } from '../view/MapView';
 import { PathArrow } from '../view/PathArrow';
@@ -63,15 +64,20 @@ export class BattleScene extends Phaser.Scene {
     const banner = new TurnBanner(this);
     const forecast = new ForecastPanel(this);
     const endScreen = new EndScreen(this);
+    const pauseMenu = new PauseMenu(this);
     // Le contrôleur est créé juste après : le HUD l'appelle par une fermeture.
     let controller: BattleController | null = null;
-    const hud = new Hud(this, () => controller?.requestEndTurn());
+    const hud = new Hud(
+      this,
+      () => controller?.requestEndTurn(),
+      () => void controller?.openPauseMenu(),
+    );
     const player = new EventPlayer(this, { map, units, hud, banner });
 
     controller = new BattleController(
       this,
       state,
-      { cursor, overlay, arrow, menu, hud, player, forecast, endScreen },
+      { cursor, overlay, arrow, menu, hud, player, forecast, endScreen, pauseMenu },
       (choice) => {
         if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers });
         else goToCover();

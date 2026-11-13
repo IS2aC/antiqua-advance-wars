@@ -19,6 +19,7 @@ import { DISABLED_TEXT_COLOR, TEAM_COLORS } from './palette';
 const MARGIN = 4;
 const BAR_H = GRID * 3;
 const BUTTON_W = GRID * 13;
+const PAUSE_W = GRID * 3;
 const INFO_W = GRID * 24;
 const PIP = 5;
 
@@ -37,6 +38,8 @@ export class Hud {
   private readonly teamPip: Phaser.GameObjects.Rectangle;
   private readonly button: Phaser.GameObjects.NineSlice;
   private readonly buttonLabel: Phaser.GameObjects.Text;
+  private readonly pauseButton: Phaser.GameObjects.NineSlice;
+  private readonly pauseIcon: Phaser.GameObjects.Graphics;
 
   private readonly info: Phaser.GameObjects.Container;
   private readonly infoPanel: Phaser.GameObjects.NineSlice;
@@ -48,8 +51,11 @@ export class Hud {
   private readonly unitPip: Phaser.GameObjects.Rectangle;
   private infoOnLeft = true;
 
-  /** `onButton` : clic sur le bouton en haut à droite (« Fin de tour », ou « Accélérer »). */
-  constructor(scene: Phaser.Scene, onButton: () => void) {
+  /**
+   * `onButton` : clic sur le bouton en haut à droite (« Fin de tour », ou « Accélérer ») ;
+   * `onPause` : clic sur le bouton pause, juste à sa gauche.
+   */
+  constructor(scene: Phaser.Scene, onButton: () => void, onPause: () => void) {
     // ——— Barre d'état ———
     this.statusPanel = panel(scene, MARGIN, 0, 200, BAR_H);
     this.teamPip = scene.add.rectangle(MARGIN + 8, BAR_H / 2, 6, 6, 0xffffff).setOrigin(0, 0.5);
@@ -63,10 +69,26 @@ export class Hud {
     });
     this.button.on('pointerover', () => this.button.setTint(0xffe0a0));
     this.button.on('pointerout', () => this.button.clearTint());
+
+    // Bouton pause : deux barres verticales dessinées (pas de glyphe dans la police).
+    const pauseX = LOGICAL_WIDTH - MARGIN - BUTTON_W - MARGIN - PAUSE_W;
+    this.pauseButton = panel(scene, pauseX, 0, PAUSE_W, BAR_H, 'button');
+    this.pauseButton.setInteractive({ useHandCursor: true });
+    this.pauseButton.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonDown()) onPause();
+    });
+    this.pauseButton.on('pointerover', () => this.pauseButton.setTint(0xffe0a0));
+    this.pauseButton.on('pointerout', () => this.pauseButton.clearTint());
+    this.pauseIcon = scene.add.graphics();
+    this.pauseIcon.fillStyle(0xfff4c8, 1);
+    this.pauseIcon.fillRect(pauseX + 8, 7, 3, 10).fillRect(pauseX + 13, 7, 3, 10);
+
     this.bar = scene.add.container(0, MARGIN, [
       this.statusPanel,
       this.teamPip,
       this.status,
+      this.pauseButton,
+      this.pauseIcon,
       this.button,
       this.buttonLabel,
     ]);
@@ -163,6 +185,12 @@ export class Hud {
   /** Libellé du bouton : « Fin de tour » pendant le tour du joueur, « Accélérer » pendant l'IA. */
   setButtonLabel(text: string): void {
     this.buttonLabel.setText(text);
+  }
+
+  /** Pause indisponible pendant le tour de l'IA : le bouton est estompé. */
+  setPauseEnabled(enabled: boolean): void {
+    this.pauseButton.setAlpha(enabled ? 1 : 0.4);
+    this.pauseIcon.setAlpha(enabled ? 1 : 0.4);
   }
 
   setVisible(visible: boolean): void {
