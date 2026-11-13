@@ -9,8 +9,12 @@ import { DISABLED_TEXT_COLOR, TEAM_COLORS } from './palette';
 export type EndChoice = 'rejouer' | 'menu';
 
 const WIDTH = GRID * 44;
-const HEIGHT = GRID * 26;
 const ROW = GRID * 2;
+/** Première ligne du tableau, puis marge basse sous la dernière ligne. */
+const FIRST_ROW = GRID * 12;
+const BOTTOM_MARGIN = GRID * 3;
+/** Hauteur réservée au menu « Rejouer / Menu principal » sous le panneau. */
+const MENU_SPACE = GRID * 7;
 
 /**
  * Écran de fin : vainqueur, nombre de jours, et pour chaque camp les unités produites,
@@ -39,7 +43,10 @@ export class EndScreen {
     const scene = this.scene;
     const shade = scene.add.rectangle(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT, 0x000000, 0.55);
     shade.setOrigin(0);
-    const background = panel(scene, 0, 0, WIDTH, HEIGHT);
+    // Le panneau s'ajuste au nombre de camps : pas de vide sous le tableau.
+    const height = FIRST_ROW + state.players.length * ROW + BOTTOM_MARGIN;
+    const top = Math.round((LOGICAL_HEIGHT - height - MENU_SPACE) / 2);
+    const background = panel(scene, 0, 0, WIDTH, height);
     const winner = state.winner;
     const title = uiText(
       scene,
@@ -59,7 +66,7 @@ export class EndScreen {
       uiText(scene, columns[i] ?? 0, GRID * 10, label, 'small', { color: DISABLED_TEXT_COLOR }),
     );
     const rows = state.players.flatMap((player, index) => {
-      const y = GRID * 12 + index * ROW;
+      const y = FIRST_ROW + index * ROW;
       const buildings = state.buildings.filter((b) => b.owner === player.id).length;
       const values = [
         FACTIONS[player.id].name + (player.defeated ? ' (vaincu)' : ''),
@@ -73,11 +80,13 @@ export class EndScreen {
       ];
     });
 
-    const card = scene.add.container(
-      (LOGICAL_WIDTH - WIDTH) / 2,
-      (LOGICAL_HEIGHT - HEIGHT) / 2 - GRID * 3,
-      [background, title, subtitle, ...header, ...rows],
-    );
+    const card = scene.add.container((LOGICAL_WIDTH - WIDTH) / 2, top, [
+      background,
+      title,
+      subtitle,
+      ...header,
+      ...rows,
+    ]);
     pinToScreen(card).setDepth(70);
     const shadeLayer = scene.add.container(0, 0, [shade]);
     pinToScreen(shadeLayer).setDepth(69);
@@ -87,7 +96,7 @@ export class EndScreen {
         { value: 'rejouer', label: 'Rejouer' },
         { value: 'menu', label: 'Menu principal' },
       ],
-      { top: (LOGICAL_HEIGHT + HEIGHT) / 2 - GRID * 2 },
+      { top: top + height + GRID },
     );
     return choice ?? 'menu';
   }
