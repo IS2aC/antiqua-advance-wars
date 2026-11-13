@@ -1,0 +1,20 @@
+# Alkébulan — déploiement Dokploy (type « Docker Compose »).
+#
+# Dans Dokploy :
+#   1. Créer un service « Compose », source = ce dépôt Git, branche à déployer,
+#      chemin du fichier = ./docker-compose.yml.
+#   2. Onglet « Domains » : service `alkebulan`, port 80, ton nom de domaine,
+#      HTTPS activé avec Let's Encrypt. Dokploy ajoute lui-même les labels Traefik
+#      et le réseau ; ne pas publier de port ici.
+#   3. Déployer. Le DNS du domaine (enregistrement A) doit pointer vers le serveur.
+#
+# En local : docker compose build, puis docker run --rm -p 8080:80 <image>
+
+services:
+  alkebulan:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    expose:
+      - '80'

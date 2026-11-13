@@ -1,0 +1,103 @@
+import type Phaser from 'phaser';
+import { FACTIONS, type GameState } from '@antiqua/engine';
+import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../config';
+import { GRID, panel } from '../ui/panels';
+import { ActionMenu } from './ActionMenu';
+import { pinToScreen, uiText } from './text';
+import { DISABLED_TEXT_COLOR, TEAM_COLORS } from './palette';
+
+export type EndChoice = 'rejouer' | 'menu';
+
+const WIDTH = GRID * 44;
+const ROW = GRID * 2;
+/** Première ligne du tableau, puis marge basse sous la dernière ligne. */
+const FIRST_ROW = GRID * 12;
+const BOTTOM_MARGIN = GRID * 3;
+/** Hauteur réservée au menu « Rejouer / Menu principal » sous le panneau. */
+const MENU_SPACE = GRID * 7;
+
+/**
+ * Écran de fin : vainqueur, nombre de jours, et pour chaque camp les unités produites,
+ * les unités perdues et les bâtiments tenus. Puis « Rejouer » ou « Menu principal ».
+ */
+export class EndScreen {
+  private readonly menu: ActionMenu;
+
+  constructor(private readonly scene: Phaser.Scene) {
+    this.menu = new ActionMenu(scene, false, 71);
+  }
+
+  get isOpen(): boolean {
+    return this.menu.isOpen;
+  }
+
+  move(delta: number): void {
+    this.menu.move(delta);
+  }
+
+  confirm(): void {
+    this.menu.confirm();
+  }
+
+  async show(state: GameState): Promise<EndChoice> {
+    const scene = this.scene;
+    const shade = scene.add.rectangle(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT, 0x000000, 0.55);
+    shade.setOrigin(0);
+    // Le panneau s'ajuste au nombre de camps : pas de vide sous le tableau.
+    const height = FIRST_ROW + state.players.length * ROW + BOTTOM_MARGIN;
+    const top = Math.round((LOGICAL_HEIGHT - height - MENU_SPACE) / 2);
+    const background = panel(scene, 0, 0, WIDTH, height);
+    const winner = state.winner;
+    const title = uiText(
+      scene,
+      WIDTH / 2,
+      GRID * 2,
+      winner ? `Victoire : ${FACTIONS[winner].name} !` : 'Égalité',
+      'large',
+      { outline: true },
+    ).setOrigin(0.5, 0);
+    if (winner) title.setColor(`#${TEAM_COLORS[winner].toString(16).padStart(6, '0')}`);
+    const subtitle = uiText(scene, WIDTH / 2, GRID * 7, `Partie terminée au jour ${state.day}`)
+      .setOrigin(0.5, 0)
+      .setColor(DISABLED_TEXT_COLOR);
+
+    const columns = [GRID * 3, GRID * 17, GRID * 26, GRID * 35];
+    const header = ['Camp', 'Produites', 'Perdues', 'Bâtiments'].map((label, i) =>
+      uiText(scene, columns[i] ?? 0, GRID * 10, label, 'small', { color: DISABLED_TEXT_COLOR }),
+    );
+    const rows = state.players.flatMap((player, index) => {
+      const y = FIRST_ROW + index * ROW;
+      const buildings = state.buildings.filter((b) => b.owner === player.id).length;
+      const values = [
+        FACTIONS[player.id].name + (player.defeated ? ' (vaincu)' : ''),
+        String(player.stats.unitsBuilt),
+        String(player.stats.unitsLost),
+        String(buildings),
+      ];
+      return [
+        scene.add.rectangle(GRID * 2, y + 6, 4, 6, TEAM_COLORS[player.id]).setOrigin(0),
+        ...values.map((value, i) => uiText(scene, columns[i] ?? 0, y, value)),
+      ];
+    });
+
+    const card = scene.add.container((LOGICAL_WIDTH - WIDTH) / 2, top, [
+      background,
+      title,
+      subtitle,
+      ...header,
+      ...rows,
+    ]);
+    pinToScreen(card).setDepth(70);
+    const shadeLayer = scene.add.container(0, 0, [shade]);
+    pinToScreen(shadeLayer).setDepth(69);
+
+    const choice = await this.menu.open<EndChoice>(
+      [
+        { value: 'rejouer', label: 'Rejouer' },
+        { value: 'menu', label: 'Menu principal' },
+      ],
+      { top: top + height + GRID },
+    );
+    return choice ?? 'menu';
+  }
+}

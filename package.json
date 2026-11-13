@@ -1,0 +1,29 @@
+{
+  "name": "antiqua",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.9",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @antiqua/game dev",
+    "dev:site": "pnpm --filter @antiqua/site dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "assets:build": "pnpm --filter @antiqua/asset-pipeline build:assets",
+    "assets:cover": "pnpm --filter @antiqua/asset-pipeline build:cover",
+    "match": "pnpm --filter @antiqua/cli match"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.2"
+  }
+}

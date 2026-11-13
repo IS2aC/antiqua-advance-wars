@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+dist
+.astro
+coverage
+README.md
+docs
+art
+apps/game/public/assets

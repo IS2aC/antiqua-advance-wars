@@ -1,0 +1,435 @@
+/*
+ * Page de garde : illustration à gauche qui se fond dans un panneau ivoire à motifs,
+ * logo et menu à droite. Couleurs et typographies reprises de la maquette Stitch.
+ */
+:root {
+  --cream: #fffefc;
+  --ivory: #f8f5ee;
+  --gold-light: #ffc83b;
+  --gold: #f5a623;
+  --gold-dark: #d99a26;
+  --gold-border: #e2bf81;
+  --card-border: #e9dfd4;
+  --crimson: #8c1d24;
+  --dark-brown: #341e0f;
+  --noble-brown: #49301f;
+  --muted: rgba(73, 48, 31, 0.68);
+  --font-title: 'Cinzel', 'Times New Roman', serif;
+  --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--cream);
+  color: var(--noble-brown);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+.garde {
+  position: relative;
+  display: flex;
+  min-height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--cream);
+}
+
+/* ——— Illustration ——— */
+
+.garde__art {
+  position: relative;
+  flex: 0 0 55%;
+  overflow: hidden;
+  /* Fondu vers le panneau, en biais comme sur la maquette. */
+  mask-image: linear-gradient(
+    100deg,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.95) 58%,
+    rgba(0, 0, 0, 0.82) 68%,
+    rgba(0, 0, 0, 0.6) 78%,
+    rgba(0, 0, 0, 0.35) 86%,
+    rgba(0, 0, 0, 0.14) 93%,
+    transparent 100%
+  );
+}
+
+.garde__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 36%;
+  transform: scale(1.02);
+  animation: drift 24s ease-in-out infinite alternate;
+}
+
+/* Lueur de crépuscule en haut, vignettage en bas à gauche. */
+.garde__art::before,
+.garde__art::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.garde__art::before {
+  inset: 0 0 auto;
+  height: 10rem;
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.15), transparent);
+}
+
+.garde__art::after {
+  left: 0;
+  bottom: 0;
+  width: 20rem;
+  height: 16rem;
+  background: linear-gradient(to top right, rgba(52, 30, 15, 0.3), transparent);
+}
+
+@keyframes drift {
+  from {
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1.06) translateY(-1.2%);
+  }
+}
+
+/* ——— Panneau ——— */
+
+.garde__panel {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 2.5rem 0;
+  /* Motif géométrique : points dorés et rayures en biais. */
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(rgba(217, 154, 38, 0.18) 1.5px, transparent 1.5px),
+    repeating-linear-gradient(
+      45deg,
+      rgba(217, 154, 38, 0.035) 0,
+      rgba(217, 154, 38, 0.035) 16px,
+      transparent 16px,
+      transparent 32px
+    );
+  background-size:
+    32px 32px,
+    64px 64px;
+}
+
+.garde__center {
+  width: 100%;
+  max-width: 28rem;
+  margin: auto;
+  padding: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.garde__logo {
+  margin: 0;
+  width: 100%;
+  max-width: 24rem;
+  animation: rise 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.garde__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 6px 10px rgba(52, 30, 15, 0.22));
+}
+
+.garde__pitch {
+  margin: 0.75rem 0 1.5rem;
+  max-width: 24rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--muted);
+  text-wrap: pretty;
+  animation: rise 700ms 80ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ——— Menu ——— */
+
+.garde__menu {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  animation: rise 700ms 160ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.action {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow:
+    0 4px 18px -2px rgba(90, 60, 35, 0.07),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+  color: var(--noble-brown);
+  font: 600 0.875rem/1 var(--font-ui);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.action[hidden] {
+  display: none;
+}
+
+.action__icon {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: color 180ms ease;
+}
+
+.action__label {
+  flex: 1;
+  text-align: left;
+}
+
+.action__detail {
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.action__badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: var(--ivory);
+  border: 1px solid var(--card-border);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.action:not(:disabled):hover {
+  transform: translateX(4px);
+  border-color: var(--gold);
+  box-shadow:
+    0 8px 25px -4px rgba(217, 154, 38, 0.25),
+    0 3px 8px rgba(90, 60, 35, 0.08);
+}
+
+.action:not(:disabled):hover .action__icon {
+  color: var(--gold-dark);
+}
+
+.action:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.action:focus-visible {
+  outline: 3px solid var(--gold-light);
+  outline-offset: 3px;
+}
+
+.action:disabled {
+  cursor: default;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+/* Bouton principal : dégradé doré et reflet qui passe. */
+.action--primary {
+  min-height: 3.25rem;
+  justify-content: center;
+  overflow: hidden;
+  border: none;
+  background: linear-gradient(90deg, var(--gold), #f59e0b 50%, var(--gold-dark));
+  box-shadow:
+    0 8px 24px -4px rgba(245, 166, 35, 0.45),
+    0 2px 6px rgba(184, 115, 15, 0.25);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 2px rgba(94, 16, 21, 0.25);
+}
+
+.action--primary .action__label {
+  flex: none;
+}
+
+.action--primary .action__detail {
+  color: rgba(255, 255, 255, 0.85);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.action--primary:hover {
+  transform: scale(1.02);
+}
+
+.action__play {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: transform 180ms ease;
+}
+
+.action__play svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-left: 2px;
+  fill: #fff;
+}
+
+.action--primary:hover .action__play {
+  transform: scale(1.1);
+}
+
+.action__sheen {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: sheen 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sheen {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+  35%,
+  100% {
+    transform: translateX(250%) skewX(-25deg);
+  }
+}
+
+.garde__hint {
+  margin: 1.25rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ——— Pied de page ——— */
+
+.garde__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 -2.5rem;
+  padding: 0.5rem 2.5rem;
+  border-top: 1px solid rgba(237, 228, 217, 0.8);
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* ——— Écrans étroits et portrait : l'illustration passe au-dessus ——— */
+
+@media (max-width: 860px), (orientation: portrait) {
+  .garde {
+    flex-direction: column;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .garde__art {
+    flex: none;
+    height: 40vh;
+    min-height: 15rem;
+    mask-image: linear-gradient(to bottom, #000 55%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
+  }
+
+  .garde__art img {
+    object-position: center 45%;
+  }
+
+  .garde__panel {
+    flex: 1;
+    margin-top: -4rem;
+    padding: 0 1rem;
+    background-color: transparent;
+  }
+
+  .garde__center {
+    margin: 0 auto;
+    padding-bottom: 1.5rem;
+  }
+
+  .garde__logo {
+    max-width: 18rem;
+  }
+
+  .garde__hint {
+    display: none;
+  }
+
+  .garde__footer {
+    margin: 0 -1rem;
+    padding: 0.5rem 1rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garde__art img,
+  .action__sheen,
+  .garde__logo,
+  .garde__pitch,
+  .garde__menu {
+    animation: none;
+  }
+
+  .action {
+    transition: none;
+  }
+}

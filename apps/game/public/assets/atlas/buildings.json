@@ -1,0 +1,314 @@
+{
+ "frames": {
+  "building/caserne/aksoum": {
+   "frame": {
+    "x": 2,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/caserne/carthage": {
+   "frame": {
+    "x": 36,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/caserne/kemet": {
+   "frame": {
+    "x": 70,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/caserne/koush": {
+   "frame": {
+    "x": 104,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/caserne/neutre": {
+   "frame": {
+    "x": 138,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/qg/aksoum": {
+   "frame": {
+    "x": 172,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/qg/carthage": {
+   "frame": {
+    "x": 206,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/qg/kemet": {
+   "frame": {
+    "x": 240,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/qg/koush": {
+   "frame": {
+    "x": 274,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/qg/neutre": {
+   "frame": {
+    "x": 308,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/aksoum": {
+   "frame": {
+    "x": 342,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/carthage": {
+   "frame": {
+    "x": 376,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/kemet": {
+   "frame": {
+    "x": 410,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/koush": {
+   "frame": {
+    "x": 444,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/neutre": {
+   "frame": {
+    "x": 478,
+    "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  }
+ },
+ "meta": {
+  "app": "@antiqua/asset-pipeline",
+  "image": "buildings.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 512,
+   "h": 68
+  },
+  "scale": "1"
+ }
+}

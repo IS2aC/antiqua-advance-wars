@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+coverage/
+*.log
+.DS_Store
+.env
+.env.*
+tools/asset-pipeline/report.html
+test-results/
+playwright-report/
