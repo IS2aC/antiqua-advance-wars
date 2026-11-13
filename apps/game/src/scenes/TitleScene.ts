@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FACTIONS, GUE_DU_NIL, createGame } from '@antiqua/engine';
+import { FACTIONS, GUE_DU_NIL, createGame, type PlayerId } from '@antiqua/engine';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, TILE_SIZE } from '../config';
 import { loadGame } from '../persistence/save';
 import { font } from '../ui/font';
@@ -10,9 +10,12 @@ import { MapView } from '../view/MapView';
 import { uiText } from '../view/text';
 import { DISABLED_TEXT_COLOR } from '../view/palette';
 
-type TitleChoice = 'continuer' | 'nouvelle';
+type TitleChoice = 'continuer' | 'ia' | 'deux';
 
-/** Écran titre : « Continuer » (si une sauvegarde existe) et « Nouvelle partie ». */
+/** En partie contre l'IA, le joueur commande Koush et l'IA Carthage. */
+const AI_OPPONENT: PlayerId = 'carthage';
+
+/** Écran titre : « Continuer » (si une sauvegarde existe), « Contre l'IA » et « À deux ». */
 export class TitleScene extends Phaser.Scene {
   constructor() {
     super('Title');
@@ -68,10 +71,11 @@ export class TitleScene extends Phaser.Scene {
       items.push({
         value: 'continuer',
         label: 'Continuer',
-        detail: `Jour ${save.state.day} · ${FACTIONS[save.state.currentPlayer].name}`,
+        detail: `Jour ${save.state.day} · ${save.aiPlayers.length > 0 ? "contre l'IA" : 'à deux'}`,
       });
     }
-    items.push({ value: 'nouvelle', label: 'Nouvelle partie' });
+    items.push({ value: 'ia', label: "Contre l'IA", detail: FACTIONS.koush.name });
+    items.push({ value: 'deux', label: 'À deux joueurs', detail: 'même écran' });
 
     const menu = new ActionMenu(this, false);
     this.input.keyboard?.on('keydown', (event: KeyboardEvent) => {
@@ -80,8 +84,13 @@ export class TitleScene extends Phaser.Scene {
       else if (event.code === 'Enter' || event.code === 'Space') menu.confirm();
     });
     void menu.open(items, { top: GRID * 22 }).then((choice) => {
-      if (choice === 'continuer' && save) this.scene.start('Battle', { state: save.state });
-      else this.scene.start('Battle', {});
+      if (choice === 'continuer' && save) {
+        this.scene.start('Battle', { state: save.state, aiPlayers: save.aiPlayers });
+      } else if (choice === 'ia') {
+        this.scene.start('Battle', { aiPlayers: [AI_OPPONENT] });
+      } else {
+        this.scene.start('Battle', {});
+      }
     });
   }
 }

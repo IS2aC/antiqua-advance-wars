@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GUE_DU_NIL, createGame, type GameState } from '@antiqua/engine';
+import { GUE_DU_NIL, createGame, type GameState, type PlayerId } from '@antiqua/engine';
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { BattleController } from '../controller/BattleController';
@@ -19,6 +19,8 @@ import { UnitLayer } from '../view/UnitLayer';
 export interface BattleData {
   /** Partie sauvegardée à reprendre ; sinon, nouvelle partie. */
   readonly state?: GameState;
+  /** Camps joués par l'IA ; absent ou vide : partie à deux sur le même écran. */
+  readonly aiPlayers?: readonly PlayerId[];
 }
 
 /** Développement : accès à l'état courant pour la console et les tests de bout en bout. */
@@ -28,9 +30,10 @@ export interface DebugHook {
   mode(): string;
 }
 
-/** Partie à deux joueurs sur le même écran, sur « Le Gué du Nil ». */
+/** Partie sur « Le Gué du Nil » : contre l'IA, ou à deux sur le même écran. */
 export class BattleScene extends Phaser.Scene {
   private initial: GameState | null = null;
+  private aiPlayers: readonly PlayerId[] = [];
 
   constructor() {
     super('Battle');
@@ -38,6 +41,7 @@ export class BattleScene extends Phaser.Scene {
 
   init(data: BattleData): void {
     this.initial = data.state ?? null;
+    this.aiPlayers = data.aiPlayers ?? [];
   }
 
   create(): void {
@@ -67,9 +71,10 @@ export class BattleScene extends Phaser.Scene {
       state,
       { cursor, overlay, arrow, menu, hud, player, forecast, endScreen },
       (choice) => {
-        if (choice === 'rejouer') this.scene.restart({});
+        if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers });
         else this.scene.start('Title');
       },
+      this.aiPlayers,
     );
     const input = controller;
 

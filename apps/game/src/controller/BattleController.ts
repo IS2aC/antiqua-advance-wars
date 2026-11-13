@@ -4,6 +4,7 @@ import {
   UNIT_TYPES,
   applyAction,
   buildingAt,
+  chooseGreedyAction,
   canCapture,
   findPath,
   findUnit,
@@ -16,6 +17,7 @@ import {
   type Action,
   type Building,
   type GameState,
+  type PlayerId,
   type Position,
   type Unit,
   type UnitType,
@@ -41,9 +43,10 @@ const T = TILE_SIZE;
  * - menu : un menu est ouvert (il reçoit le clavier) ;
  * - targeting : choix de la cible d'une attaque ;
  * - busy : animation en cours, entrées ignorées ;
+ * - ai : l'IA joue son tour (seule l'accélération est possible) ;
  * - over : partie terminée.
  */
-type Mode = 'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'over';
+type Mode = 'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'over';
 
 type Command = 'attack' | 'capture' | 'wait';
 
@@ -60,6 +63,12 @@ export interface ControllerViews {
 
 const same = (a: Position, b: Position) => a.x === b.x && a.y === b.y;
 
+/** Rythme du tour de l'IA (ms, à vitesse normale). */
+const AI_UNIT_PAUSE = 250;
+const AI_PREVIEW = 350;
+/** Facteur de vitesse du bouton « Accélérer ». */
+const AI_FAST = 4;
+
 /**
  * Traduit les entrées du joueur en Action, les envoie au moteur et fait jouer les
  * événements. C'est le seul endroit qui remplace l'état courant par celui du moteur.
@@ -72,6 +81,7 @@ export class BattleController {
   private targetIndex = 0;
   private resolveTarget: ((target: Unit | null) => void) | null = null;
   private cameraTween: Phaser.Tweens.Tween | null = null;
+  private fast = false;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -79,6 +89,8 @@ export class BattleController {
     private readonly views: ControllerViews,
     /** Appelé quand le joueur quitte l'écran de fin. */
     private readonly onFinished: (choice: EndChoice) => void,
+    /** Camps joués par l'IA (vide : partie à deux sur le même écran). */
+    private readonly aiPlayers: readonly PlayerId[] = [],
   ) {}
 
   /** État courant (lecture seule) : tests de bout en bout et console de développement. */
@@ -100,11 +112,17 @@ export class BattleController {
       this.state,
     );
     this.mode = 'idle';
+    // Reprise d'une sauvegarde faite pendant le tour de l'IA.
+    if (this.isAiTurn()) await this.runAiTurns();
   }
 
   // ——— Entrées ———
 
   onKey(code: string): void {
+    if (this.mode === 'ai') {
+      if (code === 'Enter' || code === 'Space') this.toggleFast();
+      return;
+    }
     if (this.mode === 'over') {
       if (code === 'ArrowUp') this.views.endScreen.move(-1);
       else if (code === 'ArrowDown') this.views.endScreen.move(1);
@@ -141,11 +159,12 @@ export class BattleController {
   }
 
   onPointerMove(worldX: number, worldY: number): void {
-    if (this.mode === 'menu') return;
+    if (this.mode === 'menu' || this.mode === 'ai') return;
     this.pointAt({ x: Math.floor(worldX / T), y: Math.floor(worldY / T) }, 0);
   }
 
   onPointerDown(worldX: number, worldY: number, rightButton: boolean): void {
+    if (this.mode === 'ai') return;
     if (rightButton) {
       if (this.mode === 'menu') this.views.menu.cancel();
       else this.cancel();
@@ -158,8 +177,12 @@ export class BattleController {
     void this.confirm(tile);
   }
 
-  /** Bouton « Fin de tour » du HUD. */
+  /** Bouton du HUD : « Fin de tour », ou « Accélérer » pendant le tour de l'IA. */
   requestEndTurn(): void {
+    if (this.mode === 'ai') {
+      this.toggleFast();
+      return;
+    }
     if (this.mode !== 'idle' && this.mode !== 'inspecting') return;
     this.clearSelection();
     void this.endTurn();
@@ -421,7 +444,108 @@ export class BattleController {
   }
 
   private async endTurn(): Promise<void> {
-    if (await this.execute({ type: 'END_TURN' })) this.focusCurrentPlayer();
+    if (!(await this.execute({ type: 'END_TURN' }))) return;
+    if (this.isAiTurn()) await this.runAiTurns();
+    else this.focusCurrentPlayer();
+  }
+
+  // ——— Tour de l'IA ———
+
+  private isAiTurn(): boolean {
+    return this.state.status === 'playing' && this.aiPlayers.includes(this.state.currentPlayer);
+  }
+
+  /** Joue les tours de l'IA jusqu'à ce que la main revienne à un joueur humain. */
+  private async runAiTurns(): Promise<void> {
+    while (this.isAiTurn()) {
+      this.clearSelection();
+      this.mode = 'ai';
+      this.views.hud.setButtonLabel('Accélérer');
+      await this.playAiTurn();
+      this.setFast(false);
+      this.views.hud.setButtonLabel('Fin de tour');
+      if (this.state.status === 'finished') return;
+    }
+    this.mode = 'idle';
+    this.focusCurrentPlayer();
+  }
+
+  /**
+   * Une action de l'IA à la fois, choisie sur l'état courant : la caméra suit l'unité,
+   * la zone de déplacement et le chemin s'affichent un instant, puis l'EventPlayer joue.
+   */
+  private async playAiTurn(): Promise<void> {
+    const player = this.state.currentPlayer;
+    while (this.state.status === 'playing' && this.state.currentPlayer === player) {
+      const action = chooseGreedyAction(this.state);
+      await this.previewAiAction(action);
+      const ok = await this.execute(action);
+      if (this.mode === 'over') return;
+      this.mode = 'ai';
+      if (!ok) {
+        // Ne devrait jamais arriver (testé dans le moteur) : on rend la main proprement.
+        if (action.type !== 'END_TURN') await this.execute({ type: 'END_TURN' });
+        return;
+      }
+      if (action.type === 'END_TURN') return;
+      if (action.type !== 'MOVE') await this.pause(AI_UNIT_PAUSE);
+    }
+  }
+
+  private async previewAiAction(action: Action): Promise<void> {
+    switch (action.type) {
+      case 'MOVE': {
+        const unit = findUnit(this.state, action.unitId);
+        const path = findPath(this.state, action.unitId, action.to);
+        if (!unit || !path) return;
+        this.pointAt(unit, 3);
+        this.views.overlay.show(reachableTiles(this.state, unit.id), []);
+        this.views.arrow.show(path);
+        await this.pause(AI_PREVIEW);
+        this.views.overlay.clear();
+        this.views.arrow.clear();
+        return;
+      }
+      case 'ATTACK': {
+        const target = findUnit(this.state, action.targetId);
+        if (!target) return;
+        this.views.overlay.showTargets([target]);
+        this.pointAt(target, 2);
+        await this.pause(AI_PREVIEW);
+        this.views.overlay.clear();
+        return;
+      }
+      case 'BUILD':
+        this.pointAt(action, 3);
+        await this.pause(AI_PREVIEW / 2);
+        return;
+      case 'CAPTURE':
+      case 'WAIT': {
+        const unit = findUnit(this.state, action.unitId);
+        if (unit) this.pointAt(unit, 3);
+        return;
+      }
+      case 'END_TURN':
+        return;
+    }
+  }
+
+  /** « Accélérer » : animations, minuteries et tweens tournent plus vite. */
+  private toggleFast(): void {
+    this.setFast(!this.fast);
+  }
+
+  private setFast(fast: boolean): void {
+    this.fast = fast;
+    const scale = fast ? AI_FAST : 1;
+    this.scene.tweens.timeScale = scale;
+    this.scene.time.timeScale = scale;
+    this.scene.anims.globalTimeScale = scale;
+    if (this.isAiTurn()) this.views.hud.setButtonLabel(fast ? 'Vitesse ×4' : 'Accélérer');
+  }
+
+  private pause(ms: number): Promise<void> {
+    return new Promise((resolve) => this.scene.time.delayedCall(ms, resolve));
   }
 
   // ——— Moteur ———
@@ -445,7 +569,7 @@ export class BattleController {
       return true;
     }
     // Sauvegarde automatique à chaque fin de tour.
-    if (action.type === 'END_TURN') saveGame(this.state);
+    if (action.type === 'END_TURN') saveGame(this.state, this.aiPlayers);
     this.mode = 'idle';
     return true;
   }

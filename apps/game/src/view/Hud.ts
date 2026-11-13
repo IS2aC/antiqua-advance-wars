@@ -36,6 +36,7 @@ export class Hud {
   private readonly statusPanel: Phaser.GameObjects.NineSlice;
   private readonly teamPip: Phaser.GameObjects.Rectangle;
   private readonly button: Phaser.GameObjects.NineSlice;
+  private readonly buttonLabel: Phaser.GameObjects.Text;
 
   private readonly info: Phaser.GameObjects.Container;
   private readonly infoPanel: Phaser.GameObjects.NineSlice;
@@ -47,17 +48,18 @@ export class Hud {
   private readonly unitPip: Phaser.GameObjects.Rectangle;
   private infoOnLeft = true;
 
-  constructor(scene: Phaser.Scene, onEndTurn: () => void) {
+  /** `onButton` : clic sur le bouton en haut à droite (« Fin de tour », ou « Accélérer »). */
+  constructor(scene: Phaser.Scene, onButton: () => void) {
     // ——— Barre d'état ———
     this.statusPanel = panel(scene, MARGIN, 0, 200, BAR_H);
     this.teamPip = scene.add.rectangle(MARGIN + 8, BAR_H / 2, 6, 6, 0xffffff).setOrigin(0, 0.5);
     this.status = uiText(scene, MARGIN + 20, 4, '');
     this.button = panel(scene, LOGICAL_WIDTH - MARGIN - BUTTON_W, 0, BUTTON_W, BAR_H, 'button');
     this.button.setInteractive({ useHandCursor: true });
-    const label = uiText(scene, LOGICAL_WIDTH - MARGIN - BUTTON_W / 2, 4, 'Fin de tour');
-    label.setOrigin(0.5, 0);
+    this.buttonLabel = uiText(scene, LOGICAL_WIDTH - MARGIN - BUTTON_W / 2, 4, 'Fin de tour');
+    this.buttonLabel.setOrigin(0.5, 0);
     this.button.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if (pointer.leftButtonDown()) onEndTurn();
+      if (pointer.leftButtonDown()) onButton();
     });
     this.button.on('pointerover', () => this.button.setTint(0xffe0a0));
     this.button.on('pointerout', () => this.button.clearTint());
@@ -66,7 +68,7 @@ export class Hud {
       this.teamPip,
       this.status,
       this.button,
-      label,
+      this.buttonLabel,
     ]);
     pinToScreen(this.bar).setDepth(40);
 
@@ -156,6 +158,11 @@ export class Hud {
     else if (!barAtTop && screenY > LOGICAL_HEIGHT - BAR_H * 2 - MARGIN) this.bar.setY(MARGIN);
     this.infoOnLeft = screenX + TILE_SIZE / 2 > LOGICAL_WIDTH / 2;
     this.placeInfo();
+  }
+
+  /** Libellé du bouton : « Fin de tour » pendant le tour du joueur, « Accélérer » pendant l'IA. */
+  setButtonLabel(text: string): void {
+    this.buttonLabel.setText(text);
   }
 
   setVisible(visible: boolean): void {

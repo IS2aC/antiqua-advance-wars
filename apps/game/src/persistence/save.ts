@@ -1,4 +1,4 @@
-import type { GameState } from '@antiqua/engine';
+import type { GameState, PlayerId } from '@antiqua/engine';
 
 /**
  * Sauvegarde locale (localStorage), écrite automatiquement à chaque fin de tour.
@@ -14,6 +14,8 @@ export interface SaveFile {
   readonly version: number;
   readonly savedAt: string;
   readonly state: GameState;
+  /** Camps joués par l'IA (absent dans les anciennes sauvegardes : partie à deux). */
+  readonly aiPlayers: readonly PlayerId[];
 }
 
 /** Vérification de forme minimale : une sauvegarde abîmée ou d'une autre version est ignorée. */
@@ -35,9 +37,20 @@ function isGameState(value: unknown): value is GameState {
   );
 }
 
-export function saveGame(state: GameState): boolean {
+const PLAYER_IDS: readonly string[] = ['koush', 'carthage', 'kemet', 'aksoum'];
+
+function isPlayerList(value: unknown): value is PlayerId[] {
+  return Array.isArray(value) && value.every((id) => PLAYER_IDS.includes(String(id)));
+}
+
+export function saveGame(state: GameState, aiPlayers: readonly PlayerId[] = []): boolean {
   try {
-    const file: SaveFile = { version: VERSION, savedAt: new Date().toISOString(), state };
+    const file: SaveFile = {
+      version: VERSION,
+      savedAt: new Date().toISOString(),
+      state,
+      aiPlayers,
+    };
     localStorage.setItem(KEY, JSON.stringify(file));
     return true;
   } catch {
@@ -51,7 +64,12 @@ export function loadGame(): SaveFile | null {
     if (!raw) return null;
     const file = JSON.parse(raw) as Partial<SaveFile>;
     if (file.version !== VERSION || !isGameState(file.state)) return null;
-    return { version: VERSION, savedAt: String(file.savedAt ?? ''), state: file.state };
+    return {
+      version: VERSION,
+      savedAt: String(file.savedAt ?? ''),
+      state: file.state,
+      aiPlayers: isPlayerList(file.aiPlayers) ? file.aiPlayers : [],
+    };
   } catch {
     return null;
   }

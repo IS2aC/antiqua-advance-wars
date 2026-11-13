@@ -51,3 +51,4 @@ export { ASCII_LEGEND, parseAsciiMap, rotateRows, type ParsedAsciiMap } from './
 export { GUE_DU_NIL, GUE_DU_NIL_ROWS } from './maps/gue-du-nil';
 
 export { chooseRandomAction, type AgentDecision } from './ai/random-ai';
+export { chooseGreedyAction, planTurn } from './ai/greedy-ai';

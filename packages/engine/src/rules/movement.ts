@@ -38,38 +38,36 @@ function explore(state: GameState, unit: Unit): Exploration {
   const occupants = new Map<number, Unit>();
   for (const other of state.units) occupants.set(tileIndex(map, other.x, other.y), other);
 
-  dist[tileIndex(map, unit.x, unit.y)] = 0;
+  // Dijkstra à file « à seaux » : les coûts sont de petits entiers bornés par `move`.
+  // Les voisins sont visités dans un ordre fixe, d'où des chemins déterministes.
+  const start = tileIndex(map, unit.x, unit.y);
+  dist[start] = 0;
+  const buckets: number[][] = [[start]];
 
-  for (;;) {
-    let current = -1;
-    let best = Infinity;
-    for (let index = 0; index < size; index++) {
-      const candidate = dist[index] ?? Infinity;
-      if (!done[index] && candidate < best) {
-        best = candidate;
-        current = index;
-      }
-    }
-    if (current === -1) break;
-    done[current] = true;
+  for (let best = 0; best < buckets.length; best++) {
+    for (const current of buckets[best] ?? []) {
+      if (done[current] || dist[current] !== best) continue;
+      done[current] = true;
 
-    const cx = current % map.width;
-    const cy = Math.floor(current / map.width);
-    for (const direction of DIRECTIONS) {
-      const nx = cx + direction.x;
-      const ny = cy + direction.y;
-      if (!inBounds(map, nx, ny)) continue;
-      const next = tileIndex(map, nx, ny);
-      const occupant = occupants.get(next);
-      if (occupant && occupant.owner !== unit.owner) continue;
-      const terrain = map.tiles[next];
-      if (terrain === undefined) continue;
-      const cost = movementCost(terrain, moveType);
-      if (cost === null) continue;
-      const total = best + cost;
-      if (total <= move && total < (dist[next] ?? Infinity)) {
-        dist[next] = total;
-        prev[next] = current;
+      const cx = current % map.width;
+      const cy = Math.floor(current / map.width);
+      for (const direction of DIRECTIONS) {
+        const nx = cx + direction.x;
+        const ny = cy + direction.y;
+        if (!inBounds(map, nx, ny)) continue;
+        const next = tileIndex(map, nx, ny);
+        const occupant = occupants.get(next);
+        if (occupant && occupant.owner !== unit.owner) continue;
+        const terrain = map.tiles[next];
+        if (terrain === undefined) continue;
+        const cost = movementCost(terrain, moveType);
+        if (cost === null) continue;
+        const total = best + cost;
+        if (total <= move && total < (dist[next] ?? Infinity)) {
+          dist[next] = total;
+          prev[next] = current;
+          (buckets[total] ??= []).push(next);
+        }
       }
     }
   }

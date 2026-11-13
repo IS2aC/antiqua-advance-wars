@@ -20,8 +20,9 @@ test('lancer une partie, produire, déplacer, attaquer, finir le tour', async ({
   await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
   await page.reload();
 
-  // Écran titre : sans sauvegarde, seul « Nouvelle partie » est proposé.
+  // Écran titre sans sauvegarde : « Contre l'IA », puis « À deux joueurs ».
   await waitForScene(page, 'Title');
+  await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
   await waitForScene(page, 'Battle');
   await waitForMode(page, 'idle');
@@ -94,5 +95,64 @@ test('lancer une partie, produire, déplacer, attaquer, finir le tour', async ({
   const saved = await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY);
   expect(JSON.parse(saved ?? '{}').state?.currentPlayer).toBe('carthage');
 
+  expect(errors).toEqual([]);
+});
+
+/**
+ * Contre l'IA : le joueur finit son premier tour, Carthage joue seule (déplacements,
+ * production), puis la main revient à Koush au jour 2. La sauvegarde garde le mode.
+ */
+test('contre l’IA : Carthage joue son tour puis rend la main', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  await page.goto('/');
+  await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
+  await page.reload();
+  await waitForScene(page, 'Title');
+  await page.keyboard.press('Enter'); // « Contre l'IA »
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+
+  const before = await state(page);
+  const carthageBefore = before.units.filter((unit) => unit.owner === 'carthage');
+
+  await clickEndTurnButton(page);
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as unknown as { __ANTIQUA__: { mode(): string } }).__ANTIQUA__.mode(),
+      ),
+    )
+    .toBe('ai');
+  // Le bouton du HUD accélère le tour de l'IA.
+  await clickEndTurnButton(page);
+
+  await expect
+    .poll(
+      async () => {
+        const current = await state(page);
+        return `${current.currentPlayer}/${current.day}`;
+      },
+      { timeout: 60_000 },
+    )
+    .toBe('koush/2');
+  await waitForMode(page, 'idle');
+
+  const after = await state(page);
+  const carthageAfter = after.units.filter((unit) => unit.owner === 'carthage');
+  // L'IA a produit (2 000 or au départ) et déplacé ses fantassins de départ.
+  expect(carthageAfter.length).toBeGreaterThan(carthageBefore.length);
+  const moved = carthageBefore.filter((unit) => {
+    const now = after.units.find((candidate) => candidate.id === unit.id);
+    return now && (now.x !== unit.x || now.y !== unit.y);
+  });
+  expect(moved.length).toBeGreaterThan(0);
+
+  const saved = JSON.parse(
+    (await page.evaluate((key) => localStorage.getItem(key), SAVE_KEY)) ?? '{}',
+  );
+  expect(saved.aiPlayers).toEqual(['carthage']);
+  expect(saved.state?.currentPlayer).toBe('koush');
   expect(errors).toEqual([]);
 });
