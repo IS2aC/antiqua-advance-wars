@@ -37,6 +37,7 @@ Monorepo pnpm :
 
 ### Rendu pixel art
 
+- Phaser 4.2.1 est patché (`patches/phaser@4.2.1.patch`, `pnpm patch`) : le shader de teinte divisait par un alpha nul (0/0) sur les pixels transparents, ce qui affichait des carrés noirs derrière les sprites sur les vieux iPhone/iPad (issue phaserjs/phaser#7392). À retirer quand une version de Phaser intègre le correctif.
 - `TILE_SIZE = 32` (constante unique dans `apps/game/src/config.ts`, jamais de 32 en dur ailleurs).
 - Résolution logique 640×384 (20×12 cases), zoom **entier** uniquement (×1, ×2, ×3), `pixelArt: true`, `roundPixels: true`.
 

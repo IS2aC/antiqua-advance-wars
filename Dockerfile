@@ -9,6 +9,8 @@ RUN corepack enable
 # Manifestes d'abord (cache Docker des dépendances) : tous les paquets du workspace,
 # sinon l'installation verrouillée par le lockfile échoue.
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
+# Correctifs de dépendances (pnpm patch) : appliqués pendant l'installation.
+COPY patches patches
 COPY packages/engine/package.json packages/engine/
 COPY apps/game/package.json apps/game/
 COPY apps/site/package.json apps/site/
