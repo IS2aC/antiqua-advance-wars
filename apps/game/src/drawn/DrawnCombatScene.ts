@@ -8,6 +8,7 @@ import {
   DUST,
   SHADOW,
   SLASH,
+  STAR,
   SPARK,
   STONE,
   createDrawnAnimations,
@@ -87,6 +88,8 @@ const FALLBACK_POSE: Readonly<Record<DrawnAnim, Pose>> = {
   attack: 'attack',
   hit: 'hit',
   fall: 'down',
+  sit: 'down',
+  dazed: 'down',
   victory: 'idle',
 };
 
@@ -543,11 +546,19 @@ export class DrawnCombatScene extends StagedScene {
     });
 
     const fallen = target.figures.splice(remaining);
+    // Les vaincus ne meurent pas : ils tombent assis, sonnés, des étoiles autour de la tête.
+    // Avec la planche « sonné », ils restent assis jusqu'à la fin ; sans, ils s'effacent.
+    const sits = drawnAnimation(this, target.side.owner, target.side.unitType, 'sit') !== null;
     const falls = fallen.map(async (figure, i) => {
       await this.wait(200 + i * 90 + figure.delay);
-      await this.act(target, figure, 'fall');
+      await this.act(target, figure, sits ? 'sit' : 'fall');
       this.puff(target, figure.image.x, figure.image.y);
-      await this.tween({ targets: figure.image, alpha: 0, duration: 450, delay: 450 });
+      this.dizzy(target, figure);
+      if (sits) {
+        void this.act(target, figure, 'dazed');
+        return;
+      }
+      await this.tween({ targets: figure.image, alpha: 0, duration: 600, delay: 900 });
     });
 
     await Promise.all([countdown, ...falls]);
@@ -936,6 +947,38 @@ export class DrawnCombatScene extends StagedScene {
         ease: 'Quad.easeOut',
       }).then(() => dust.destroy());
     }
+  }
+
+  /**
+   * Trois étoiles qui tournent au-dessus de la tête d'un vaincu (orbite aplatie : elles
+   * grossissent en passant devant), et s'effacent avec lui.
+   */
+  private dizzy(view: SideView, figure: Figure): void {
+    const bounds = figure.image.getBounds();
+    const cx = bounds.centerX;
+    const cy = bounds.top + 24 * figure.baseScale;
+    const radius = 70 * figure.baseScale;
+    const stars = [0, 1, 2].map(() => {
+      const star = this.add.image(cx, cy, STAR);
+      view.world.add(star);
+      return star;
+    });
+    const orbit = { a: 0 };
+    this.tweens.add({
+      targets: orbit,
+      a: Math.PI * 2,
+      duration: 1300,
+      repeat: -1,
+      onUpdate: () => {
+        stars.forEach((star, i) => {
+          const t = orbit.a + (i * Math.PI * 2) / 3;
+          star
+            .setPosition(cx + Math.cos(t) * radius, cy + Math.sin(t) * radius * 0.25)
+            .setScale(figure.baseScale * (1.3 + 0.35 * Math.sin(t)))
+            .setAlpha(figure.image.alpha);
+        });
+      },
+    });
   }
 
   /** Éclair blanc sur tout l'écran (plan de contact). */

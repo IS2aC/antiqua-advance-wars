@@ -286,3 +286,27 @@ Mise en scène :
 - **Plan de contact** (corps à corps) : au moment du choc, la séparation disparaît ; les deux
   lignes se rencontrent en plein écran sur le même décor (coup, silhouettes blanches, gel,
   étincelles), puis on revient à l'écran partagé pour les PV et les chutes.
+
+## Vaincus sonnés — planche 5 du fantassin
+
+Dans Alkébulan, les soldats vaincus ne meurent pas : ils tombent assis, sonnés, avec des
+étoiles qui tournent au-dessus de la tête (ajoutées par le jeu, pas dessinées). Les 2 premières
+images sont la chute ; les 2 dernières se jouent en boucle lente (il vacille, étourdi). Sans
+cette planche, le jeu utilise la chute de la planche 4 et efface le soldat.
+
+Fichier : `carthage-fantassin-sonne.png`. Joindre la planche de poses comme référence, et
+ajouter le bloc de style à la fin.
+
+```text
+Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
+
+Create 4 frames of a funny, gentle hand-drawn cartoon sequence, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera, on the same ground baseline, facing RIGHT in a 3/4 side view. The soldier is knocked out in a comical, non-violent way, like in a family animated film: no blood, no injury.
+1. Losing balance: knocked backward, arms flailing, spear flying out of his hand, helmet tilting.
+2. Landing: sitting down hard on the ground, legs stretched forward, shield fallen flat beside him, spear lying on the ground, helmet askew over one eye.
+3. Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile, helmet askew.
+4. Dazed: same sitting position, upper body swaying to the right, same dizzy face. Frames 3 and 4 must be almost identical except for the sway, so they can loop.
+
+Do not draw any stars, birds or symbols above his head.
+
+[STYLE BLOCK]
+```

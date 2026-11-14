@@ -46,6 +46,11 @@ export const SEQUENCE_SHEETS = {
     { anim: 'fall', from: 0, count: 2 },
     { anim: 'victory', from: 2, count: 2 },
   ],
+  // Vaincu sonné : il tombe assis (2 images), puis vacille, étourdi (2 images en boucle).
+  sonne: [
+    { anim: 'sit', from: 0, count: 2 },
+    { anim: 'dazed', from: 2, count: 2 },
+  ],
 } as const;
 export type SequenceSheet = keyof typeof SEQUENCE_SHEETS;
 /** Images par planche de séquence. */

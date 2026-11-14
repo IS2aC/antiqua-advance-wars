@@ -53,6 +53,9 @@ export const DRAWN_ANIMS = {
   hit: { rate: 10, loop: false, yoyo: false },
   fall: { rate: 8, loop: false, yoyo: false },
   victory: { rate: 5, loop: false, yoyo: false },
+  // Vaincu : tombe assis, puis vacille lentement, étourdi.
+  sit: { rate: 8, loop: false, yoyo: false },
+  dazed: { rate: 3, loop: true, yoyo: true },
 } as const;
 export type DrawnAnim = keyof typeof DRAWN_ANIMS;
 
@@ -367,6 +370,8 @@ export const DUST = 'd:fx:dust';
 export const ARROW = 'd:fx:arrow';
 export const SLASH = 'd:fx:slash';
 export const STONE = 'd:fx:stone';
+/** Étoile d'étourdissement, qui tourne au-dessus de la tête des vaincus. */
+export const STAR = 'd:fx:star';
 /** Ombre douce au sol, sous chaque soldat (256×64). */
 export const SHADOW = 'd:fx:shadow';
 
@@ -406,6 +411,16 @@ export function createEffectTextures(scene: Phaser.Scene): void {
     g.beginPath().arc(110, 110, 90, -2.4, -0.2, false).strokePath();
     g.lineStyle(6, 0xfff4c8, 1);
     g.beginPath().arc(110, 110, 72, -2.2, -0.4, false).strokePath();
+  });
+  make(STAR, 48, 48, (g) => {
+    const points: Phaser.Math.Vector2[] = [];
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 === 0 ? 21 : 9;
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      points.push(new Phaser.Math.Vector2(24 + r * Math.cos(a), 24 + r * Math.sin(a)));
+    }
+    g.fillStyle(0xffd166, 1).fillPoints(points, true);
+    g.lineStyle(3, OUTLINE_COLOR, 1).strokePoints(points, true);
   });
   make(SHADOW, 256, 64, (g) => {
     // Ellipses concentriques peu opaques : le centre, où elles se cumulent, est le plus sombre.
