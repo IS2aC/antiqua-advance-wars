@@ -274,3 +274,15 @@ exemple `{ "carthage-fantassin": { "attack": 12 } }` (positif : le personnage re
 Dans le jeu : ombre douce sous chaque soldat, repos en aller-retour (6 images/s), préparation, course (10 images/s), coup à partir
 de l'image de vitesse (14 images/s) avec un gel de 90 ms à l'impact, coup reçu, chute, et
 victoire pour le camp qui a perdu le moins. Une unité sans séquence garde ses 4 poses.
+
+
+Mise en scène :
+
+- **Foule vivante** : chaque soldat a sa taille (±5 %), sa teinte (second rang voilé) et son
+  retard de réaction (0 à 200 ms), et démarre à une image différente de son repos.
+- **Course par à-coups** au rythme des pas, avec un rebond à chaque foulée.
+- **Caméra** : elle se resserre pendant la préparation, suit la charge, donne un zoom
+  brusque à l'impact d'un tir, et s'approche lentement du vainqueur à la fin.
+- **Plan de contact** (corps à corps) : au moment du choc, la séparation disparaît ; les deux
+  lignes se rencontrent en plein écran sur le même décor (coup, silhouettes blanches, gel,
+  étincelles), puis on revient à l'écran partagé pour les PV et les chutes.

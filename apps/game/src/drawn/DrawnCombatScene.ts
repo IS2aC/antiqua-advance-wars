@@ -29,6 +29,7 @@ import {
   finalExpression,
   type Expression,
   type Pose,
+  type Slot,
 } from './layout';
 
 export interface DrawnCombatData {
@@ -61,8 +62,21 @@ const HUD_MARGIN = 24;
 const PORTRAIT = 150;
 /** Gel de l'image au moment où le coup porte : c'est ce qui donne du poids. */
 const HITSTOP_MS = 90;
-/** Décalage entre deux soldats d'un même rang : jamais de chorégraphie synchronisée. */
-const STAGGER_MS = 60;
+/**
+ * Retard de réaction de chaque soldat, tiré au hasard : jamais de chorégraphie
+ * synchronisée. Le premier rang réagit un peu plus vite que le second.
+ */
+const REACTION_MS: Readonly<Record<'front' | 'back', readonly [number, number]>> = {
+  front: [0, 120],
+  back: [60, 200],
+};
+/** Variation de taille entre soldats (±). */
+const SIZE_JITTER = 0.05;
+/** Teinte du second rang (un peu voilé : plus loin) et petites variations au premier. */
+const BACK_ROW_TINT = 0xd8d0c0;
+const FRONT_TINTS = [0xffffff, 0xfbf6ee, 0xf6f0e6] as const;
+/** Plan de contact : un monde par caméra, loin des deux camps. */
+const CLASH_X: Record<Side, number> = { left: 8000, right: 12000 };
 /** Opacité des ombres au sol. */
 const SHADOW_ALPHA = 0.7;
 
@@ -79,7 +93,14 @@ const FALLBACK_POSE: Readonly<Record<DrawnAnim, Pose>> = {
 interface Figure {
   readonly image: Phaser.GameObjects.Sprite;
   readonly homeX: number;
+  readonly homeY: number;
   readonly baseScale: number;
+  /** Teinte de repos (second rang voilé, petites variations au premier). */
+  readonly tint: number;
+  /** Retard de réaction propre à ce soldat. */
+  readonly delay: number;
+  /** Place dans les rangs (pour le plan de contact). */
+  readonly slot: Slot;
   /** Ombre au sol : suit le soldat (position, transparence). */
   readonly shadow: Phaser.GameObjects.Image;
   breathing: Phaser.Tweens.Tween | null;
@@ -104,6 +125,9 @@ export class DrawnCombatScene extends StagedScene {
   private divider!: Phaser.GameObjects.Graphics;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
   private views!: Record<Side, SideView>;
+  private attackerSide: Side = 'left';
+  /** Décor et soldats du plan de contact, un par caméra. */
+  private clashWorlds!: Record<Side, Phaser.GameObjects.Container>;
   /** Tous les soldats, tombés compris : leurs ombres les suivent. */
   private shadowed: Figure[] = [];
 
@@ -120,6 +144,7 @@ export class DrawnCombatScene extends StagedScene {
     createDrawnAnimations(this);
     const { setup } = data;
     const attackerSide = setup.left.role === 'attaquant' ? 'left' : 'right';
+    this.attackerSide = attackerSide;
 
     this.ui = this.add.container(0, 0).setDepth(100);
     const leftCamera = this.cameras.main;
@@ -134,9 +159,15 @@ export class DrawnCombatScene extends StagedScene {
     this.divider = this.add.graphics();
     this.ui.add(this.divider);
 
-    leftCamera.ignore([this.views.right.world, this.ui]);
-    rightCamera.ignore([this.views.left.world, this.ui]);
-    this.uiCamera.ignore([this.views.left.world, this.views.right.world]);
+    this.clashWorlds = { left: this.add.container(0, 0), right: this.add.container(0, 0) };
+    leftCamera.ignore([this.views.right.world, this.ui, this.clashWorlds.right]);
+    rightCamera.ignore([this.views.left.world, this.ui, this.clashWorlds.left]);
+    this.uiCamera.ignore([
+      this.views.left.world,
+      this.views.right.world,
+      this.clashWorlds.left,
+      this.clashWorlds.right,
+    ]);
 
     // Au départ, seul l'attaquant est à l'écran, plein cadre.
     this.layoutCameras(attackerSide, 0);
@@ -200,11 +231,12 @@ export class DrawnCombatScene extends StagedScene {
     for (const side of ['left', 'right'] as const) {
       const view = this.views[side];
       this.setExpression(view, endings[side]);
-      // Le vainqueur lève son arme.
+      // Le vainqueur lève son arme, et la caméra s'approche lentement de lui.
       if (endings[side] === 'smile') {
-        view.figures.forEach((figure, i) => {
-          void this.wait(i * STAGGER_MS).then(() => this.act(view, figure, 'victory'));
-        });
+        for (const figure of view.figures) {
+          void this.wait(figure.delay).then(() => this.act(view, figure, 'victory'));
+        }
+        void this.tween({ targets: view.camera, zoom: 1.07, duration: 1300, ease: 'Sine.easeOut' });
       }
     }
     await this.wait(1100);
@@ -214,8 +246,11 @@ export class DrawnCombatScene extends StagedScene {
   private async playStrike(strike: Strike, from: SideView, to: SideView): Promise<void> {
     this.setExpression(from, 'shout');
     if (strike.ranged) {
-      for (const figure of from.figures) void this.act(from, figure, 'attack');
-      await this.wait(260);
+      void this.tween({ targets: from.camera, zoom: 1.04, duration: 500, ease: 'Sine.easeInOut' });
+      for (const figure of from.figures) {
+        void this.wait(figure.delay).then(() => this.act(from, figure, 'attack'));
+      }
+      await this.wait(320);
       await this.volley(from, to, from.side.unitType === 'catapulte');
       await this.impact(to, strike);
     } else {
@@ -227,25 +262,29 @@ export class DrawnCombatScene extends StagedScene {
         void this.tween({
           targets: figure.image,
           x: figure.homeX,
+          y: figure.homeY,
           duration: 320,
           ease: 'Quad.easeOut',
         });
       }
       void this.act(from, figure, 'idle');
     }
+    // La caméra du tireur ou du chargeur revient en place.
+    void this.tween({ targets: from.camera, zoom: 1, duration: 400, ease: 'Sine.easeOut' });
     if (from.hp > 0) this.setExpression(from, 'neutral');
   }
 
   /**
-   * Corps à corps : préparation (léger recul), course vers l'ennemi, puis le coup. Avec une
-   * séquence dessinée, le coup part de l'image de vitesse et l'impact tombe sur l'image
-   * d'extension, avec un gel ; sinon, pose d'attaque et impact à l'arrivée.
+   * Corps à corps : préparation (léger recul, la caméra se resserre), course par à-coups
+   * vers l'ennemi (la caméra suit), puis le plan de contact où les deux lignes se
+   * rencontrent, et retour à l'écran partagé pour les dégâts.
    */
   private async charge(from: SideView, to: SideView, strike: Strike): Promise<void> {
-    const animated = drawnAnimation(this, from.side.owner, from.side.unitType, 'attack');
+    const camera = from.camera;
+    void this.tween({ targets: camera, zoom: 1.05, duration: 420, ease: 'Sine.easeInOut' });
     await Promise.all(
-      from.figures.map(async (figure, i) => {
-        await this.wait(i * STAGGER_MS);
+      from.figures.map(async (figure) => {
+        await this.wait(figure.delay);
         this.still(from, figure, 'attack', 0);
         await this.tween({
           targets: figure.image,
@@ -255,25 +294,149 @@ export class DrawnCombatScene extends StagedScene {
         });
       }),
     );
-    await this.wait(80);
+    await this.wait(100);
+    void this.tween({
+      targets: camera,
+      scrollX: camera.scrollX + from.dir * 60,
+      duration: 420,
+      ease: 'Sine.easeIn',
+    });
     await Promise.all(
-      from.figures.map(async (figure, i) => {
-        await this.wait(i * STAGGER_MS);
+      from.figures.map(async (figure) => {
+        await this.wait(figure.delay);
         void this.act(from, figure, 'run');
+        figure.image.anims.setProgress(Math.random());
         this.puff(from, figure.image.x - from.dir * 40, figure.image.y);
+        // Par à-coups, au rythme des pas, avec un petit rebond à chaque foulée.
+        void this.tween({
+          targets: figure.image,
+          y: figure.homeY - 14 * figure.baseScale,
+          duration: 90,
+          yoyo: true,
+          repeat: 1,
+          ease: 'Sine.easeOut',
+        });
         await this.tween({
           targets: figure.image,
-          x: figure.homeX + from.dir * 170,
-          duration: 230,
-          ease: 'Quad.easeIn',
+          x: figure.homeX + from.dir * 190,
+          duration: 360,
+          ease: 'Stepped',
+          easeParams: [4],
         });
-        if (animated) figure.image.play({ key: animated.key, startFrame: 1 });
       }),
     );
-    // Image de vitesse, puis extension (deux images à 14 par seconde).
-    if (animated) await this.wait(130);
-    for (const figure of to.figures) this.slash(to, figure);
-    await this.impact(to, strike);
+
+    if (to.figures.length > 0) await this.clash(from, to);
+    // De retour à l'écran partagé : les soldats finissent leur geste (suite du mouvement).
+    for (const figure of from.figures) {
+      this.still(from, figure, 'attack', 3);
+      figure.image.setY(figure.homeY);
+    }
+    await this.impact(to, strike, { afterClash: to.figures.length > 0 });
+  }
+
+  /**
+   * Plan de contact : un instant, la séparation disparaît. L'attaquant occupe tout l'écran,
+   * ses soldats portent le coup dans la ligne adverse, les deux camps face à face sur le
+   * même décor. Puis on revient à l'écran partagé.
+   */
+  private async clash(from: SideView, to: SideView): Promise<void> {
+    const side = from.side.side;
+    const camera = from.camera;
+    const world = this.clashWorlds[side];
+    const x0 = CLASH_X[side];
+    const center = x0 + DRAWN_HALF;
+    world.removeAll(true);
+    world.add(
+      this.add
+        .image(x0, 0, decorTexture(this, to.side.terrain))
+        .setOrigin(0)
+        .setDisplaySize(DRAWN_W, DRAWN_H),
+    );
+    const spawn = (view: SideView, group: readonly Figure[], groupCenter: number) =>
+      group.map((figure) => {
+        const x = groupCenter + figure.slot.dx * 0.75 * view.dir;
+        const y = figure.slot.y;
+        const shadow = this.add
+          .image(x, y, SHADOW)
+          .setScale(figure.baseScale * 0.95)
+          .setAlpha(SHADOW_ALPHA);
+        const sprite = this.add
+          .sprite(x, y, figure.image.texture.key, figure.image.frame.name)
+          .setOrigin(figure.image.originX, figure.image.originY)
+          .setScale(figure.baseScale)
+          .setFlipX(view.dir < 0)
+          .setTint(figure.tint);
+        world.add(shadow);
+        return { sprite, figure };
+      });
+    const attackers = spawn(from, from.figures, center - from.dir * 300);
+    const defenders = spawn(to, to.figures, center + from.dir * 300);
+    // Les rangs du fond derrière ceux du premier plan, tous camps confondus.
+    [...attackers, ...defenders]
+      .sort((a, b) => a.sprite.y - b.sprite.y)
+      .forEach(({ sprite }) => world.add(sprite));
+    const idle = drawnAnimation(this, to.side.owner, to.side.unitType, 'idle');
+    for (const { sprite } of defenders) {
+      if (idle) sprite.setOrigin(this.originX(to, idle.originX), idle.originY).play(idle.key);
+      else this.posePuppet(to, sprite, 'idle');
+    }
+
+    // Coupe franche : plein écran sur le plan de contact.
+    this.views[to.side.side].camera.setVisible(false);
+    this.drawDivider(0, false);
+    camera.setViewport(0, 0, DRAWN_W, DRAWN_H).setScroll(x0, 0).setZoom(1.1);
+
+    const attack = drawnAnimation(this, from.side.owner, from.side.unitType, 'attack');
+    for (const { sprite } of attackers) {
+      if (attack) {
+        sprite
+          .setOrigin(this.originX(from, attack.originX), attack.originY)
+          .play({ key: attack.key, startFrame: 1 });
+      } else {
+        this.posePuppet(from, sprite, 'attack');
+      }
+      void this.tween({
+        targets: sprite,
+        x: sprite.x + from.dir * 70,
+        duration: 140,
+        ease: 'Quad.easeOut',
+      });
+    }
+    await this.wait(attack ? 130 : 90);
+
+    // Le coup porte : silhouettes blanches, éclair, gel, étincelles sur la ligne de contact.
+    const hit = drawnAnimation(this, to.side.owner, to.side.unitType, 'hit');
+    for (const { sprite } of defenders) {
+      if (hit) {
+        sprite.setOrigin(this.originX(to, hit.originX), hit.originY).play(hit.key);
+      } else {
+        this.posePuppet(to, sprite, 'hit');
+      }
+      sprite.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    }
+    this.flashScreen();
+    await this.hitstop(HITSTOP_MS + 30);
+    camera.shake(220, 0.012);
+    camera.setZoom(1.16);
+    void this.tween({ targets: camera, zoom: 1.1, duration: 260, ease: 'Quad.easeOut' });
+    for (const { sprite, figure } of defenders) {
+      sprite.setTint(figure.tint).setTintMode(Phaser.TintModes.MULTIPLY);
+      this.sparkAt(world, sprite.x - from.dir * 60, sprite.y - 220 * figure.baseScale);
+      void this.tween({
+        targets: sprite,
+        x: sprite.x + from.dir * 40,
+        duration: 140,
+        ease: 'Quad.easeOut',
+      });
+    }
+    await this.wait(380);
+
+    // Retour à l'écran partagé.
+    world.removeAll(true);
+    camera.setZoom(1);
+    this.layoutCameras(this.attackerSide, 1);
+    this.views[to.side.side].camera.setVisible(true);
   }
 
   /** Tir : les projectiles quittent l'écran du tireur, puis tombent sur la cible. */
@@ -340,18 +503,27 @@ export class DrawnCombatScene extends StagedScene {
   }
 
   /** Impact : éclair, gel, secousse, PV qui descendent, figurants qui tombent. */
-  private async impact(target: SideView, strike: Strike): Promise<void> {
+  private async impact(
+    target: SideView,
+    strike: Strike,
+    options: { readonly afterClash?: boolean } = {},
+  ): Promise<void> {
     this.setExpression(target, 'hurt');
-    this.flashHalf(target);
     const remaining = drawnFigureCount(target.side.unitType, strike.targetHpAfter);
-    for (const figure of target.figures) {
-      void this.act(target, figure, 'hit');
-      figure.image.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+    for (const figure of target.figures) void this.act(target, figure, 'hit');
+    if (!options.afterClash) {
+      // Le coup arrive ici (tir) : éclair, silhouettes blanches, gel et zoom brusque.
+      this.flashHalf(target);
+      for (const figure of target.figures) {
+        figure.image.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
+      }
+      await this.hitstop(HITSTOP_MS);
+      target.camera.shake(220, 0.01);
+      target.camera.setZoom(1.08);
+      void this.tween({ targets: target.camera, zoom: 1, duration: 280, ease: 'Quad.easeOut' });
     }
-    await this.hitstop(HITSTOP_MS);
-    target.camera.shake(220, 0.01);
     for (const figure of target.figures) {
-      this.time.delayedCall(40, () => figure.image.clearTint());
+      this.time.delayedCall(40, () => this.restoreTint(figure));
       void this.tween({
         targets: figure.image,
         x: figure.homeX - target.dir * 34,
@@ -372,7 +544,7 @@ export class DrawnCombatScene extends StagedScene {
 
     const fallen = target.figures.splice(remaining);
     const falls = fallen.map(async (figure, i) => {
-      await this.wait(240 + i * 110);
+      await this.wait(200 + i * 90 + figure.delay);
       await this.act(target, figure, 'fall');
       this.puff(target, figure.image.x, figure.image.y);
       await this.tween({ targets: figure.image, alpha: 0, duration: 450, delay: 450 });
@@ -424,25 +596,41 @@ export class DrawnCombatScene extends StagedScene {
       if (!slot) break;
       const homeX = x0 + DRAWN_HALF + slot.dx * dir;
       const pose = poseTexture(this, side.owner, side.unitType, 'idle', FIGURE_SCREEN_H);
-      const baseScale = pose.scale * slot.scale;
+      const front = slot.scale >= 1;
+      const jitter = 1 + Phaser.Math.FloatBetween(-SIZE_JITTER, SIZE_JITTER);
+      const baseScale = pose.scale * slot.scale * jitter;
+      const tint = front ? Phaser.Utils.Array.GetRandom([...FRONT_TINTS]) : BACK_ROW_TINT;
+      const [minDelay, maxDelay] = REACTION_MS[front ? 'front' : 'back'];
+      const delay = Phaser.Math.Between(minDelay, maxDelay);
       const image = this.add
         .sprite(homeX, slot.y, pose.key)
         .setOrigin(0.5, 1)
         .setScale(baseScale)
         .setFlipX(dir < 0)
+        .setTint(tint)
         .setDepth(slot.y);
       const shadow = this.add
         .image(homeX, slot.y, SHADOW)
         .setScale(baseScale * 0.95, baseScale * 0.95)
         .setAlpha(SHADOW_ALPHA);
-      const figure: Figure = { image, homeX, baseScale, shadow, breathing: null };
+      const figure: Figure = {
+        image,
+        homeX,
+        homeY: slot.y,
+        baseScale,
+        tint,
+        delay,
+        slot,
+        shadow,
+        breathing: null,
+      };
       this.shadowed.push(figure);
       const idle = drawnAnimation(this, side.owner, side.unitType, 'idle');
       if (idle) {
         // Repos dessiné : chaque soldat démarre à une image différente.
         image
           .setOrigin(dir < 0 ? 1 - idle.originX : idle.originX, idle.originY)
-          .play({ key: idle.key, startFrame: i % idle.frames.length });
+          .play({ key: idle.key, startFrame: Phaser.Math.Between(0, idle.frames.length - 1) });
       } else {
         this.breathe(figure);
       }
@@ -644,6 +832,21 @@ export class DrawnCombatScene extends StagedScene {
     ]);
   }
 
+  /** Teinte de repos du soldat (après l'éclair blanc d'un coup). */
+  private restoreTint(figure: Figure): void {
+    figure.image.setTint(figure.tint).setTintMode(Phaser.TintModes.MULTIPLY);
+  }
+
+  /** Pose de secours sur un sprite du plan de contact (unité sans séquence). */
+  private posePuppet(view: SideView, sprite: Phaser.GameObjects.Sprite, pose: Pose): void {
+    const texture = poseTexture(this, view.side.owner, view.side.unitType, pose, FIGURE_SCREEN_H);
+    sprite.anims.stop();
+    sprite
+      .setTexture(texture.key)
+      .setOrigin(0.5, 1)
+      .setAngle(texture.angle * view.dir);
+  }
+
   /** Ancrage horizontal : un personnage retourné (camp de droite) a ses pieds en miroir. */
   private originX(view: SideView, originX: number): number {
     return view.dir < 0 ? 1 - originX : originX;
@@ -680,7 +883,12 @@ export class DrawnCombatScene extends StagedScene {
   }
 
   private spark(view: SideView, x: number, y: number): void {
-    const spark = this.addTo(view, this.add.image(x, y, SPARK).setScale(0.6).setDepth(2000));
+    this.sparkAt(view.world, x, y);
+  }
+
+  private sparkAt(world: Phaser.GameObjects.Container, x: number, y: number): void {
+    const spark = this.add.image(x, y, SPARK).setScale(0.6).setDepth(2000);
+    world.add(spark);
     void this.tween({
       targets: spark,
       scale: 1.6,
@@ -728,6 +936,13 @@ export class DrawnCombatScene extends StagedScene {
         ease: 'Quad.easeOut',
       }).then(() => dust.destroy());
     }
+  }
+
+  /** Éclair blanc sur tout l'écran (plan de contact). */
+  private flashScreen(): void {
+    const flash = this.add.rectangle(0, 0, DRAWN_W, DRAWN_H, 0xffffff, 0.6).setOrigin(0);
+    this.ui.addAt(flash, 0);
+    void this.tween({ targets: flash, alpha: 0, duration: 200 }).then(() => flash.destroy());
   }
 
   /** Éclair blanc sur la moitié touchée. */
