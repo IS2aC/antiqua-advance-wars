@@ -1,16 +1,18 @@
 /**
- * Combats dessinés (prototype) : art/raw/proto-combat → apps/game/public/assets/combat-hd.
+ * Combats dessinés (prototype) : art/raw/combat-dessine → apps/game/public/assets/combat-hd.
  *
- * - `<peuple>-<unité>.png` : 4 poses (repos, attaque, coup reçu, à terre) → une image par pose ;
- * - `<peuple>-<unité>-<planche>.png` : séquences (repos, attaque, charge, chute), 4 images
- *   chacune, mises à la même échelle que les poses (corrigeable dans `echelles.json`) ;
- * - `portrait-<peuple>.png` : 4 expressions → une image par expression (256×256) ;
- * - `decor-<nom>.png` : décor recadré en 1920×1152.
- * Plus `manifest.json`, que le jeu lit pour savoir ce qui existe (le reste est provisoire).
+ * - `peuples/<peuple>/<unité>/poses.png` : 4 poses (repos, attaque, coup reçu, à terre) ;
+ * - `peuples/<peuple>/<unité>/<planche>.png` : séquences (repos, attaque, charge, chute,
+ *   sonne), 4 images chacune, à la même échelle que les poses ;
+ * - `portraits/<peuple>.png` : 4 expressions → une image par expression (256×256) ;
+ * - `decors/<nom>.png` : décor recadré en 1920×1152 ;
+ * - `reglages.json` : corrections d'échelle par planche et calages par animation.
+ * Écrit `manifest.json` (ce qui existe, pour le jeu ; le reste est provisoire) et
+ * `A-FAIRE.md` dans le dossier source (ce qui reste à dessiner).
  * Lancement : `pnpm assets:dessin`.
  */
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
-import { dirname, extname, join, parse, resolve } from 'node:path';
+import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { COMBAT_UNITS, PEOPLES } from './combat';
@@ -23,19 +25,20 @@ import {
   PORTRAIT_SIZE,
   SEQUENCE_CELLS,
   SEQUENCE_SHEETS,
-  classifyDrawnFile,
+  classifyDrawnPath,
   figureScale,
   layoutSequence,
   separateFrames,
   portraitScale,
   removeBackground,
   splitColumns,
+  todoReport,
 } from './drawn';
 import type { PlacedFrame } from './drawn';
 import { loadImage, type Box, type RgbaImage } from './image';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
-const SOURCE = join(ROOT, 'art/raw/proto-combat');
+const SOURCE = join(ROOT, 'art/raw/combat-dessine');
 const OUT = join(ROOT, 'apps/game/public/assets/combat-hd');
 const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp']);
 
@@ -117,47 +120,54 @@ async function writeFrame(
     .toFile(output);
 }
 
+interface Settings {
+  /** Correction d'échelle par planche : « carthage/fantassin/repos » → 0.92. */
+  readonly scales: Record<string, number>;
+  /**
+   * Calage par animation, en pixels de l'image finale (positif : le personnage recule) :
+   * « carthage/fantassin » → { attack: 12 }.
+   */
+  readonly shifts: Record<string, Record<string, number>>;
+}
+
+const numbers = (value: unknown): Record<string, number> =>
+  value && typeof value === 'object'
+    ? Object.fromEntries(
+        Object.entries(value).filter(
+          (entry): entry is [string, number] => typeof entry[1] === 'number',
+        ),
+      )
+    : {};
+
 /**
- * Corrections d'échelle par planche (`echelles.json` à côté des images) : ChatGPT ne
- * dessine pas toujours le personnage à la même taille d'une planche à l'autre.
- * Exemple : { "carthage-fantassin-repos": 0.92 }.
+ * Réglages (`reglages.json`) : ChatGPT ne dessine pas toujours le personnage à la même taille
+ * d'une planche à l'autre (« echelles »), et un petit saut entre deux animations se corrige
+ * à l'œil (« calages »).
  */
-async function readScaleFixes(): Promise<Record<string, number>> {
+async function readSettings(): Promise<Settings> {
   try {
-    const data = JSON.parse(await readFile(join(SOURCE, 'echelles.json'), 'utf8')) as unknown;
-    if (!data || typeof data !== 'object') return {};
-    return Object.fromEntries(
-      Object.entries(data).filter(
-        (entry): entry is [string, number] => typeof entry[1] === 'number',
-      ),
-    );
+    const data = JSON.parse(await readFile(join(SOURCE, 'reglages.json'), 'utf8')) as {
+      echelles?: unknown;
+      calages?: unknown;
+    };
+    const shifts: Record<string, Record<string, number>> = {};
+    for (const [unit, anims] of Object.entries(data.calages ?? {})) shifts[unit] = numbers(anims);
+    return { scales: numbers(data.echelles), shifts };
   } catch {
-    return {};
+    return { scales: {}, shifts: {} };
   }
 }
 
-/**
- * Calages manuels par animation (`calages.json` à côté des images), en pixels de l'image
- * finale : pour corriger à l'œil un petit saut quand on passe d'une animation à l'autre.
- * Exemple : { "carthage-fantassin": { "attack": 12 } } déplace le point d'ancrage de
- * l'attaque de 12 px vers la droite, donc le personnage de 12 px vers l'arrière.
- */
-async function readShifts(): Promise<Record<string, Record<string, number>>> {
+/** Toutes les images sous `dir`, en chemins relatifs avec des « / ». */
+async function listImages(dir: string): Promise<string[]> {
   try {
-    const data = JSON.parse(await readFile(join(SOURCE, 'calages.json'), 'utf8')) as unknown;
-    if (!data || typeof data !== 'object') return {};
-    const result: Record<string, Record<string, number>> = {};
-    for (const [unit, anims] of Object.entries(data)) {
-      if (!anims || typeof anims !== 'object') continue;
-      result[unit] = Object.fromEntries(
-        Object.entries(anims).filter(
-          (entry): entry is [string, number] => typeof entry[1] === 'number',
-        ),
-      );
-    }
-    return result;
+    const entries = await readdir(dir, { recursive: true, withFileTypes: true });
+    return entries
+      .filter((entry) => entry.isFile() && IMAGE_EXTENSIONS.has(extname(entry.name).toLowerCase()))
+      .map((entry) => relative(dir, join(entry.parentPath, entry.name)).split('\\').join('/'))
+      .sort();
   } catch {
-    return {};
+    return [];
   }
 }
 
@@ -167,25 +177,24 @@ async function main(): Promise<void> {
   const manifest: DrawnManifest = { figures: {}, anims: {}, portraits: [], decors: [] };
   /** Échelle des poses de chaque unité : les séquences s'y alignent. */
   const poseScales = new Map<string, number>();
-  const scaleFixes = await readScaleFixes();
-  const shifts = await readShifts();
-  let files: string[] = [];
-  try {
-    files = (await readdir(SOURCE)).filter((f) => IMAGE_EXTENSIONS.has(extname(f).toLowerCase()));
-  } catch {
-    console.log(`[dessin] ${SOURCE} absent : tout restera provisoire.`);
-  }
+  const settings = await readSettings();
+  const files = await listImages(SOURCE);
+  if (files.length === 0)
+    console.log(`[dessin] aucune image dans ${SOURCE} : tout est provisoire.`);
+  /** Chemins reconnus, sans extension : pour la liste « à faire ». */
+  const present = new Set<string>();
 
   // Les séquences en dernier : elles prennent l'échelle des poses de leur unité.
   const isSequence = (f: string) =>
-    classifyDrawnFile(parse(f).name, PEOPLES, COMBAT_UNITS)?.kind === 'sequence';
-  const ordered = [...files.sort().filter((f) => !isSequence(f)), ...files.filter(isSequence)];
+    classifyDrawnPath(f, PEOPLES, COMBAT_UNITS)?.kind === 'sequence';
+  const ordered = [...files.filter((f) => !isSequence(f)), ...files.filter(isSequence)];
   for (const file of ordered) {
-    const role = classifyDrawnFile(parse(file).name, PEOPLES, COMBAT_UNITS);
+    const role = classifyDrawnPath(file, PEOPLES, COMBAT_UNITS);
     if (!role) {
-      console.warn(`[dessin] ${file} : nom non reconnu, ignoré (voir docs/proto-combat.md).`);
+      console.warn(`[dessin] ${file} : emplacement non reconnu, ignoré (voir A-FAIRE.md).`);
       continue;
     }
+    present.add(file.replace(/\.[a-z]+$/i, '').toLowerCase());
     const input = join(SOURCE, file);
 
     if (role.kind === 'decor') {
@@ -202,12 +211,12 @@ async function main(): Promise<void> {
     const image = removeBackground(source, { pockets: role.kind !== 'portrait' });
 
     if (role.kind === 'sequence') {
-      const key = `${role.people}-${role.unit}`;
+      const key = `${role.people}/${role.unit}`;
       const frames = separateFrames(image, SEQUENCE_CELLS);
       // Sans planche de poses : la première image debout fait la hauteur de référence.
       const base =
         poseScales.get(key) ?? FIGURE_IDLE_HEIGHT / (frames[0]?.box.h ?? FIGURE_IDLE_HEIGHT);
-      const fix = scaleFixes[parse(file).name] ?? 1;
+      const fix = settings.scales[`${key}/${role.sheet}`] ?? 1;
       const scale = base * fix;
       const dir = join(OUT, role.people, role.unit);
       await mkdir(dir, { recursive: true });
@@ -221,7 +230,7 @@ async function main(): Promise<void> {
           await writeFrame(frame, layout, w, h, join(dir, `${layout.anim}-${i}.webp`));
         }
         // Calage manuel (pixels de l'image finale, positif = le personnage recule).
-        const shift = shifts[key]?.[layout.anim] ?? 0;
+        const shift = settings.shifts[key]?.[layout.anim] ?? 0;
         anims[layout.anim] = {
           frames: layout.frames.length,
           w,
@@ -239,7 +248,7 @@ async function main(): Promise<void> {
     if (role.kind === 'figure') {
       const frames = separateFrames(image, DRAWN_POSES.length);
       const scale = figureScale(frames.map((frame) => frame.box));
-      poseScales.set(`${role.people}-${role.unit}`, scale);
+      poseScales.set(`${role.people}/${role.unit}`, scale);
       const dir = join(OUT, role.people, role.unit);
       await mkdir(dir, { recursive: true });
       const poses: Record<string, PoseInfo> = {};
@@ -299,7 +308,9 @@ async function main(): Promise<void> {
   }
 
   await writeFile(join(OUT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-  console.log(`[dessin] manifeste écrit : ${OUT}/manifest.json`);
+  await mkdir(SOURCE, { recursive: true });
+  await writeFile(join(SOURCE, 'A-FAIRE.md'), todoReport(present, PEOPLES, COMBAT_UNITS));
+  console.log(`[dessin] manifeste écrit, liste à jour : art/raw/combat-dessine/A-FAIRE.md`);
 }
 
 main().catch((error: unknown) => {

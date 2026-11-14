@@ -57,43 +57,105 @@ export type SequenceSheet = keyof typeof SEQUENCE_SHEETS;
 /** Images par planche de séquence. */
 export const SEQUENCE_CELLS = 4;
 
+/** Planches d'une unité, dans l'ordre : les 4 poses de référence, puis les séquences. */
+export const UNIT_SHEETS = ['poses', ...(Object.keys(SEQUENCE_SHEETS) as SequenceSheet[])] as const;
+
 /**
- * Nom de fichier → rôle : `<peuple>-<unité>` (4 poses), `<peuple>-<unité>-<planche>`
- * (séquence), `portrait-<peuple>`, `decor-<nom>`.
+ * Chemin (relatif au dossier des combats dessinés) → rôle :
+ * - `peuples/<peuple>/<unité>/poses.png` : les 4 poses de référence ;
+ * - `peuples/<peuple>/<unité>/<planche>.png` : une séquence (repos, attaque, charge, chute, sonne) ;
+ * - `portraits/<peuple>.png` : 4 expressions ;
+ * - `decors/<nom>.png` : un décor.
  */
-export function classifyDrawnFile(
-  baseName: string,
+export function classifyDrawnPath(
+  path: string,
   peoples: readonly string[],
   units: readonly string[],
 ): DrawnFile | null {
-  const name = baseName.toLowerCase();
-  const portrait = /^portrait-([a-z]+)$/.exec(name);
-  if (portrait?.[1] && peoples.includes(portrait[1])) {
-    return { kind: 'portrait', people: portrait[1] };
+  const parts = path
+    .toLowerCase()
+    .replace(/\\/g, '/')
+    .replace(/\.(png|jpe?g|webp)$/, '')
+    .split('/');
+  const [root, a, b, c] = parts;
+  if (root === 'decors' && parts.length === 2 && a) return { kind: 'decor', name: a };
+  if (root === 'portraits' && parts.length === 2 && a && peoples.includes(a)) {
+    return { kind: 'portrait', people: a };
   }
-  const decor = /^decor-([a-z]+)$/.exec(name);
-  if (decor?.[1]) return { kind: 'decor', name: decor[1] };
-  const sequence = /^([a-z]+)-([a-z]+)-([a-z]+)$/.exec(name);
-  if (
-    sequence?.[1] &&
-    sequence[2] &&
-    sequence[3] &&
-    peoples.includes(sequence[1]) &&
-    units.includes(sequence[2]) &&
-    sequence[3] in SEQUENCE_SHEETS
-  ) {
-    return {
-      kind: 'sequence',
-      people: sequence[1],
-      unit: sequence[2],
-      sheet: sequence[3] as SequenceSheet,
-    };
-  }
-  const figure = /^([a-z]+)-([a-z]+)$/.exec(name);
-  if (figure?.[1] && figure[2] && peoples.includes(figure[1]) && units.includes(figure[2])) {
-    return { kind: 'figure', people: figure[1], unit: figure[2] };
+  if (root !== 'peuples' || parts.length !== 4 || !a || !b || !c) return null;
+  if (!peoples.includes(a) || !units.includes(b)) return null;
+  if (c === 'poses') return { kind: 'figure', people: a, unit: b };
+  if (c in SEQUENCE_SHEETS) {
+    return { kind: 'sequence', people: a, unit: b, sheet: c as SequenceSheet };
   }
   return null;
+}
+
+/** Libellés des planches dans la liste « à faire ». */
+const SHEET_LABELS: Readonly<Record<string, string>> = {
+  poses: 'poses',
+  repos: 'repos',
+  attaque: 'attaque',
+  charge: 'charge',
+  chute: 'chute',
+  sonne: 'sonné',
+};
+
+const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1);
+
+/**
+ * Liste de ce qui reste à dessiner (`A-FAIRE.md`), à partir des chemins présents (sans
+ * extension, par exemple `peuples/koush/archers/repos`).
+ */
+export function todoReport(
+  present: ReadonlySet<string>,
+  peoples: readonly string[],
+  units: readonly string[],
+): string {
+  const total = peoples.length * units.length * UNIT_SHEETS.length;
+  let done = 0;
+  const rows: string[] = [];
+  for (const people of peoples) {
+    for (const unit of units) {
+      const cells = UNIT_SHEETS.map((sheet) => {
+        const ok = present.has(`peuples/${people}/${unit}/${sheet}`);
+        if (ok) done++;
+        return ok ? '✅' : '·';
+      });
+      rows.push(`| ${capitalize(people)} | ${capitalize(unit)} | ${cells.join(' | ')} |`);
+    }
+  }
+  const portraits = peoples.map(
+    (people) => `${present.has(`portraits/${people}`) ? '✅' : '·'} ${capitalize(people)}`,
+  );
+  const decors = [...present]
+    .filter((path) => path.startsWith('decors/'))
+    .map((path) => path.slice('decors/'.length))
+    .sort();
+  return [
+    '# Combats dessinés — ce qui reste à dessiner',
+    '',
+    '> Fichier généré par `pnpm assets:dessin` : ne pas le modifier à la main.',
+    '> Prompts et règles : `docs/proto-combat.md`.',
+    '',
+    `**Planches : ${done} / ${total}** · portraits : ${portraits.filter((p) => p.startsWith('✅')).length} / ${peoples.length} · décors : ${decors.length}`,
+    '',
+    'Chaque unité a son dossier `peuples/<peuple>/<unité>/` avec 6 fichiers aux noms fixes.',
+    'Montures et engins (cavalerie, char, catapulte) : planches à préciser avant de les dessiner.',
+    '',
+    `| Peuple | Unité | ${UNIT_SHEETS.map((sheet) => SHEET_LABELS[sheet] ?? sheet).join(' | ')} |`,
+    `| --- | --- | ${UNIT_SHEETS.map(() => ':---:').join(' | ')} |`,
+    ...rows,
+    '',
+    '## Portraits (`portraits/<peuple>.png`)',
+    '',
+    portraits.join(' · '),
+    '',
+    '## Décors (`decors/<nom>.png`)',
+    '',
+    decors.length > 0 ? decors.join(' · ') : 'aucun',
+    '',
+  ].join('\n');
 }
 
 // ——— Détourage ———
@@ -205,7 +267,7 @@ export function removeBackground(
 /**
  * Poches de fond enfermées dans le dessin (entre l'arc et la corde, sous un bras) : le
  * remplissage depuis les bords ne les atteint pas. On les retire quand on est sûr que
- * c'est du fond : une grande zone (au moins 0,1 % de l'image) dont presque tous les pixels
+ * c'est du fond : une grande zone (au moins 0,03 % de l'image) dont presque tous les pixels
  * ont exactement la couleur du fond (une tunique crème en reste loin), ou n'importe quelle
  * zone d'un fond très saturé comme le magenta, absent du dessin. Réservé aux personnages :
  * sur un portrait, les dents ou le blanc des yeux pourraient y ressembler.
@@ -218,7 +280,7 @@ function removePockets(
 ): void {
   const { width, height } = image;
   const saturated = background.length === 1 && saturation(background[0] as Color) > 150;
-  const minSize = Math.max(64, width * height * 0.001);
+  const minSize = Math.max(64, width * height * 0.0003);
   const EXACT = 20;
   const nearest = (i: number): number => {
     let best = -1;

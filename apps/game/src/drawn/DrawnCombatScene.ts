@@ -250,11 +250,20 @@ export class DrawnCombatScene extends StagedScene {
     this.setExpression(from, 'shout');
     if (strike.ranged) {
       void this.tween({ targets: from.camera, zoom: 1.04, duration: 500, ease: 'Sine.easeInOut' });
+      // Chaque tireur prend sa flèche, encoche, bande l'arc : sa flèche part à son lâcher.
+      const released = new Map<Figure, Promise<void>>();
       for (const figure of from.figures) {
-        void this.wait(figure.delay).then(() => this.act(from, figure, 'attack'));
+        released.set(
+          figure,
+          this.wait(figure.delay).then(() => this.shoot(from, figure)),
+        );
       }
-      await this.wait(320);
-      await this.volley(from, to, from.side.unitType === 'catapulte');
+      await this.volley(
+        from,
+        to,
+        from.side.unitType === 'catapulte',
+        (figure) => released.get(figure) ?? Promise.resolve(),
+      );
       await this.impact(to, strike);
     } else {
       await this.charge(from, to, strike);
@@ -443,11 +452,25 @@ export class DrawnCombatScene extends StagedScene {
   }
 
   /** Tir : les projectiles quittent l'écran du tireur, puis tombent sur la cible. */
-  private async volley(from: SideView, to: SideView, heavy: boolean): Promise<void> {
+  private async volley(
+    from: SideView,
+    to: SideView,
+    heavy: boolean,
+    release: (figure: Figure) => Promise<void>,
+  ): Promise<void> {
     const texture = heavy ? STONE : ARROW;
-    const shots = from.figures.flatMap((figure) => (heavy ? [figure] : [figure, figure]));
-    const outgoing = shots.map(async (figure, i) => {
-      await this.wait(i * 60);
+    // Deux flèches par tireur (la seconde juste après), une pierre par engin.
+    const shots = from.figures.flatMap((figure) =>
+      heavy
+        ? [{ figure, k: 0 }]
+        : [
+            { figure, k: 0 },
+            { figure, k: 1 },
+          ],
+    );
+    const outgoing = shots.map(async ({ figure, k }) => {
+      await release(figure);
+      await this.wait(k * 90);
       const sx = figure.image.x + from.dir * 60;
       const sy = figure.image.y - 260 * figure.baseScale;
       const projectile = this.addTo(
@@ -826,6 +849,35 @@ export class DrawnCombatScene extends StagedScene {
    * Joue une animation de la séquence dessinée ; se résout à sa fin (aussitôt pour une
    * boucle). Sans séquence, la pose de secours, animée par le code.
    */
+  /**
+   * Tir d'un soldat ; se résout au lâcher. Tir dessiné : les 4 images (prendre la flèche,
+   * encocher, bander, lâcher) à 8 par seconde, et la flèche part sur la dernière. Sinon,
+   * pose d'attaque et départ après un court temps.
+   */
+  private shoot(view: SideView, figure: Figure): Promise<void> {
+    const anim = drawnAnimation(this, view.side.owner, view.side.unitType, 'attack');
+    if (!anim) {
+      void this.act(view, figure, 'attack');
+      return this.wait(320);
+    }
+    const sprite = figure.image;
+    sprite.setOrigin(this.originX(view, anim.originX), anim.originY).setAngle(0);
+    sprite.play({ key: anim.key, frameRate: 8 });
+    if (this.skipped) return Promise.resolve();
+    return Promise.race([
+      new Promise<void>((resolve) => {
+        const onUpdate = (_anim: unknown, frame: Phaser.Animations.AnimationFrame) => {
+          if (!frame.isLast) return;
+          sprite.off(Phaser.Animations.Events.ANIMATION_UPDATE, onUpdate);
+          resolve();
+        };
+        sprite.on(Phaser.Animations.Events.ANIMATION_UPDATE, onUpdate);
+      }),
+      this.skipSignal,
+      this.wait(1200),
+    ]);
+  }
+
   private act(view: SideView, figure: Figure, action: DrawnAnim): Promise<void> {
     const anim = drawnAnimation(this, view.side.owner, view.side.unitType, action);
     const sprite = figure.image;

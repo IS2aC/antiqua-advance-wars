@@ -9,7 +9,7 @@ Si le résultat plaît, on produit les autres unités de la même façon.
 | Étape | Qui | Quoi |
 | --- | --- | --- |
 | 1 | Toi | Générer les 5 images dans ChatGPT (prompts ci-dessous), une par une |
-| 2 | Toi | Les déposer dans `art/raw/proto-combat/` avec les noms exacts |
+| 2 | Toi | Les déposer dans `art/raw/combat-dessine/` avec les noms exacts |
 | 3 | Claude (en parallèle) | Couche de combat haute définition, mise en scène en 6 temps, effets, interface, avec des images provisoires |
 | 4 | Claude | Brancher tes images : découpe des poses, détourage, mise à l'échelle |
 | 5 | Ensemble | Tester dans le navigateur, juger, corriger les prompts si besoin |
@@ -27,7 +27,7 @@ Le bloc de style est le même partout : il demande un dessin animé 2D classique
 traits, des aplats et une seule ombre. C'est ce qui évite l'aspect « image IA » (trop de
 plis, de muscles, de petits ornements et de dégradés).
 
-### Image 1 — Fantassin carthaginois, 4 poses → `carthage-fantassin.png`
+### Image 1 — Fantassin carthaginois, 4 poses → `peuples/carthage/fantassin/poses.png`
 
 Joindre : la moitié droite de ta planche (le guerrier carthaginois).
 
@@ -52,7 +52,7 @@ Transparent background. No ground shadow, no text, no labels, no frame.
 À vérifier : même visage et même tenue sur les 4 poses ; 4 personnages de même taille ; pieds
 alignés ; tous tournés vers la droite ; rien de coupé au bord.
 
-### Image 2 — Archers de Koush, 4 poses → `koush-archers.png`
+### Image 2 — Archers de Koush, 4 poses → `peuples/koush/archers/poses.png`
 
 Joindre : la moitié gauche de ta planche (le Roi de Koush), pour le style et les couleurs
 seulement.
@@ -77,7 +77,7 @@ Transparent background. No ground shadow, no text, no labels, no frame.
 
 À vérifier : mêmes points que l'image 1.
 
-### Image 3 — Portrait du chef carthaginois, 4 expressions → `portrait-carthage.png`
+### Image 3 — Portrait du chef carthaginois, 4 expressions → `portraits/carthage.png`
 
 Joindre : la moitié droite de ta planche.
 
@@ -101,7 +101,7 @@ Transparent background. No text, no labels, no frame.
 
 À vérifier : même visage sur les 4 cases ; même cadrage ; expressions bien lisibles.
 
-### Image 4 — Portrait du Roi de Koush, 4 expressions → `portrait-koush.png`
+### Image 4 — Portrait du Roi de Koush, 4 expressions → `portraits/koush.png`
 
 Joindre : la moitié gauche de ta planche.
 
@@ -123,7 +123,7 @@ Transparent background. No text, no labels, no frame.
 
 À vérifier : même visage sur les 4 cases ; même cadrage ; expressions bien lisibles.
 
-### Image 5 — Décor de savane → `decor-savane.png`
+### Image 5 — Décor de savane → `decors/savane.png`
 
 Rien à joindre.
 
@@ -139,18 +139,26 @@ No characters, no animals, no text, no frame.
 
 ## Étape 2 — Où déposer les images
 
-Dans `art/raw/proto-combat/`, avec ces noms exacts :
+Dans `art/raw/combat-dessine/`, un dossier par unité, avec des noms de fichiers fixes :
 
 ```text
-art/raw/proto-combat/
-├── carthage-fantassin.png
-├── koush-archers.png
-├── portrait-carthage.png
-├── portrait-koush.png
-└── decor-savane.png
+art/raw/combat-dessine/
+├── A-FAIRE.md          ← généré : ce qui existe et ce qui manque
+├── reglages.json       ← corrections d'échelle et calages
+├── decors/savane.png
+├── portraits/
+│   ├── carthage.png
+│   └── koush.png
+└── peuples/<peuple>/<unité>/
+    ├── poses.png       ← les 4 poses (référence de taille)
+    ├── repos.png
+    ├── attaque.png
+    ├── charge.png
+    ├── chute.png
+    └── sonne.png
 ```
 
-Tu peux les déposer au fur et à mesure : chaque image remplace l'image provisoire correspondante.
+Après chaque dépôt, `pnpm assets:dessin` traite les images et met à jour `A-FAIRE.md`.
 
 ## Expérience « 16 dessins » — fantassin carthaginois
 
@@ -160,14 +168,14 @@ case étant une image de la séquence, dans l'ordre.
 
 | Planche | Fichier | Cases (de gauche à droite) |
 | --- | --- | --- |
-| 1 | `carthage-fantassin-repos.png` | repos neutre · inspiration · cape vers l'arrière · cape vers l'avant |
-| 2 | `carthage-fantassin-attaque.png` | préparation · image de vitesse · coup · suite du mouvement |
-| 3 | `carthage-fantassin-charge.png` | course 1 · course 2 · coup reçu · recul |
-| 4 | `carthage-fantassin-chute.png` | déséquilibre · à terre · victoire, lance levée · victoire, cri |
+| 1 | `peuples/carthage/fantassin/repos.png` | repos neutre · inspiration · cape vers l'arrière · cape vers l'avant |
+| 2 | `peuples/carthage/fantassin/attaque.png` | préparation · image de vitesse · coup · suite du mouvement |
+| 3 | `peuples/carthage/fantassin/charge.png` | course 1 · course 2 · coup reçu · recul |
+| 4 | `peuples/carthage/fantassin/chute.png` | déséquilibre · à terre · victoire, lance levée · victoire, cri |
 
 Règles communes :
 
-- Une conversation par planche. Joins **à chaque fois** `art/raw/proto-combat/carthage-fantassin.png`
+- Une conversation par planche. Joins **à chaque fois** `art/raw/combat-dessine/peuples/carthage/fantassin/poses.png`
   (la planche actuelle) : c'est la référence du personnage et de sa taille.
 - **Caméra fixe** : dans une planche, les 4 cases sont des images d'un même plan. Le
   personnage reste au même endroit dans sa case, le pied d'appui ne bouge pas sauf si le geste
@@ -184,7 +192,7 @@ Style: classic hand-drawn 2D feature animation, 1990s cel look. Simple, appealin
 Plain solid pure white background (#FFFFFF), no checkerboard, no ground shadow, no ground line, no text, no labels, no frame, no cell borders.
 ```
 
-### Planche 1 — Repos → `carthage-fantassin-repos.png`
+### Planche 1 — Repos → `peuples/carthage/fantassin/repos.png`
 
 ```text
 Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
@@ -198,7 +206,7 @@ Create 4 frames of a hand-drawn animation sequence, side by side in one wide ima
 [STYLE BLOCK]
 ```
 
-### Planche 2 — Attaque → `carthage-fantassin-attaque.png`
+### Planche 2 — Attaque → `peuples/carthage/fantassin/attaque.png`
 
 ```text
 Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
@@ -212,7 +220,7 @@ Create 4 frames of a hand-drawn animation sequence of a spear thrust, side by si
 [STYLE BLOCK]
 ```
 
-### Planche 3 — Charge et coup reçu → `carthage-fantassin-charge.png`
+### Planche 3 — Charge et coup reçu → `peuples/carthage/fantassin/charge.png`
 
 ```text
 Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
@@ -228,7 +236,7 @@ Frames 3-4: getting hit.
 [STYLE BLOCK]
 ```
 
-### Planche 4 — Chute et victoire → `carthage-fantassin-chute.png`
+### Planche 4 — Chute et victoire → `peuples/carthage/fantassin/chute.png`
 
 ```text
 Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
@@ -263,13 +271,14 @@ sa case est conservée : le mouvement d'une image à l'autre est celui que ChatG
 même échelle que la planche de 4 poses de l'unité.
 
 ChatGPT ne dessine pas toujours le personnage à la même taille d'une planche à l'autre. Une
-correction par planche se règle dans `art/raw/proto-combat/echelles.json` (par exemple
-`{ "carthage-fantassin-repos": 0.92 }` : la planche de repos était dessinée 8 % trop grande).
+correction par planche se règle dans `art/raw/combat-dessine/reglages.json`, rubrique
+`echelles` (par exemple `"carthage/fantassin/repos": 0.92` : la planche de repos était
+dessinée 8 % trop grande).
 
 Petits sauts entre deux animations : chaque animation est ancrée au centre des pieds de sa
 première image (sans la hampe de lance posée au sol). Pour corriger un saut à l'œil, un
-décalage en pixels par animation se règle dans `art/raw/proto-combat/calages.json`, par
-exemple `{ "carthage-fantassin": { "attack": 12 } }` (positif : le personnage recule).
+décalage en pixels par animation se règle dans `reglages.json`, rubrique `calages`, par
+exemple `"carthage/fantassin": { "attack": 12 }` (positif : le personnage recule).
 
 Dans le jeu : ombre douce sous chaque soldat, repos en aller-retour (6 images/s), préparation, course (10 images/s), coup à partir
 de l'image de vitesse (14 images/s) avec un gel de 90 ms à l'impact, coup reçu, chute, et
@@ -294,7 +303,7 @@ Dans Alkébulan, les soldats vaincus ne meurent pas : ils tombent assis, sonnés
 images sont la chute ; les 2 dernières se jouent en boucle lente (il vacille, étourdi). Sans
 cette planche, le jeu utilise la chute de la planche 4 et efface le soldat.
 
-Fichier : `carthage-fantassin-sonne.png`. Joindre la planche de poses comme référence, et
+Fichier : `peuples/carthage/fantassin/sonne.png`. Joindre la planche de poses comme référence, et
 ajouter le bloc de style à la fin.
 
 ```text
@@ -314,16 +323,16 @@ Do not draw any stars, birds or symbols above his head.
 ## Archers de Koush — 5 planches (20 dessins)
 
 Même méthode que le fantassin : une conversation par planche, 4 images par planche, caméra
-fixe, fond blanc uni. Joins **à chaque fois** `art/raw/proto-combat/koush-archers.png` (la
+fixe, fond blanc uni. Joins **à chaque fois** `art/raw/combat-dessine/peuples/koush/archers/poses.png` (la
 planche de 4 poses) comme référence, et termine chaque prompt par le bloc de style.
 
 | Planche | Fichier | Cases (de gauche à droite) |
 | --- | --- | --- |
-| 1 | `koush-archers-repos.png` | neutre · inspiration · arc qui balance · retour |
-| 2 | `koush-archers-attaque.png` | prendre une flèche · encocher · arc bandé · lâcher |
-| 3 | `koush-archers-charge.png` | petits pas 1 · petits pas 2 · coup reçu · recul |
-| 4 | `koush-archers-chute.png` | perte d'équilibre · à genoux · arc levé · cri de victoire |
-| 5 | `koush-archers-sonne.png` | bascule · assis · étourdi à gauche · étourdi à droite |
+| 1 | `peuples/koush/archers/repos.png` | neutre · inspiration · arc qui balance · retour |
+| 2 | `peuples/koush/archers/attaque.png` | prendre une flèche · encocher · arc bandé · lâcher |
+| 3 | `peuples/koush/archers/charge.png` | petits pas 1 · petits pas 2 · coup reçu · recul |
+| 4 | `peuples/koush/archers/chute.png` | perte d'équilibre · à genoux · arc levé · cri de victoire |
+| 5 | `peuples/koush/archers/sonne.png` | bascule · assis · étourdi à gauche · étourdi à droite |
 
 Le début commun des 5 prompts :
 
@@ -331,7 +340,7 @@ Le début commun des 5 prompts :
 Use the attached pose sheet as the exact reference for this young Kushite archer: same face, same blue headband, same cream linen kilt with blue belt, same blue sash across the chest, same gold arm bands, same leather quiver and long wooden bow, same proportions and SAME SIZE as the first (idle) pose.
 ```
 
-### Planche 1 — Repos → `koush-archers-repos.png`
+### Planche 1 — Repos → `peuples/koush/archers/repos.png`
 
 ```text
 [DÉBUT COMMUN]
@@ -345,7 +354,7 @@ Create 4 frames of a hand-drawn animation sequence, side by side in one wide ima
 [STYLE BLOCK]
 ```
 
-### Planche 2 — Tir → `koush-archers-attaque.png`
+### Planche 2 — Tir → `peuples/koush/archers/attaque.png`
 
 ```text
 [DÉBUT COMMUN]
@@ -359,7 +368,7 @@ Create 4 frames of a hand-drawn animation sequence of shooting an arrow, side by
 [STYLE BLOCK]
 ```
 
-### Planche 3 — Petits pas et coup reçu → `koush-archers-charge.png`
+### Planche 3 — Petits pas et coup reçu → `peuples/koush/archers/charge.png`
 
 ```text
 [DÉBUT COMMUN]
@@ -375,7 +384,7 @@ Frames 3-4: getting hit.
 [STYLE BLOCK]
 ```
 
-### Planche 4 — Chute et victoire → `koush-archers-chute.png`
+### Planche 4 — Chute et victoire → `peuples/koush/archers/chute.png`
 
 ```text
 [DÉBUT COMMUN]
@@ -391,7 +400,7 @@ Frames 3-4: victory.
 [STYLE BLOCK]
 ```
 
-### Planche 5 — Sonné → `koush-archers-sonne.png`
+### Planche 5 — Sonné → `peuples/koush/archers/sonne.png`
 
 ```text
 [DÉBUT COMMUN]

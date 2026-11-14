@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   FIGURE_IDLE_HEIGHT,
   borderColors,
-  classifyDrawnFile,
+  classifyDrawnPath,
+  todoReport,
   feetCenterX,
   layoutSequence,
   separateFrames,
@@ -29,28 +30,55 @@ const MAGENTA: Rgba = [255, 0, 255, 255];
 const INK: Rgba = [30, 20, 15, 255];
 const CREAM: Rgba = [250, 245, 230, 255];
 
-describe('classifyDrawnFile', () => {
+describe('classifyDrawnPath', () => {
   const peoples = ['koush', 'carthage'];
   const units = ['fantassin', 'archers'];
-  it('reconnaît poses, portraits et décors', () => {
-    expect(classifyDrawnFile('carthage-fantassin', peoples, units)).toEqual({
+  it('reconnaît poses, séquences, portraits et décors par leur dossier', () => {
+    expect(classifyDrawnPath('peuples/carthage/fantassin/poses.png', peoples, units)).toEqual({
       kind: 'figure',
       people: 'carthage',
       unit: 'fantassin',
     });
-    expect(classifyDrawnFile('portrait-koush', peoples, units)).toEqual({
+    expect(classifyDrawnPath('peuples/koush/archers/attaque.png', peoples, units)).toEqual({
+      kind: 'sequence',
+      people: 'koush',
+      unit: 'archers',
+      sheet: 'attaque',
+    });
+    expect(classifyDrawnPath('portraits/koush.png', peoples, units)).toEqual({
       kind: 'portrait',
       people: 'koush',
     });
-    expect(classifyDrawnFile('decor-savane', peoples, units)).toEqual({
+    expect(classifyDrawnPath('decors/savane.webp', peoples, units)).toEqual({
       kind: 'decor',
       name: 'savane',
     });
   });
-  it('ignore les noms inconnus', () => {
-    expect(classifyDrawnFile('rome-fantassin', peoples, units)).toBeNull();
-    expect(classifyDrawnFile('koush-elephant', peoples, units)).toBeNull();
-    expect(classifyDrawnFile('photo', peoples, units)).toBeNull();
+  it('ignore les emplacements inconnus', () => {
+    expect(classifyDrawnPath('peuples/rome/fantassin/poses.png', peoples, units)).toBeNull();
+    expect(classifyDrawnPath('peuples/koush/elephant/poses.png', peoples, units)).toBeNull();
+    expect(classifyDrawnPath('peuples/koush/archers/danse.png', peoples, units)).toBeNull();
+    expect(classifyDrawnPath('photo.png', peoples, units)).toBeNull();
+  });
+});
+
+describe('todoReport', () => {
+  it('compte les planches présentes et liste ce qui manque', () => {
+    const report = todoReport(
+      new Set([
+        'peuples/koush/archers/poses',
+        'peuples/koush/archers/repos',
+        'portraits/koush',
+        'decors/savane',
+      ]),
+      ['koush'],
+      ['archers', 'fantassin'],
+    );
+    expect(report).toContain('**Planches : 2 / 12**');
+    expect(report).toContain('| Koush | Archers | ✅ | ✅ | · | · | · | · |');
+    expect(report).toContain('| Koush | Fantassin | · | · | · | · | · | · |');
+    expect(report).toContain('✅ Koush');
+    expect(report).toContain('savane');
   });
 });
 
@@ -170,16 +198,6 @@ describe('poches de fond enfermées', () => {
 });
 
 describe('séquences « caméra fixe »', () => {
-  it('reconnaît les planches de séquence', () => {
-    expect(classifyDrawnFile('carthage-fantassin-attaque', ['carthage'], ['fantassin'])).toEqual({
-      kind: 'sequence',
-      people: 'carthage',
-      unit: 'fantassin',
-      sheet: 'attaque',
-    });
-    expect(classifyDrawnFile('carthage-fantassin-danse', ['carthage'], ['fantassin'])).toBeNull();
-  });
-
   it('garde la position de chaque dessin dans sa case et ancre aux pieds', () => {
     // Deux cases de 50 px ; le second dessin est 6 px plus à droite dans sa case.
     const sheet = image(100, 40, (x, y) => {
