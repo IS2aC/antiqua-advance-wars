@@ -24,7 +24,7 @@ import {
 } from '@antiqua/engine';
 import { TILE_SIZE, VIEW_TILES_X, VIEW_TILES_Y } from '../config';
 import type { EventPlayer } from '../animation/EventPlayer';
-import { loadOptions, saveOptions } from '../persistence/options';
+import { combatSetting, loadOptions, saveOptions, withCombatSetting } from '../persistence/options';
 import { clearSave, saveGame } from '../persistence/save';
 import type { EndChoice, EndScreen } from '../view/EndScreen';
 import type { ForecastPanel } from '../view/ForecastPanel';
@@ -199,8 +199,8 @@ export class BattleController {
     if (this.mode !== 'idle' && this.mode !== 'inspecting') return;
     this.clearSelection();
     this.mode = 'paused';
-    const choice = await this.views.pauseMenu.open(loadOptions().combatScenes, (enabled) =>
-      saveOptions({ ...loadOptions(), combatScenes: enabled }),
+    const choice = await this.views.pauseMenu.open(combatSetting(loadOptions()), (setting) =>
+      saveOptions(withCombatSetting(loadOptions(), setting)),
     );
     if (choice === 'reprendre') {
       this.mode = 'idle';

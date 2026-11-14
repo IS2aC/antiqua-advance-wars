@@ -6,6 +6,7 @@
   "scripts": {
     "build:assets": "tsx src/index.ts",
     "build:cover": "tsx src/cover.ts",
+    "build:drawn": "tsx src/drawn-build.ts",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

@@ -1,0 +1,51 @@
+{
+  "figures": {
+    "carthage": {
+      "fantassin": {
+        "idle": {
+          "w": 230,
+          "h": 420
+        },
+        "attack": {
+          "w": 429,
+          "h": 360
+        },
+        "hit": {
+          "w": 243,
+          "h": 373
+        },
+        "down": {
+          "w": 358,
+          "h": 266
+        }
+      }
+    },
+    "koush": {
+      "archers": {
+        "idle": {
+          "w": 210,
+          "h": 420
+        },
+        "attack": {
+          "w": 374,
+          "h": 459
+        },
+        "hit": {
+          "w": 314,
+          "h": 386
+        },
+        "down": {
+          "w": 357,
+          "h": 247
+        }
+      }
+    }
+  },
+  "portraits": [
+    "carthage",
+    "koush"
+  ],
+  "decors": [
+    "savane"
+  ]
+}

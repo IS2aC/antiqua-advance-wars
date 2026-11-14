@@ -1,0 +1,321 @@
+import Phaser from 'phaser';
+import type { PlayerId, TerrainType, UnitType } from '@antiqua/engine';
+import { OUTLINE_COLOR, TEAM_COLORS, darken } from '../view/palette';
+import {
+  DRAWN_H,
+  DRAWN_W,
+  FIGURE_SOURCE_H,
+  decorCandidates,
+  type Expression,
+  type Pose,
+} from './layout';
+
+/**
+ * Images des combats dessinés : celles du pipeline (`pnpm assets:dessin`, manifeste
+ * `assets/combat-hd/manifest.json`) quand elles existent, sinon des images provisoires
+ * dessinées par le code (silhouettes, visages, savane), pour que tout reste jouable.
+ */
+
+const BASE = 'assets/combat-hd/';
+const MANIFEST = 'drawn-manifest';
+
+interface DrawnManifest {
+  readonly figures: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
+  readonly portraits: readonly string[];
+  readonly decors: readonly string[];
+}
+
+const figureKey = (people: string, unit: string, pose: string) => `d:fig:${people}:${unit}:${pose}`;
+const portraitKey = (people: string, expression: string) => `d:por:${people}:${expression}`;
+const decorKey = (name: string) => `d:decor:${name}`;
+
+/** Charge le manifeste puis, dans la même passe, les images qu'il annonce. */
+export function preloadDrawn(scene: Phaser.Scene): void {
+  scene.load.json(MANIFEST, `${BASE}manifest.json`);
+  scene.load.once(`filecomplete-json-${MANIFEST}`, (_key: string, _type: string, data: unknown) => {
+    const manifest = data as Partial<DrawnManifest> | undefined;
+    for (const [people, units] of Object.entries(manifest?.figures ?? {})) {
+      for (const [unit, poses] of Object.entries(units)) {
+        for (const pose of Object.keys(poses as object)) {
+          scene.load.image(figureKey(people, unit, pose), `${BASE}${people}/${unit}/${pose}.webp`);
+        }
+      }
+    }
+    for (const people of manifest?.portraits ?? []) {
+      for (const expression of ['neutral', 'shout', 'hurt', 'smile']) {
+        scene.load.image(
+          portraitKey(people, expression),
+          `${BASE}portraits/${people}/${expression}.webp`,
+        );
+      }
+    }
+    for (const name of manifest?.decors ?? []) {
+      scene.load.image(decorKey(name), `${BASE}decor-${name}.webp`);
+    }
+  });
+}
+
+/** Texture d'une pose, et l'inclinaison à lui donner (les poses provisoires s'inclinent). */
+export interface PoseTexture {
+  readonly key: string;
+  readonly angle: number;
+  /** Échelle à l'écran pour un figurant du premier rang. */
+  readonly scale: number;
+}
+
+const PLACEHOLDER_ANGLES: Readonly<Record<Pose, number>> = {
+  idle: 0,
+  attack: 12,
+  hit: -14,
+  down: -78,
+};
+
+export function poseTexture(
+  scene: Phaser.Scene,
+  people: PlayerId,
+  unit: UnitType,
+  pose: Pose,
+  screenHeight: number,
+): PoseTexture {
+  const real = figureKey(people, unit, pose);
+  if (scene.textures.exists(real)) {
+    return { key: real, angle: 0, scale: screenHeight / FIGURE_SOURCE_H };
+  }
+  const key = placeholderFigure(scene, people, unit);
+  return { key, angle: PLACEHOLDER_ANGLES[pose], scale: screenHeight / FIGURE_SOURCE_H };
+}
+
+export function hasRealFigure(scene: Phaser.Scene, people: PlayerId, unit: UnitType): boolean {
+  return scene.textures.exists(figureKey(people, unit, 'idle'));
+}
+
+/**
+ * Sens du regard des portraits fournis : les prompts demandent Carthage tourné vers la
+ * droite et Koush vers la gauche (docs/proto-combat.md). Les provisoires regardent à droite.
+ */
+const PORTRAITS_FACING_LEFT: ReadonlySet<string> = new Set(['koush']);
+
+export function portraitFacesLeft(scene: Phaser.Scene, people: PlayerId): boolean {
+  return scene.textures.exists(portraitKey(people, 'neutral')) && PORTRAITS_FACING_LEFT.has(people);
+}
+
+export function portraitTexture(
+  scene: Phaser.Scene,
+  people: PlayerId,
+  expression: Expression,
+): string {
+  const real = portraitKey(people, expression);
+  return scene.textures.exists(real) ? real : placeholderPortrait(scene, people, expression);
+}
+
+export function decorTexture(scene: Phaser.Scene, terrain: TerrainType): string {
+  for (const name of decorCandidates(terrain)) {
+    if (scene.textures.exists(decorKey(name))) return decorKey(name);
+  }
+  return placeholderDecor(scene);
+}
+
+// ——— Images provisoires ———
+
+const SKIN = 0x8a5a3c;
+const CREAM = 0xf3e6c4;
+const BRONZE = 0xc8963c;
+const WOOD = 0x7a4a26;
+const LINE = 6;
+
+/** Armes d'hast et boucliers, ou arc, selon l'unité. */
+function usesBow(unit: UnitType): boolean {
+  return unit === 'archers' || unit === 'catapulte';
+}
+
+/** Silhouette de 240×420, tournée vers la droite, pieds en bas. */
+function placeholderFigure(scene: Phaser.Scene, people: PlayerId, unit: UnitType): string {
+  const bow = usesBow(unit);
+  const key = `d:ph:fig:${people}:${bow ? 'arc' : 'lance'}`;
+  if (scene.textures.exists(key)) return key;
+  const team = TEAM_COLORS[people];
+  const g = scene.make.graphics({}, false);
+  g.lineStyle(LINE, OUTLINE_COLOR, 1);
+  // Jambes.
+  g.fillStyle(SKIN, 1);
+  g.fillRect(88, 300, 26, 112).strokeRect(88, 300, 26, 112);
+  g.fillRect(124, 300, 26, 112).strokeRect(124, 300, 26, 112);
+  // Tunique.
+  g.fillStyle(team, 1);
+  g.fillRoundedRect(72, 160, 96, 160, 24).strokeRoundedRect(72, 160, 96, 160, 24);
+  g.fillStyle(CREAM, 1).fillRect(74, 268, 92, 14);
+  // Tête et bandeau (ou casque).
+  g.fillStyle(SKIN, 1);
+  g.fillCircle(124, 104, 46).strokeCircle(124, 104, 46);
+  g.fillStyle(bow ? team : BRONZE, 1);
+  g.fillRect(80, 70, 90, 18).strokeRect(80, 70, 90, 18);
+  g.fillStyle(OUTLINE_COLOR, 1).fillCircle(146, 100, 6);
+  if (bow) {
+    // Arc tendu devant le corps.
+    g.lineStyle(10, WOOD, 1);
+    g.beginPath();
+    g.arc(160, 230, 110, -1.1, 1.1, false);
+    g.strokePath();
+    g.lineStyle(3, CREAM, 1).lineBetween(209, 130, 209, 330);
+  } else {
+    // Lance et bouclier rond.
+    g.lineStyle(10, WOOD, 1).lineBetween(200, 30, 200, 412);
+    g.fillStyle(BRONZE, 1).fillTriangle(190, 34, 210, 34, 200, 4);
+    g.fillStyle(CREAM, 1);
+    g.lineStyle(LINE, OUTLINE_COLOR, 1);
+    g.fillCircle(170, 238, 54).strokeCircle(170, 238, 54);
+    g.fillStyle(team, 1).fillCircle(170, 238, 20);
+  }
+  g.generateTexture(key, 240, FIGURE_SOURCE_H);
+  g.destroy();
+  return key;
+}
+
+/** Visage provisoire 256×256 : la bouche et les yeux changent avec l'expression. */
+function placeholderPortrait(
+  scene: Phaser.Scene,
+  people: PlayerId,
+  expression: Expression,
+): string {
+  const key = `d:ph:por:${people}:${expression}`;
+  if (scene.textures.exists(key)) return key;
+  const team = TEAM_COLORS[people];
+  const g = scene.make.graphics({}, false);
+  g.lineStyle(LINE, OUTLINE_COLOR, 1);
+  // Épaules et cape.
+  g.fillStyle(darken(team), 1).fillEllipse(128, 262, 240, 130).strokeEllipse(128, 262, 240, 130);
+  // Tête.
+  g.fillStyle(SKIN, 1).fillCircle(128, 118, 74).strokeCircle(128, 118, 74);
+  g.fillStyle(team, 1).fillRect(58, 58, 140, 24).strokeRect(58, 58, 140, 24);
+  // Yeux.
+  g.fillStyle(OUTLINE_COLOR, 1);
+  if (expression === 'hurt') {
+    g.lineStyle(5, OUTLINE_COLOR, 1);
+    g.lineBetween(92, 112, 112, 104).lineBetween(144, 104, 164, 112);
+  } else if (expression === 'smile') {
+    g.lineStyle(5, OUTLINE_COLOR, 1);
+    g.beginPath().arc(102, 114, 10, Math.PI, 0, false).strokePath();
+    g.beginPath().arc(154, 114, 10, Math.PI, 0, false).strokePath();
+  } else {
+    g.fillCircle(102, 110, 8).fillCircle(154, 110, 8);
+  }
+  // Bouche.
+  g.lineStyle(5, OUTLINE_COLOR, 1);
+  if (expression === 'shout') {
+    g.fillStyle(0x4a1a14, 1).fillEllipse(128, 160, 44, 40).strokeEllipse(128, 160, 44, 40);
+  } else if (expression === 'smile') {
+    g.beginPath()
+      .arc(128, 146, 26, 0.2, Math.PI - 0.2, false)
+      .strokePath();
+  } else if (expression === 'hurt') {
+    g.lineBetween(106, 164, 118, 156)
+      .lineBetween(118, 156, 138, 164)
+      .lineBetween(138, 164, 150, 156);
+  } else {
+    g.lineBetween(108, 160, 148, 160);
+  }
+  g.generateTexture(key, 256, 256);
+  g.destroy();
+  return key;
+}
+
+/** Savane provisoire en 1920×1152 : ciel en dégradé, collines, sol doré, acacias. */
+function placeholderDecor(scene: Phaser.Scene): string {
+  const key = 'd:ph:decor';
+  if (scene.textures.exists(key)) return key;
+  const g = scene.make.graphics({}, false);
+  const top = Phaser.Display.Color.ValueToColor(0x6fb2e8);
+  const bottom = Phaser.Display.Color.ValueToColor(0xf6dfae);
+  const horizon = 760;
+  const bands = 32;
+  for (let i = 0; i < bands; i++) {
+    const c = Phaser.Display.Color.Interpolate.ColorWithColor(top, bottom, bands - 1, i);
+    g.fillStyle(Phaser.Display.Color.GetColor(c.r, c.g, c.b), 1);
+    g.fillRect(0, Math.floor((i * horizon) / bands), DRAWN_W, Math.ceil(horizon / bands) + 1);
+  }
+  g.fillStyle(0xfff3c4, 1).fillCircle(1500, 230, 90);
+  g.fillStyle(0xffffff, 0.85);
+  for (const [x, y, s] of [
+    [300, 180, 1],
+    [820, 120, 0.8],
+    [1250, 300, 0.7],
+  ] as const) {
+    g.fillEllipse(x, y, 260 * s, 70 * s).fillEllipse(x + 70 * s, y - 30 * s, 160 * s, 80 * s);
+  }
+  // Collines au loin.
+  g.fillStyle(0x9fae78, 1);
+  g.fillEllipse(380, horizon + 40, 1100, 260).fillEllipse(1500, horizon + 50, 1200, 220);
+  g.fillStyle(0x8c9c62, 1).fillEllipse(960, horizon + 70, 1300, 200);
+  // Sol.
+  g.fillStyle(0xd9b45a, 1).fillRect(0, horizon + 40, DRAWN_W, DRAWN_H - horizon - 40);
+  g.fillStyle(0xe6c672, 1).fillRect(0, horizon + 40, DRAWN_W, 60);
+  g.fillStyle(0xc9a24c, 1);
+  for (let x = 40; x < DRAWN_W; x += 160) g.fillEllipse(x, 1010 + ((x * 7) % 60), 120, 18);
+  // Acacias.
+  for (const [x, s] of [
+    [220, 1],
+    [700, 0.7],
+    [1380, 0.85],
+    [1760, 0.6],
+  ] as const) {
+    const base = horizon + 60;
+    g.fillStyle(0x6b4a2c, 1).fillRect(x - 8 * s, base - 150 * s, 16 * s, 150 * s);
+    g.fillStyle(0x5f7d3a, 1).fillEllipse(x, base - 160 * s, 300 * s, 70 * s);
+    g.fillStyle(0x6f8f44, 1).fillEllipse(x - 20 * s, base - 175 * s, 200 * s, 40 * s);
+  }
+  g.generateTexture(key, DRAWN_W, DRAWN_H);
+  g.destroy();
+  return key;
+}
+
+// ——— Effets ———
+
+export const SPARK = 'd:fx:spark';
+export const DUST = 'd:fx:dust';
+export const ARROW = 'd:fx:arrow';
+export const SLASH = 'd:fx:slash';
+export const STONE = 'd:fx:stone';
+
+/** Petites textures d'effets, dessinées une fois. */
+export function createEffectTextures(scene: Phaser.Scene): void {
+  const make = (
+    key: string,
+    w: number,
+    h: number,
+    draw: (g: Phaser.GameObjects.Graphics) => void,
+  ) => {
+    if (scene.textures.exists(key)) return;
+    const g = scene.make.graphics({}, false);
+    draw(g);
+    g.generateTexture(key, w, h);
+    g.destroy();
+  };
+  make(SPARK, 48, 48, (g) => {
+    g.fillStyle(0xfff4c8, 1)
+      .fillTriangle(24, 0, 30, 24, 18, 24)
+      .fillTriangle(24, 48, 30, 24, 18, 24);
+    g.fillTriangle(0, 24, 24, 18, 24, 30).fillTriangle(48, 24, 24, 18, 24, 30);
+    g.fillStyle(0xffffff, 1).fillCircle(24, 24, 7);
+  });
+  make(DUST, 64, 64, (g) => {
+    g.fillStyle(0xe8d3a0, 0.9).fillCircle(32, 32, 30);
+    g.fillStyle(0xf6e7c0, 0.9).fillCircle(26, 26, 16);
+  });
+  make(ARROW, 96, 14, (g) => {
+    g.fillStyle(OUTLINE_COLOR, 1).fillRect(0, 5, 84, 5);
+    g.fillStyle(0xe8d8b0, 1).fillRect(8, 6, 70, 3);
+    g.fillStyle(BRONZE, 1).fillTriangle(78, 0, 78, 14, 96, 7);
+    g.fillStyle(CREAM, 1).fillTriangle(0, 0, 16, 6, 0, 6).fillTriangle(0, 14, 16, 8, 0, 8);
+  });
+  make(SLASH, 220, 220, (g) => {
+    g.lineStyle(14, 0xffffff, 1);
+    g.beginPath().arc(110, 110, 90, -2.4, -0.2, false).strokePath();
+    g.lineStyle(6, 0xfff4c8, 1);
+    g.beginPath().arc(110, 110, 72, -2.2, -0.4, false).strokePath();
+  });
+  make(STONE, 64, 64, (g) => {
+    g.fillStyle(0x8a8478, 1).fillCircle(32, 32, 26);
+    g.lineStyle(5, OUTLINE_COLOR, 1).strokeCircle(32, 32, 26);
+    g.fillStyle(0xb0aa9c, 1).fillCircle(24, 24, 8);
+  });
+}

@@ -6,6 +6,7 @@ import { goToCover } from '../launch';
 import type { CaptureSceneData } from '../combat/CaptureScene';
 import type { CombatSceneData } from '../combat/CombatScene';
 import { createFigureAnimations } from '../combat/packs';
+import { drawnStage } from '../drawn/DrawnStage';
 import type { CombatPresenter } from '../animation/EventPlayer';
 import { loadOptions } from '../persistence/options';
 import { BattleController } from '../controller/BattleController';
@@ -139,9 +140,19 @@ export class BattleScene extends Phaser.Scene {
           },
         });
       });
+    // Combats dessinés (prototype) : second canvas en haute définition, par-dessus la carte.
+    const drawn = async (setup: CombatSceneData['setup']) => {
+      this.input.enabled = false;
+      try {
+        await drawnStage.play(this.game.canvas, setup, this.tweens.timeScale);
+      } finally {
+        this.input.enabled = true;
+      }
+    };
     return {
       enabled: () => loadOptions().combatScenes,
-      play: (setup) => launch('Combat', setup),
+      play: (setup) =>
+        loadOptions().combatStyle === 'dessin' ? drawn(setup) : launch('Combat', setup),
       capture: (setup) => launch('Capture', setup),
     };
   }
