@@ -376,8 +376,8 @@ export function feetCenterX(image: RgbaImage, box: Box): number {
 }
 
 export interface PlacedFrame {
-  /** Le dessin dans la planche source. */
-  readonly box: Box;
+  /** Le dessin, séparé de ses voisins. */
+  readonly frame: SeparatedFrame;
   /** Sa place dans le cadre commun de l'animation (pixels source). */
   readonly dx: number;
   readonly dy: number;
@@ -398,26 +398,31 @@ export interface SequenceLayout {
  * Mise en page d'une animation tirée d'une planche « caméra fixe » : chaque dessin garde sa
  * position dans sa case (le mouvement d'une image à l'autre est celui dessiné), toutes les
  * images partagent un même cadre, et l'ancrage est pris aux pieds de la première image.
- * `boxes` : les dessins trouvés dans la planche (un par case), `cellWidth` : largeur d'une case.
+ * `frames` : les dessins séparés (un par case), `cellWidth` : largeur d'une case.
  */
 export function layoutSequence(
-  image: RgbaImage,
-  boxes: readonly Box[],
+  frames: readonly SeparatedFrame[],
   cellWidth: number,
   group: { readonly anim: string; readonly from: number; readonly count: number },
 ): SequenceLayout {
   const local = Array.from({ length: group.count }, (_, k) => {
     const i = group.from + k;
-    const box = boxes[i] ?? { x: i * cellWidth, y: 0, w: 1, h: 1 };
-    return { box, x: box.x - i * cellWidth, y: box.y };
+    const frame = frames[i] ?? {
+      box: { x: i * cellWidth, y: 0, w: 1, h: 1 },
+      pixels: { width: 1, height: 1, data: new Uint8ClampedArray(4) },
+    };
+    return { frame, x: frame.box.x - i * cellWidth, y: frame.box.y };
   });
   const minX = Math.min(...local.map((f) => f.x));
   const minY = Math.min(...local.map((f) => f.y));
-  const maxX = Math.max(...local.map((f) => f.x + f.box.w));
-  const maxY = Math.max(...local.map((f) => f.y + f.box.h));
+  const maxX = Math.max(...local.map((f) => f.x + f.frame.box.w));
+  const maxY = Math.max(...local.map((f) => f.y + f.frame.box.h));
   const first = local[0];
-  const anchorX = first ? feetCenterX(image, first.box) - group.from * cellWidth : minX;
-  const anchorY = first ? first.y + first.box.h : maxY;
+  const anchorX = first
+    ? first.x +
+      feetCenterX(first.frame.pixels, { x: 0, y: 0, w: first.frame.box.w, h: first.frame.box.h })
+    : minX;
+  const anchorY = first ? first.y + first.frame.box.h : maxY;
   const width = maxX - minX;
   const height = maxY - minY;
   return {
@@ -426,6 +431,95 @@ export function layoutSequence(
     height,
     originX: (anchorX - minX) / width,
     originY: (anchorY - minY) / height,
-    frames: local.map((f) => ({ box: f.box, dx: f.x - minX, dy: f.y - minY })),
+    frames: local.map((f) => ({ frame: f.frame, dx: f.x - minX, dy: f.y - minY })),
   };
+}
+
+// ——— Séparation des dessins ———
+
+export interface SeparatedFrame {
+  /** Cadre du dessin dans la planche. */
+  readonly box: Box;
+  /** Le dessin seul (sans les morceaux des voisins), à la taille du cadre. */
+  readonly pixels: RgbaImage;
+}
+
+/**
+ * Sépare une planche en `count` dessins de gauche à droite, même quand ils se touchent ou
+ * que leurs cadres se chevauchent (traits de vitesse, cape, lance qui dépasse) : chaque
+ * morceau de dessin (pixels non transparents reliés entre eux) va à la case où tombe son
+ * centre. Chaque dessin ne garde que ses propres pixels : pas de pied ni de cape du voisin.
+ */
+export function separateFrames(image: RgbaImage, count: number): SeparatedFrame[] {
+  const { width, height, data } = image;
+  const labels = new Int32Array(width * height).fill(-1);
+  const owner: number[] = [];
+  const cellWidth = width / count;
+  const stack: number[] = [];
+  let next = 0;
+  for (let start = 0; start < width * height; start++) {
+    if (labels[start] !== -1 || (data[start * 4 + 3] ?? 0) === 0) continue;
+    const label = next++;
+    labels[start] = label;
+    stack.push(start);
+    let sumX = 0;
+    let pixels = 0;
+    while (stack.length > 0) {
+      const i = stack.pop() as number;
+      const x = i % width;
+      const y = (i - x) / width;
+      sumX += x;
+      pixels++;
+      for (const [nx, ny] of [
+        [x + 1, y],
+        [x - 1, y],
+        [x, y + 1],
+        [x, y - 1],
+      ] as const) {
+        if (nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+        const n = ny * width + nx;
+        if (labels[n] !== -1 || (data[n * 4 + 3] ?? 0) === 0) continue;
+        labels[n] = label;
+        stack.push(n);
+      }
+    }
+    owner[label] = Math.min(count - 1, Math.max(0, Math.floor(sumX / pixels / cellWidth)));
+  }
+
+  const boxes = Array.from({ length: count }, () => ({
+    minX: Infinity,
+    minY: Infinity,
+    maxX: -1,
+    maxY: -1,
+  }));
+  for (let i = 0; i < width * height; i++) {
+    const label = labels[i] ?? -1;
+    if (label < 0) continue;
+    const b = boxes[owner[label] ?? 0];
+    if (!b) continue;
+    const x = i % width;
+    const y = (i - x) / width;
+    if (x < b.minX) b.minX = x;
+    if (x > b.maxX) b.maxX = x;
+    if (y < b.minY) b.minY = y;
+    if (y > b.maxY) b.maxY = y;
+  }
+
+  return boxes.map((b, frame) => {
+    if (b.maxX < 0) {
+      const box = { x: Math.round(frame * cellWidth), y: 0, w: 1, h: 1 };
+      return { box, pixels: { width: 1, height: 1, data: new Uint8ClampedArray(4) } };
+    }
+    const box = { x: b.minX, y: b.minY, w: b.maxX - b.minX + 1, h: b.maxY - b.minY + 1 };
+    const out = new Uint8ClampedArray(box.w * box.h * 4);
+    for (let y = 0; y < box.h; y++) {
+      for (let x = 0; x < box.w; x++) {
+        const i = (box.y + y) * width + box.x + x;
+        const label = labels[i] ?? -1;
+        if (label < 0 || owner[label] !== frame) continue;
+        out.set(data.subarray(i * 4, i * 4 + 4), (y * box.w + x) * 4);
+      }
+    }
+    return { box, pixels: { width: box.w, height: box.h, data: out } };
+  });
 }

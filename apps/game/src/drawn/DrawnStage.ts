@@ -31,10 +31,13 @@ class DrawnStage {
   private game: Phaser.Game | null = null;
   private ready: Promise<void> | null = null;
   private overlay: HTMLDivElement | null = null;
-  private host: HTMLCanvasElement | null = null;
+  private host: HTMLElement | null = null;
 
-  /** Joue un combat par-dessus le canvas `host` ; se résout au retour à la carte. */
-  async play(host: HTMLCanvasElement, setup: CombatSetup, speed: number): Promise<void> {
+  /**
+   * Joue un combat par-dessus l'élément `host` (le canvas de la carte, ou la zone du banc
+   * d'essai) ; se résout au retour à la carte.
+   */
+  async play(host: HTMLElement, setup: CombatSetup, speed: number): Promise<void> {
     this.host = host;
     await this.ensure();
     const overlay = this.overlay;

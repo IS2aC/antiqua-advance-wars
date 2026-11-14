@@ -246,11 +246,20 @@ Frames 3-4: victory.
 
 Remplace `[STYLE BLOCK]` par le bloc de style ci-dessus avant d'envoyer.
 
+### Banc d'essai
+
+Entrée « Animation (proto) » de la page de garde (`jeu.html?mode=proto`) : on choisit
+l'attaquant, le défenseur, les PV avant et après, la riposte et la vitesse (dont un ralenti
+×0,25 pour examiner chaque image), puis on rejoue le combat autant de fois que nécessaire.
+Provisoire : à retirer quand les combats dessinés seront validés (`src/drawn/ProtoBench.ts`
+et l'entrée du menu dans `index.html`).
+
 ### Traitement et réglages
 
-`pnpm assets:dessin` découpe chaque planche en suivant les vides entre les dessins, mais garde
-la position de chaque dessin dans sa case : le mouvement d'une image à l'autre est celui que
-ChatGPT a dessiné. Chaque animation est ancrée aux pieds de sa première image, et mise à la
+`pnpm assets:dessin` sépare les dessins d'une planche même quand ils se touchent ou se
+chevauchent (traits de vitesse, cape, lance) : chaque morceau de dessin va à la case où tombe
+son centre, et chaque image ne garde que ses propres pixels. La position de chaque dessin dans
+sa case est conservée : le mouvement d'une image à l'autre est celui que ChatGPT a dessiné. Chaque animation est ancrée aux pieds de sa première image, et mise à la
 même échelle que la planche de 4 poses de l'unité.
 
 ChatGPT ne dessine pas toujours le personnage à la même taille d'une planche à l'autre. Une

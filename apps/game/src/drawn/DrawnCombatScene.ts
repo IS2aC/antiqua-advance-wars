@@ -106,6 +106,8 @@ export class DrawnCombatScene extends StagedScene {
 
   create(data: DrawnCombatData): void {
     this.beginStage(data.speed);
+    // Les animations dessinées suivent la même vitesse (ralenti du banc d'essai compris).
+    this.anims.globalTimeScale = data.speed;
     createEffectTextures(this);
     createDrawnAnimations(this);
     const { setup } = data;

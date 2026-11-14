@@ -12,7 +12,7 @@
         },
         "hit": {
           "w": 243,
-          "h": 373
+          "h": 374
         },
         "down": {
           "w": 358,
@@ -28,7 +28,7 @@
         },
         "attack": {
           "w": 374,
-          "h": 459
+          "h": 460
         },
         "hit": {
           "w": 314,
@@ -46,31 +46,31 @@
       "fantassin": {
         "attack": {
           "frames": 4,
-          "w": 386,
+          "w": 470,
           "h": 361,
-          "originX": 0.5658,
+          "originX": 0.4122,
           "originY": 1
         },
         "run": {
           "frames": 2,
-          "w": 386,
+          "w": 395,
           "h": 384,
-          "originX": 0.7153,
+          "originX": 0.659,
           "originY": 1
         },
         "hit": {
           "frames": 2,
-          "w": 357,
+          "w": 337,
           "h": 428,
-          "originX": 0.6509,
+          "originX": 0.6295,
           "originY": 1
         },
         "fall": {
           "frames": 2,
           "w": 344,
-          "h": 374,
+          "h": 375,
           "originX": 0.6519,
-          "originY": 0.9867
+          "originY": 0.9848
         },
         "victory": {
           "frames": 2,
@@ -82,9 +82,9 @@
         "idle": {
           "frames": 4,
           "w": 265,
-          "h": 430,
+          "h": 431,
           "originX": 0.5862,
-          "originY": 1
+          "originY": 0.9985
         }
       }
     }

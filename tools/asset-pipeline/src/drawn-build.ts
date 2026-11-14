@@ -26,10 +26,12 @@ import {
   classifyDrawnFile,
   figureScale,
   layoutSequence,
+  separateFrames,
   portraitScale,
   removeBackground,
   splitColumns,
 } from './drawn';
+import type { PlacedFrame } from './drawn';
 import { loadImage, type Box, type RgbaImage } from './image';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -86,23 +88,18 @@ async function writePiece(
 }
 
 /**
- * Image d'une séquence : le dessin posé à sa place dans le cadre commun de l'animation
- * (transparent autour), puis mis à l'échelle.
+ * Image d'une séquence : le dessin (séparé de ses voisins) posé à sa place dans le cadre
+ * commun de l'animation, transparent autour, puis mis à l'échelle.
  */
 async function writeFrame(
-  image: RgbaImage,
-  frame: { readonly box: Box; readonly dx: number; readonly dy: number },
+  placed: PlacedFrame,
   layout: { readonly width: number; readonly height: number },
-  scale: number,
   w: number,
   h: number,
   output: string,
 ): Promise<void> {
-  const { box } = frame;
-  const piece = await raw(image)
-    .extract({ left: box.x, top: box.y, width: box.w, height: box.h })
-    .png()
-    .toBuffer();
+  const piece = await raw(placed.frame.pixels).png().toBuffer();
+  const frame = placed;
   const canvas = await sharp({
     create: {
       width: Math.ceil(layout.width),
@@ -180,9 +177,10 @@ async function main(): Promise<void> {
 
     if (role.kind === 'sequence') {
       const key = `${role.people}-${role.unit}`;
-      const boxes = splitColumns(image, SEQUENCE_CELLS);
+      const frames = separateFrames(image, SEQUENCE_CELLS);
       // Sans planche de poses : la première image debout fait la hauteur de référence.
-      const base = poseScales.get(key) ?? FIGURE_IDLE_HEIGHT / (boxes[0]?.h ?? FIGURE_IDLE_HEIGHT);
+      const base =
+        poseScales.get(key) ?? FIGURE_IDLE_HEIGHT / (frames[0]?.box.h ?? FIGURE_IDLE_HEIGHT);
       const fix = scaleFixes[parse(file).name] ?? 1;
       const scale = base * fix;
       const dir = join(OUT, role.people, role.unit);
@@ -190,19 +188,11 @@ async function main(): Promise<void> {
       const cellWidth = image.width / SEQUENCE_CELLS;
       const anims = ((manifest.anims[role.people] ??= {})[role.unit] ??= {});
       for (const group of SEQUENCE_SHEETS[role.sheet]) {
-        const layout = layoutSequence(image, boxes, cellWidth, group);
+        const layout = layoutSequence(frames, cellWidth, group);
         const w = Math.max(1, Math.round(layout.width * scale));
         const h = Math.max(1, Math.round(layout.height * scale));
         for (const [i, frame] of layout.frames.entries()) {
-          await writeFrame(
-            image,
-            frame,
-            layout,
-            scale,
-            w,
-            h,
-            join(dir, `${layout.anim}-${i}.webp`),
-          );
+          await writeFrame(frame, layout, w, h, join(dir, `${layout.anim}-${i}.webp`));
         }
         anims[layout.anim] = {
           frames: layout.frames.length,
@@ -219,15 +209,22 @@ async function main(): Promise<void> {
     }
 
     if (role.kind === 'figure') {
-      const boxes = splitColumns(image, DRAWN_POSES.length);
-      const scale = figureScale(boxes);
+      const frames = separateFrames(image, DRAWN_POSES.length);
+      const scale = figureScale(frames.map((frame) => frame.box));
       poseScales.set(`${role.people}-${role.unit}`, scale);
       const dir = join(OUT, role.people, role.unit);
       await mkdir(dir, { recursive: true });
       const poses: Record<string, PoseInfo> = {};
       for (const [i, pose] of DRAWN_POSES.entries()) {
-        const box = boxes[i];
-        if (box) poses[pose] = await writePiece(image, box, scale, join(dir, `${pose}.webp`));
+        const frame = frames[i];
+        if (frame) {
+          poses[pose] = await writePiece(
+            frame.pixels,
+            { x: 0, y: 0, w: frame.box.w, h: frame.box.h },
+            scale,
+            join(dir, `${pose}.webp`),
+          );
+        }
       }
       (manifest.figures[role.people] ??= {})[role.unit] = poses;
       console.log(

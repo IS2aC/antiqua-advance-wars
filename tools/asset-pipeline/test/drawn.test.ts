@@ -5,6 +5,7 @@ import {
   classifyDrawnFile,
   feetCenterX,
   layoutSequence,
+  separateFrames,
   figureScale,
   removeBackground,
   splitColumns,
@@ -186,12 +187,32 @@ describe('séquences « caméra fixe »', () => {
       const second = x >= 66 && x < 76 && y >= 10 && y < 40;
       return first || second ? INK : [0, 0, 0, 0];
     });
-    const boxes = splitColumns(sheet, 2);
-    expect(feetCenterX(sheet, boxes[0]!)).toBeCloseTo(14.5);
-    const layout = layoutSequence(sheet, boxes, 50, { anim: 'run', from: 0, count: 2 });
+    const frames = separateFrames(sheet, 2);
+    expect(feetCenterX(sheet, frames[0]!.box)).toBeCloseTo(14.5);
+    const layout = layoutSequence(frames, 50, { anim: 'run', from: 0, count: 2 });
     expect(layout.width).toBe(16);
     expect(layout.frames.map((f) => f.dx)).toEqual([0, 6]);
     expect(layout.originX).toBeCloseTo(4.5 / 16);
     expect(layout.originY).toBe(1);
+  });
+
+  it('sépare des dessins dont les cadres se chevauchent', () => {
+    // Case 1 : un corps (10..30) ; case 2 : un corps (60..80) avec une traînée qui
+    // déborde dans la case 1 (40..58), reliée à lui. Aucune colonne vide entre les deux.
+    const sheet = image(100, 40, (x, y) => {
+      const body1 = x >= 10 && x < 30 && y >= 5 && y < 40;
+      const body2 = x >= 60 && x < 80 && y >= 5 && y < 40;
+      const trail = x >= 25 && x < 60 && y >= 20 && y < 22 && x >= 40;
+      const foot1 = x >= 30 && x < 45 && y >= 37 && y < 40;
+      return body1 || body2 || trail || foot1 ? INK : [0, 0, 0, 0];
+    });
+    const [a, b] = separateFrames(sheet, 2);
+    expect(a!.box).toEqual({ x: 10, y: 5, w: 35, h: 35 });
+    expect(b!.box).toEqual({ x: 40, y: 5, w: 40, h: 35 });
+    // Le pied du premier dessin (x 40..44, en bas) n'apparaît pas dans le second.
+    const alphaIn = (f: typeof b, x: number, y: number) =>
+      f!.pixels.data[((y - f!.box.y) * f!.box.w + (x - f!.box.x)) * 4 + 3];
+    expect(alphaIn(b, 42, 38)).toBe(0);
+    expect(alphaIn(b, 42, 21)).toBe(255);
   });
 });
