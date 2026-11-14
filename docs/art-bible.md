@@ -70,3 +70,7 @@ Les prompts complets (blocs de style, fiches unités, terrains, bâtiments) sont
 - **Autotiling** : les connexions de chaque pièce de route ou de rivière sont détectées sur ses bords. Frames : `terrain/route/<masque>`, `terrain/riviere/<masque>`, masque = lettres `n e s w` dans cet ordre (`ns`, `nes`…), `o` pour une pièce isolée ; un doublon devient `<masque>-2`. Le jeu choisit la pièce exacte, sinon la plus proche.
 - **Autres frames** : `terrain/<type>/<0-3>` (variantes de base), `terrain/pont/ew` (pont pour une route est-ouest, donc fleuve nord-sud) et `terrain/pont/ns`, `building/<type>/<neutre|faction>` (32×64), et un atlas d'unités par faction (`units-<faction>`).
 - **Retouche facultative** : `art/clean/<nom de frame>.png` (même taille que la frame) remplace la sortie automatique, ex. `art/clean/unit/fantassin/idle/0.png`.
+
+## Scènes de combat
+
+Figurants 64×64 par peuple et décors par terrain : gabarits, emplacements et prompts dans `docs/art-combat.md`.
