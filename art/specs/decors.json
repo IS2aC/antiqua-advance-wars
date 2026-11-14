@@ -1,0 +1,14 @@
+{
+  "_doc": "Un décor par terrain (le jeu prend `decors/<terrain>.png`, sinon `decors/savane.png`). Format large, recadré en 1920×1152 par `pnpm assets:dessin`.",
+  "commun": "A wide background painting for a 2D animated film battle scene, no characters. Style: classic hand-drawn 2D feature animation background, 1990s look. Simple, readable shapes, soft flat color areas with gentle shading, warm sunny light from the top left. The lower third is a flat, simple, uncluttered ground where characters will stand. No characters, no animals, no text, no frame.",
+  "terrains": {
+    "savane": "An African savanna: flat golden grass ground, a few acacia trees in the middle distance, soft hills far away, a bright warm sky with simple rounded clouds.",
+    "plaine": "Open green-gold grassland with a dirt path, a few small bushes, gentle hills far away, bright sky.",
+    "foret": "The edge of a lush tropical forest: big trees and palms in the background, dappled light, flat grassy ground in front.",
+    "colline": "Rolling grassy hills with rocks, a hilltop in the background, flat grassy ground in front.",
+    "montagne": "Rocky mountain pass with ochre cliffs and distant peaks, flat stony ground in front.",
+    "desert": "Golden sand dunes under a hot pale sky, a few dry shrubs, flat packed sand in front.",
+    "marais": "Papyrus marsh with reeds and still water in the background, flat muddy ground with grass in front.",
+    "riviere": "A wide calm river with reeds and palm trees on the far bank, flat sandy riverbank in front."
+  }
+}

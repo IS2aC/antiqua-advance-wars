@@ -1,9 +1,12 @@
 /**
  * Combats dessinés (prototype) : art/raw/combat-dessine → apps/game/public/assets/combat-hd.
  *
- * - `peuples/<peuple>/<unité>/poses.png` : 4 poses (repos, attaque, coup reçu, à terre) ;
- * - `peuples/<peuple>/<unité>/<planche>.png` : séquences (repos, attaque, charge, chute,
- *   sonne), 4 images chacune, à la même échelle que les poses ;
+ * - `unites/<unité>/poses.png` : 4 poses (repos, attaque, coup reçu, à terre), en rouge,
+ *   recolorées pour chaque peuple (comme les sprites de la carte) ;
+ * - `unites/<unité>/<planche>.png` : séquences (repos, attaque, charge, chute, sonne),
+ *   4 images chacune, à la même échelle que les poses ;
+ * - `peuples/<peuple>/<unité>/<planche>.png` : planche propre à un peuple, prioritaire et
+ *   non recolorée ;
  * - `portraits/<peuple>.png` : 4 expressions → une image par expression (256×256) ;
  * - `decors/<nom>.png` : décor recadré en 1920×1152 ;
  * - `reglages.json` : corrections d'échelle par planche et calages par animation.
@@ -27,6 +30,8 @@ import {
   SEQUENCE_SHEETS,
   classifyDrawnPath,
   figureScale,
+  recolorTeam,
+  toRamp,
   layoutSequence,
   separateFrames,
   portraitScale,
@@ -34,8 +39,9 @@ import {
   splitColumns,
   todoReport,
 } from './drawn';
-import type { PlacedFrame } from './drawn';
+import type { DrawnFile, PlacedFrame, SeparatedFrame, SequenceSheet } from './drawn';
 import { loadImage, type Box, type RgbaImage } from './image';
+import { TEAM_RAMPS, type Faction } from './palette';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../..');
 const SOURCE = join(ROOT, 'art/raw/combat-dessine');
@@ -121,11 +127,14 @@ async function writeFrame(
 }
 
 interface Settings {
-  /** Correction d'échelle par planche : « carthage/fantassin/repos » → 0.92. */
+  /**
+   * Correction d'échelle par planche : « fantassin/repos » (planche commune) ou
+   * « carthage/fantassin/repos » (planche propre à un peuple) → 0.92.
+   */
   readonly scales: Record<string, number>;
   /**
    * Calage par animation, en pixels de l'image finale (positif : le personnage recule) :
-   * « carthage/fantassin » → { attack: 12 }.
+   * « fantassin » ou « carthage/fantassin » → { attack: 12 }.
    */
   readonly shifts: Record<string, Record<string, number>>;
 }
@@ -171,24 +180,60 @@ async function listImages(dir: string): Promise<string[]> {
   }
 }
 
+type UnitRole = Extract<DrawnFile, { kind: 'figure' | 'sequence' }>;
+const sheetOf = (role: UnitRole): string => (role.kind === 'figure' ? 'poses' : role.sheet);
+
+interface Sheet {
+  readonly frames: readonly SeparatedFrame[];
+  /** Largeur d'une case de la planche. */
+  readonly cellWidth: number;
+}
+
+/** Planche détourée et séparée en 4 dessins, gardée pour les 4 peuples. */
+const separated = new Map<string, Sheet>();
+async function framesOf(file: string): Promise<Sheet> {
+  const known = separated.get(file);
+  if (known) return known;
+  const image = removeBackground(await loadImage(join(SOURCE, file)), { pockets: true });
+  const sheet = {
+    frames: separateFrames(image, SEQUENCE_CELLS),
+    cellWidth: image.width / SEQUENCE_CELLS,
+  };
+  separated.set(file, sheet);
+  return sheet;
+}
+
+const SOURCE_RAMP = toRamp(TEAM_RAMPS.carthage);
+
+/** Les dessins d'une planche pour un peuple : recolorés si la planche est commune. */
+async function framesFor(file: string, shared: boolean, people: Faction): Promise<Sheet> {
+  const sheet = await framesOf(file);
+  if (!shared) return sheet;
+  const ramp = toRamp(TEAM_RAMPS[people]);
+  return {
+    cellWidth: sheet.cellWidth,
+    frames: sheet.frames.map((frame) => ({
+      box: frame.box,
+      pixels: recolorTeam(frame.pixels, SOURCE_RAMP, ramp),
+    })),
+  };
+}
+
 async function main(): Promise<void> {
   await rm(OUT, { recursive: true, force: true });
   await mkdir(OUT, { recursive: true });
   const manifest: DrawnManifest = { figures: {}, anims: {}, portraits: [], decors: [] };
-  /** Échelle des poses de chaque unité : les séquences s'y alignent. */
-  const poseScales = new Map<string, number>();
   const settings = await readSettings();
   const files = await listImages(SOURCE);
   if (files.length === 0)
     console.log(`[dessin] aucune image dans ${SOURCE} : tout est provisoire.`);
   /** Chemins reconnus, sans extension : pour la liste « à faire ». */
   const present = new Set<string>();
+  /** Planches d'unité : « <peuple|*>/<unité>/<planche> » → fichier. */
+  const unitSheets = new Map<string, string>();
 
-  // Les séquences en dernier : elles prennent l'échelle des poses de leur unité.
-  const isSequence = (f: string) =>
-    classifyDrawnPath(f, PEOPLES, COMBAT_UNITS)?.kind === 'sequence';
-  const ordered = [...files.filter((f) => !isSequence(f)), ...files.filter(isSequence)];
-  for (const file of ordered) {
+  for (const file of files) {
+    if (file.startsWith('archives/')) continue;
     const role = classifyDrawnPath(file, PEOPLES, COMBAT_UNITS);
     if (!role) {
       console.warn(`[dessin] ${file} : emplacement non reconnu, ignoré (voir A-FAIRE.md).`);
@@ -207,110 +252,129 @@ async function main(): Promise<void> {
       continue;
     }
 
-    const source = await loadImage(input);
-    const image = removeBackground(source, { pockets: role.kind !== 'portrait' });
-
-    if (role.kind === 'sequence') {
-      const key = `${role.people}/${role.unit}`;
-      const frames = separateFrames(image, SEQUENCE_CELLS);
-      // Sans planche de poses : la première image debout fait la hauteur de référence.
-      const base =
-        poseScales.get(key) ?? FIGURE_IDLE_HEIGHT / (frames[0]?.box.h ?? FIGURE_IDLE_HEIGHT);
-      const fix = settings.scales[`${key}/${role.sheet}`] ?? 1;
-      const scale = base * fix;
-      const dir = join(OUT, role.people, role.unit);
-      await mkdir(dir, { recursive: true });
-      const cellWidth = image.width / SEQUENCE_CELLS;
-      const anims = ((manifest.anims[role.people] ??= {})[role.unit] ??= {});
-      for (const group of SEQUENCE_SHEETS[role.sheet]) {
-        const layout = layoutSequence(frames, cellWidth, group);
-        const w = Math.max(1, Math.round(layout.width * scale));
-        const h = Math.max(1, Math.round(layout.height * scale));
-        for (const [i, frame] of layout.frames.entries()) {
-          await writeFrame(frame, layout, w, h, join(dir, `${layout.anim}-${i}.webp`));
-        }
-        // Calage manuel (pixels de l'image finale, positif = le personnage recule).
-        const shift = settings.shifts[key]?.[layout.anim] ?? 0;
-        anims[layout.anim] = {
-          frames: layout.frames.length,
-          w,
-          h,
-          originX: Number((layout.originX + shift / w).toFixed(4)),
-          originY: Number(layout.originY.toFixed(4)),
-        };
-      }
-      console.log(
-        `[dessin] ${file} → ${role.people}/${role.unit} : ${SEQUENCE_SHEETS[role.sheet].map((g) => g.anim).join(', ')} (×${scale.toFixed(2)}${fix !== 1 ? `, correction ×${fix}` : ''})`,
-      );
+    if (role.kind === 'figure' || role.kind === 'sequence') {
+      unitSheets.set(`${role.people ?? '*'}/${role.unit}/${sheetOf(role)}`, file);
       continue;
     }
 
-    if (role.kind === 'figure') {
-      const frames = separateFrames(image, DRAWN_POSES.length);
-      const scale = figureScale(frames.map((frame) => frame.box));
-      poseScales.set(`${role.people}/${role.unit}`, scale);
-      const dir = join(OUT, role.people, role.unit);
-      await mkdir(dir, { recursive: true });
-      const poses: Record<string, PoseInfo> = {};
-      for (const [i, pose] of DRAWN_POSES.entries()) {
-        const frame = frames[i];
-        if (frame) {
-          poses[pose] = await writePiece(
+    await writePortraits(file, role.people);
+    manifest.portraits.push(role.people);
+    console.log(`[dessin] ${file} → portraits « ${role.people} »`);
+  }
+
+  // Unités : pour chaque peuple, sa planche propre, sinon la planche commune recolorée.
+  // Les poses d'abord : elles donnent l'échelle des séquences.
+  for (const people of PEOPLES) {
+    for (const unit of COMBAT_UNITS) {
+      const pick = (sheet: string) => {
+        const own = unitSheets.get(`${people}/${unit}/${sheet}`);
+        if (own) return { file: own, shared: false, key: `${people}/${unit}/${sheet}` };
+        const common = unitSheets.get(`*/${unit}/${sheet}`);
+        return common ? { file: common, shared: true, key: `${unit}/${sheet}` } : null;
+      };
+      const dir = join(OUT, people, unit);
+      let poseScale: number | null = null;
+      const poses = pick('poses');
+      if (poses) {
+        const { frames } = await framesFor(poses.file, poses.shared, people);
+        poseScale = figureScale(frames.map((frame) => frame.box));
+        await mkdir(dir, { recursive: true });
+        const written: Record<string, PoseInfo> = {};
+        for (const [i, pose] of DRAWN_POSES.entries()) {
+          const frame = frames[i];
+          if (!frame) continue;
+          written[pose] = await writePiece(
             frame.pixels,
             { x: 0, y: 0, w: frame.box.w, h: frame.box.h },
-            scale,
+            poseScale,
             join(dir, `${pose}.webp`),
           );
         }
+        (manifest.figures[people] ??= {})[unit] = written;
+        console.log(
+          `[dessin] ${poses.file} → ${people}/${unit} : ${Object.keys(written).length} poses (×${poseScale.toFixed(2)}${poses.shared ? ', recoloré' : ''})`,
+        );
       }
-      (manifest.figures[role.people] ??= {})[role.unit] = poses;
-      console.log(
-        `[dessin] ${file} → ${role.people}/${role.unit} : ${Object.keys(poses).length} poses (×${scale.toFixed(2)})`,
-      );
-      continue;
-    }
 
-    // Cadre carré pris en haut : la tête et le haut des épaules.
-    const boxes = splitColumns(image, DRAWN_EXPRESSIONS.length).map((box) => ({
-      ...box,
-      h: Math.min(box.h, box.w),
-    }));
-    const scale = portraitScale(boxes);
-    const dir = join(OUT, 'portraits', role.people);
-    await mkdir(dir, { recursive: true });
-    for (const [i, expression] of DRAWN_EXPRESSIONS.entries()) {
-      const box = boxes[i];
-      if (!box) continue;
-      // Chaque expression est posée en bas et au centre d'un carré transparent.
-      const tmp = join(dir, `${expression}.tmp.webp`);
-      const size = await writePiece(image, box, scale, tmp);
-      await sharp({
-        create: {
-          width: PORTRAIT_SIZE,
-          height: PORTRAIT_SIZE,
-          channels: 4,
-          background: { r: 0, g: 0, b: 0, alpha: 0 },
-        },
-      })
-        .composite([
-          {
-            input: tmp,
-            left: Math.round((PORTRAIT_SIZE - size.w) / 2),
-            top: PORTRAIT_SIZE - size.h,
-          },
-        ])
-        .webp({ quality: 90, alphaQuality: 100 })
-        .toFile(join(dir, `${expression}.webp`));
-      await rm(tmp);
+      for (const sheet of Object.keys(SEQUENCE_SHEETS) as SequenceSheet[]) {
+        const source = pick(sheet);
+        if (!source) continue;
+        const { frames, cellWidth } = await framesFor(source.file, source.shared, people);
+        // Sans planche de poses : la première image debout fait la hauteur de référence.
+        const base = poseScale ?? FIGURE_IDLE_HEIGHT / (frames[0]?.box.h ?? FIGURE_IDLE_HEIGHT);
+        const fix =
+          settings.scales[`${people}/${unit}/${sheet}`] ?? settings.scales[source.key] ?? 1;
+        const scale = base * fix;
+        await mkdir(dir, { recursive: true });
+        const anims = ((manifest.anims[people] ??= {})[unit] ??= {});
+        for (const group of SEQUENCE_SHEETS[sheet]) {
+          const layout = layoutSequence(frames, cellWidth, group);
+          const w = Math.max(1, Math.round(layout.width * scale));
+          const h = Math.max(1, Math.round(layout.height * scale));
+          for (const [i, frame] of layout.frames.entries()) {
+            await writeFrame(frame, layout, w, h, join(dir, `${layout.anim}-${i}.webp`));
+          }
+          // Calage manuel (pixels de l'image finale, positif = le personnage recule).
+          const shift =
+            settings.shifts[`${people}/${unit}`]?.[layout.anim] ??
+            settings.shifts[unit]?.[layout.anim] ??
+            0;
+          anims[layout.anim] = {
+            frames: layout.frames.length,
+            w,
+            h,
+            originX: Number((layout.originX + shift / w).toFixed(4)),
+            originY: Number(layout.originY.toFixed(4)),
+          };
+        }
+        console.log(
+          `[dessin] ${source.file} → ${people}/${unit} : ${SEQUENCE_SHEETS[sheet].map((g) => g.anim).join(', ')} (×${scale.toFixed(2)}${fix !== 1 ? `, correction ×${fix}` : ''}${source.shared ? ', recoloré' : ''})`,
+        );
+      }
     }
-    manifest.portraits.push(role.people);
-    console.log(`[dessin] ${file} → portraits « ${role.people} »`);
   }
 
   await writeFile(join(OUT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   await mkdir(SOURCE, { recursive: true });
   await writeFile(join(SOURCE, 'A-FAIRE.md'), todoReport(present, PEOPLES, COMBAT_UNITS));
   console.log(`[dessin] manifeste écrit, liste à jour : art/raw/combat-dessine/A-FAIRE.md`);
+}
+
+/** Portraits : un carré par expression, la tête et le haut des épaules. */
+async function writePortraits(file: string, people: string): Promise<void> {
+  const image = removeBackground(await loadImage(join(SOURCE, file)), { pockets: false });
+  const boxes = splitColumns(image, DRAWN_EXPRESSIONS.length).map((box) => ({
+    ...box,
+    h: Math.min(box.h, box.w),
+  }));
+  const scale = portraitScale(boxes);
+  const dir = join(OUT, 'portraits', people);
+  await mkdir(dir, { recursive: true });
+  for (const [i, expression] of DRAWN_EXPRESSIONS.entries()) {
+    const box = boxes[i];
+    if (!box) continue;
+    // Chaque expression est posée en bas et au centre d'un carré transparent.
+    const tmp = join(dir, `${expression}.tmp.webp`);
+    const size = await writePiece(image, box, scale, tmp);
+    await sharp({
+      create: {
+        width: PORTRAIT_SIZE,
+        height: PORTRAIT_SIZE,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      },
+    })
+      .composite([
+        {
+          input: tmp,
+          left: Math.round((PORTRAIT_SIZE - size.w) / 2),
+          top: PORTRAIT_SIZE - size.h,
+        },
+      ])
+      .webp({ quality: 90, alphaQuality: 100 })
+      .toFile(join(dir, `${expression}.webp`));
+    await rm(tmp);
+  }
 }
 
 main().catch((error: unknown) => {

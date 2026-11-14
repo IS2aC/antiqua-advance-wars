@@ -54,6 +54,21 @@ describe('classifyDrawnPath', () => {
       name: 'savane',
     });
   });
+  it('reconnaît les planches communes à tous les peuples', () => {
+    expect(classifyDrawnPath('unites/archers/poses.png', peoples, units)).toEqual({
+      kind: 'figure',
+      people: null,
+      unit: 'archers',
+    });
+    expect(classifyDrawnPath('unites/fantassin/sonne.png', peoples, units)).toEqual({
+      kind: 'sequence',
+      people: null,
+      unit: 'fantassin',
+      sheet: 'sonne',
+    });
+    expect(classifyDrawnPath('unites/fantassin/danse.png', peoples, units)).toBeNull();
+    expect(classifyDrawnPath('unites/elephant/poses.png', peoples, units)).toBeNull();
+  });
   it('ignore les emplacements inconnus', () => {
     expect(classifyDrawnPath('peuples/rome/fantassin/poses.png', peoples, units)).toBeNull();
     expect(classifyDrawnPath('peuples/koush/elephant/poses.png', peoples, units)).toBeNull();
@@ -66,17 +81,19 @@ describe('todoReport', () => {
   it('compte les planches présentes et liste ce qui manque', () => {
     const report = todoReport(
       new Set([
-        'peuples/koush/archers/poses',
-        'peuples/koush/archers/repos',
+        'unites/archers/poses',
+        'unites/archers/repos',
+        'peuples/koush/fantassin/poses',
         'portraits/koush',
         'decors/savane',
       ]),
       ['koush'],
       ['archers', 'fantassin'],
     );
-    expect(report).toContain('**Planches : 2 / 12**');
-    expect(report).toContain('| Koush | Archers | ✅ | ✅ | · | · | · | · |');
-    expect(report).toContain('| Koush | Fantassin | · | · | · | · | · | · |');
+    expect(report).toContain('**Planches communes : 2 / 12**');
+    expect(report).toContain('| Archers | ✅ | ✅ | · | · | · | · |');
+    expect(report).toContain('| Fantassin | (Koush) | · | · | · | · | · |');
+    expect(report).toContain('- `peuples/koush/fantassin/poses`');
     expect(report).toContain('✅ Koush');
     expect(report).toContain('savane');
   });

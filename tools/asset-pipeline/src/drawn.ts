@@ -5,6 +5,7 @@
  * planche en poses ou en portraits, cadrage. Le lancement est dans `drawn-build.ts`.
  * Gabarits et prompts : docs/proto-combat.md.
  */
+import { hexToRgb, rgbToHsv, type Rgb } from './color';
 import type { Box, RgbaImage } from './image';
 
 /** Poses d'une planche de personnage, de gauche à droite. */
@@ -25,9 +26,13 @@ export const DRAWN_DECOR_H = 1152;
 /** Seuil d'opacité au-delà duquel un pixel compte comme « dessiné ». */
 const SOLID = 32;
 
+/**
+ * `people` vaut `null` pour une planche commune (`unites/<unité>/`), dessinée une seule fois
+ * en rouge puis recolorée pour chaque peuple, comme les sprites de la carte.
+ */
 export type DrawnFile =
-  | { kind: 'figure'; people: string; unit: string }
-  | { kind: 'sequence'; people: string; unit: string; sheet: SequenceSheet }
+  | { kind: 'figure'; people: string | null; unit: string }
+  | { kind: 'sequence'; people: string | null; unit: string; sheet: SequenceSheet }
   | { kind: 'portrait'; people: string }
   | { kind: 'decor'; name: string };
 
@@ -62,7 +67,10 @@ export const UNIT_SHEETS = ['poses', ...(Object.keys(SEQUENCE_SHEETS) as Sequenc
 
 /**
  * Chemin (relatif au dossier des combats dessinés) → rôle :
- * - `peuples/<peuple>/<unité>/poses.png` : les 4 poses de référence ;
+ * - `unites/<unité>/poses.png` et `unites/<unité>/<planche>.png` : planches communes aux
+ *   4 peuples (rouge d'équipe, recolorées au build) ;
+ * - `peuples/<peuple>/<unité>/poses.png` : les 4 poses de référence propres à un peuple
+ *   (prioritaires sur la planche commune) ;
  * - `peuples/<peuple>/<unité>/<planche>.png` : une séquence (repos, attaque, charge, chute, sonne) ;
  * - `portraits/<peuple>.png` : 4 expressions ;
  * - `decors/<nom>.png` : un décor.
@@ -81,6 +89,13 @@ export function classifyDrawnPath(
   if (root === 'decors' && parts.length === 2 && a) return { kind: 'decor', name: a };
   if (root === 'portraits' && parts.length === 2 && a && peoples.includes(a)) {
     return { kind: 'portrait', people: a };
+  }
+  if (root === 'unites' && parts.length === 3 && a && b && units.includes(a)) {
+    if (b === 'poses') return { kind: 'figure', people: null, unit: a };
+    if (b in SEQUENCE_SHEETS) {
+      return { kind: 'sequence', people: null, unit: a, sheet: b as SequenceSheet };
+    }
+    return null;
   }
   if (root !== 'peuples' || parts.length !== 4 || !a || !b || !c) return null;
   if (!peoples.includes(a) || !units.includes(b)) return null;
@@ -105,25 +120,26 @@ const capitalize = (word: string) => word.charAt(0).toUpperCase() + word.slice(1
 
 /**
  * Liste de ce qui reste à dessiner (`A-FAIRE.md`), à partir des chemins présents (sans
- * extension, par exemple `peuples/koush/archers/repos`).
+ * extension, par exemple `unites/archers/repos`).
  */
 export function todoReport(
   present: ReadonlySet<string>,
   peoples: readonly string[],
   units: readonly string[],
 ): string {
-  const total = peoples.length * units.length * UNIT_SHEETS.length;
+  const total = units.length * UNIT_SHEETS.length;
   let done = 0;
   const rows: string[] = [];
-  for (const people of peoples) {
-    for (const unit of units) {
-      const cells = UNIT_SHEETS.map((sheet) => {
-        const ok = present.has(`peuples/${people}/${unit}/${sheet}`);
-        if (ok) done++;
-        return ok ? '✅' : '·';
-      });
-      rows.push(`| ${capitalize(people)} | ${capitalize(unit)} | ${cells.join(' | ')} |`);
-    }
+  const overrides: string[] = [];
+  for (const unit of units) {
+    const cells = UNIT_SHEETS.map((sheet) => {
+      const shared = present.has(`unites/${unit}/${sheet}`);
+      if (shared) done++;
+      const own = peoples.filter((people) => present.has(`peuples/${people}/${unit}/${sheet}`));
+      for (const people of own) overrides.push(`peuples/${people}/${unit}/${sheet}`);
+      return shared ? '✅' : own.length > 0 ? `(${own.map(capitalize).join(', ')})` : '·';
+    });
+    rows.push(`| ${capitalize(unit)} | ${cells.join(' | ')} |`);
   }
   const portraits = peoples.map(
     (people) => `${present.has(`portraits/${people}`) ? '✅' : '·'} ${capitalize(people)}`,
@@ -136,16 +152,23 @@ export function todoReport(
     '# Combats dessinés — ce qui reste à dessiner',
     '',
     '> Fichier généré par `pnpm assets:dessin` : ne pas le modifier à la main.',
-    '> Prompts et règles : `docs/proto-combat.md`.',
+    '> Génération automatique : `pnpm art:generer` (fiches dans `art/specs/`, règles dans `docs/proto-combat.md`).',
     '',
-    `**Planches : ${done} / ${total}** · portraits : ${portraits.filter((p) => p.startsWith('✅')).length} / ${peoples.length} · décors : ${decors.length}`,
+    `**Planches communes : ${done} / ${total}** · portraits : ${portraits.filter((p) => p.startsWith('✅')).length} / ${peoples.length} · décors : ${decors.length}`,
     '',
-    'Chaque unité a son dossier `peuples/<peuple>/<unité>/` avec 6 fichiers aux noms fixes.',
-    'Montures et engins (cavalerie, char, catapulte) : planches à préciser avant de les dessiner.',
+    'Comme les sprites de la carte, chaque unité est dessinée une seule fois, en rouge, dans',
+    '`unites/<unité>/` (6 fichiers aux noms fixes), puis recolorée pour chaque peuple.',
+    'Entre parenthèses : une ancienne planche propre à un peuple, sans version commune.',
     '',
-    `| Peuple | Unité | ${UNIT_SHEETS.map((sheet) => SHEET_LABELS[sheet] ?? sheet).join(' | ')} |`,
-    `| --- | --- | ${UNIT_SHEETS.map(() => ':---:').join(' | ')} |`,
+    `| Unité | ${UNIT_SHEETS.map((sheet) => SHEET_LABELS[sheet] ?? sheet).join(' | ')} |`,
+    `| --- | ${UNIT_SHEETS.map(() => ':---:').join(' | ')} |`,
     ...rows,
+    '',
+    '## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)',
+    '',
+    'Prioritaires sur la planche commune pour ce peuple, et non recolorées.',
+    '',
+    overrides.length > 0 ? overrides.map((path) => `- \`${path}\``).join('\n') : 'aucune',
     '',
     '## Portraits (`portraits/<peuple>.png`)',
     '',
@@ -156,6 +179,69 @@ export function todoReport(
     decors.length > 0 ? decors.join(' · ') : 'aucun',
     '',
   ].join('\n');
+}
+
+// ——— Couleur d'équipe ———
+
+/** Rampe d'équipe, du plus sombre au plus clair. */
+export type TeamRamp = readonly [Rgb, Rgb, Rgb, Rgb];
+
+export const toRamp = (hexes: readonly [string, string, string, string]): TeamRamp =>
+  hexes.map(hexToRgb) as unknown as TeamRamp;
+
+/**
+ * Part « rouge d'équipe » d'un pixel, de 0 à 1 : 1 pour un rouge franc et saturé, 0 pour la
+ * peau cuivrée, l'or, le bois et la crème (plus orangés ou moins saturés), avec une
+ * transition douce pour les bords adoucis entre deux couleurs.
+ */
+export function teamWeight(r: number, g: number, b: number): number {
+  const { h, s, v } = rgbToHsv([r, g, b]);
+  const hueGap = h > 180 ? 360 - h : h;
+  const hue = hueGap <= 10 ? 1 : hueGap >= 16 ? 0 : (16 - hueGap) / 6;
+  const sat = s >= 0.55 ? 1 : s <= 0.35 ? 0 : (s - 0.35) / 0.2;
+  return v >= 0.18 ? hue * sat : 0;
+}
+
+const luma = ([r, g, b]: Rgb) => 0.299 * r + 0.587 * g + 0.114 * b;
+
+/** Couleur de la rampe `to` à la place qu'occupe la luminosité `l` sur la rampe `from`. */
+function rampAt(from: TeamRamp, to: TeamRamp, l: number): Rgb {
+  const stops = from.map(luma);
+  const first = stops[0] ?? 0;
+  const last = stops[stops.length - 1] ?? 255;
+  // Plus sombre que la rampe : on assombrit le ton le plus sombre ; plus clair : on éclaircit.
+  if (l <= first) return to[0].map((c) => (c * l) / Math.max(1, first)) as unknown as Rgb;
+  if (l >= last) {
+    const k = (l - last) / Math.max(1, 255 - last);
+    return to[3].map((c) => c + (255 - c) * k) as unknown as Rgb;
+  }
+  let i = 0;
+  while (i < stops.length - 2 && l > (stops[i + 1] ?? 0)) i++;
+  const a = stops[i] ?? 0;
+  const b = stops[i + 1] ?? 255;
+  const t = (l - a) / Math.max(1, b - a);
+  const ca = to[i] as Rgb;
+  const cb = to[i + 1] as Rgb;
+  return [0, 1, 2].map((k) => (ca[k] ?? 0) + ((cb[k] ?? 0) - (ca[k] ?? 0)) * t) as unknown as Rgb;
+}
+
+/**
+ * Recolore les rouges d'équipe d'un dessin vers la rampe d'un peuple, en gardant les ombres
+ * et les lumières (par luminosité) ; le reste du dessin ne bouge pas.
+ */
+export function recolorTeam(image: RgbaImage, from: TeamRamp, to: TeamRamp): RgbaImage {
+  const data = new Uint8ClampedArray(image.data);
+  for (let i = 0; i < data.length; i += 4) {
+    if ((data[i + 3] ?? 0) === 0) continue;
+    const pixel: Rgb = [data[i] ?? 0, data[i + 1] ?? 0, data[i + 2] ?? 0];
+    const w = teamWeight(...pixel);
+    if (w === 0) continue;
+    const target = rampAt(from, to, luma(pixel));
+    for (let k = 0; k < 3; k++) {
+      data[i + k] = Math.round((pixel[k] ?? 0) * (1 - w) + (target[k] ?? 0) * w);
+    }
+  }
+  return { width: image.width, height: image.height, data };
 }
 
 // ——— Détourage ———

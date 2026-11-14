@@ -1,0 +1,31 @@
+{
+  "_doc": "Un portrait de chef par peuple : 4 expressions (neutre, cri, blessé, sourire). Générés directement dans la couleur du peuple (pas de recoloration). `regard` : sens du visage (Koush regarde à gauche, comme le prévoit le jeu, apps/game/src/drawn/assets.ts).",
+  "expressions": [
+    "Neutral, calm and confident.",
+    "Shouting a battle cry, mouth wide open.",
+    "Hurt, wincing, eyes squeezed.",
+    "Proud smile, victorious."
+  ],
+  "peuples": {
+    "koush": {
+      "regard": "gauche",
+      "chef": "the King of Kush, a Nubian warrior king in his forties",
+      "design": "Short dark curly hair with a team-color headband and a thin gold circlet, short neat beard, gold broad collar, gold earrings, a team-color cape on the shoulders."
+    },
+    "carthage": {
+      "regard": "droite",
+      "chef": "a Carthaginian general in his forties",
+      "design": "Rounded gold helmet with cheek guards and a team-color crest, short dark beard, gold scale armor on the shoulders, a team-color cape."
+    },
+    "kemet": {
+      "regard": "droite",
+      "chef": "a general of ancient Egypt (Kemet) in his forties",
+      "design": "Striped headcloth in team color and cream, clean-shaven, kohl-lined eyes, gold broad collar, white linen on the shoulders under a team-color sash."
+    },
+    "aksoum": {
+      "regard": "droite",
+      "chef": "the King of Aksum, an Ethiopian king in his forties",
+      "design": "Short dark curly hair with a gold crown band, short beard, white cotton cloak with a team-color woven border on the shoulders, a simple gold disc pendant."
+    }
+  }
+}

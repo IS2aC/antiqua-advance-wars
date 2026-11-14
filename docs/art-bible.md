@@ -74,3 +74,7 @@ Les prompts complets (blocs de style, fiches unités, terrains, bâtiments) sont
 ## Scènes de combat
 
 Figurants 64×64 par peuple et décors par terrain : gabarits, emplacements et prompts dans `docs/art-combat.md`.
+
+## Combats dessinés
+
+Même règle que les sprites : un soldat commun aux 4 peuples (peau cuivrée `#C65922`, cheveux `#4D1F0F`, or `#D69625`, crème `#EFD6A8`), dessiné une fois en rouge d'équipe puis recoloré par peuple. Fiches, couleurs et génération : `art/specs/` et `docs/proto-combat.md` (`pnpm art:generer`).

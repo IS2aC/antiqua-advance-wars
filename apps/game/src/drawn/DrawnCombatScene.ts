@@ -2,15 +2,15 @@ import Phaser from 'phaser';
 import { FACTIONS, TERRAINS, UNITS } from '@antiqua/engine';
 import { StagedScene } from '../combat/StagedScene';
 import type { CombatSetup, CombatSide, Side, Strike } from '../combat/setup';
-import { OUTLINE_COLOR, TEAM_COLORS, darken } from '../view/palette';
+import { OUTLINE_COLOR, TEAM_COLORS, TEAM_RAMPS, darken } from '../view/palette';
 import {
-  ARROW,
   DUST,
   SHADOW,
   SLASH,
   STAR,
   SPARK,
   STONE,
+  arrowTexture,
   createDrawnAnimations,
   createEffectTextures,
   decorTexture,
@@ -458,7 +458,7 @@ export class DrawnCombatScene extends StagedScene {
     heavy: boolean,
     release: (figure: Figure) => Promise<void>,
   ): Promise<void> {
-    const texture = heavy ? STONE : ARROW;
+    const texture = heavy ? STONE : arrowTexture(from.side.owner);
     // Deux flèches par tireur (la seconde juste après), une pierre par engin.
     const shots = from.figures.flatMap((figure) =>
       heavy
@@ -523,7 +523,7 @@ export class DrawnCombatScene extends StagedScene {
         const y = (1 - t) ** 2 * sy + 2 * (1 - t) * t * peak + t * t * ey;
         const angle = Math.atan2(y - projectile.y, x - projectile.x);
         projectile.setPosition(x, y);
-        if (projectile.texture.key === ARROW) projectile.setRotation(angle);
+        if (projectile.texture.key !== STONE) projectile.setRotation(angle);
       },
     });
   }
@@ -968,6 +968,8 @@ export class DrawnCombatScene extends StagedScene {
       this.add
         .image(figure.image.x, figure.image.y - 200 * figure.baseScale, SLASH)
         .setFlipX(view.dir > 0)
+        // Le trait du coup prend le ton clair de l'équipe qui frappe.
+        .setTint(TEAM_RAMPS[view.side.owner][3])
         .setScale(0.7),
     );
     void this.tween({

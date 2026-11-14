@@ -1,39 +1,39 @@
 # Combats dessinés — ce qui reste à dessiner
 
 > Fichier généré par `pnpm assets:dessin` : ne pas le modifier à la main.
-> Prompts et règles : `docs/proto-combat.md`.
+> Génération automatique : `pnpm art:generer` (fiches dans `art/specs/`, règles dans `docs/proto-combat.md`).
 
-**Planches : 12 / 144** · portraits : 2 / 4 · décors : 1
+**Planches communes : 0 / 36** · portraits : 2 / 4 · décors : 1
 
-Chaque unité a son dossier `peuples/<peuple>/<unité>/` avec 6 fichiers aux noms fixes.
-Montures et engins (cavalerie, char, catapulte) : planches à préciser avant de les dessiner.
+Comme les sprites de la carte, chaque unité est dessinée une seule fois, en rouge, dans
+`unites/<unité>/` (6 fichiers aux noms fixes), puis recolorée pour chaque peuple.
+Entre parenthèses : une ancienne planche propre à un peuple, sans version commune.
 
-| Peuple | Unité | poses | repos | attaque | charge | chute | sonné |
-| --- | --- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Koush | Fantassin | · | · | · | · | · | · |
-| Koush | Lancier | · | · | · | · | · | · |
-| Koush | Archers | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Koush | Cavalerie | · | · | · | · | · | · |
-| Koush | Char | · | · | · | · | · | · |
-| Koush | Catapulte | · | · | · | · | · | · |
-| Carthage | Fantassin | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Carthage | Lancier | · | · | · | · | · | · |
-| Carthage | Archers | · | · | · | · | · | · |
-| Carthage | Cavalerie | · | · | · | · | · | · |
-| Carthage | Char | · | · | · | · | · | · |
-| Carthage | Catapulte | · | · | · | · | · | · |
-| Kemet | Fantassin | · | · | · | · | · | · |
-| Kemet | Lancier | · | · | · | · | · | · |
-| Kemet | Archers | · | · | · | · | · | · |
-| Kemet | Cavalerie | · | · | · | · | · | · |
-| Kemet | Char | · | · | · | · | · | · |
-| Kemet | Catapulte | · | · | · | · | · | · |
-| Aksoum | Fantassin | · | · | · | · | · | · |
-| Aksoum | Lancier | · | · | · | · | · | · |
-| Aksoum | Archers | · | · | · | · | · | · |
-| Aksoum | Cavalerie | · | · | · | · | · | · |
-| Aksoum | Char | · | · | · | · | · | · |
-| Aksoum | Catapulte | · | · | · | · | · | · |
+| Unité | poses | repos | attaque | charge | chute | sonné |
+| --- | :---: | :---: | :---: | :---: | :---: | :---: |
+| Fantassin | (Carthage) | (Carthage) | (Carthage) | (Carthage) | (Carthage) | (Carthage) |
+| Lancier | · | · | · | · | · | · |
+| Archers | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Cavalerie | · | · | · | · | · | · |
+| Char | · | · | · | · | · | · |
+| Catapulte | · | · | · | · | · | · |
+
+## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)
+
+Prioritaires sur la planche commune pour ce peuple, et non recolorées.
+
+- `peuples/carthage/fantassin/poses`
+- `peuples/carthage/fantassin/repos`
+- `peuples/carthage/fantassin/attaque`
+- `peuples/carthage/fantassin/charge`
+- `peuples/carthage/fantassin/chute`
+- `peuples/carthage/fantassin/sonne`
+- `peuples/koush/archers/poses`
+- `peuples/koush/archers/repos`
+- `peuples/koush/archers/attaque`
+- `peuples/koush/archers/charge`
+- `peuples/koush/archers/chute`
+- `peuples/koush/archers/sonne`
 
 ## Portraits (`portraits/<peuple>.png`)
 

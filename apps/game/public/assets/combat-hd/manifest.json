@@ -1,25 +1,5 @@
 {
   "figures": {
-    "carthage": {
-      "fantassin": {
-        "idle": {
-          "w": 230,
-          "h": 420
-        },
-        "attack": {
-          "w": 429,
-          "h": 360
-        },
-        "hit": {
-          "w": 243,
-          "h": 374
-        },
-        "down": {
-          "w": 358,
-          "h": 266
-        }
-      }
-    },
     "koush": {
       "archers": {
         "idle": {
@@ -39,71 +19,38 @@
           "h": 247
         }
       }
+    },
+    "carthage": {
+      "fantassin": {
+        "idle": {
+          "w": 230,
+          "h": 420
+        },
+        "attack": {
+          "w": 429,
+          "h": 360
+        },
+        "hit": {
+          "w": 243,
+          "h": 374
+        },
+        "down": {
+          "w": 358,
+          "h": 266
+        }
+      }
     }
   },
   "anims": {
-    "carthage": {
-      "fantassin": {
-        "attack": {
-          "frames": 4,
-          "w": 470,
-          "h": 361,
-          "originX": 0.4122,
-          "originY": 1
-        },
-        "run": {
-          "frames": 2,
-          "w": 395,
-          "h": 384,
-          "originX": 0.659,
-          "originY": 1
-        },
-        "hit": {
-          "frames": 2,
-          "w": 337,
-          "h": 428,
-          "originX": 0.6295,
-          "originY": 1
-        },
-        "fall": {
-          "frames": 2,
-          "w": 344,
-          "h": 375,
-          "originX": 0.6519,
-          "originY": 0.9848
-        },
-        "victory": {
-          "frames": 2,
-          "w": 335,
-          "h": 475,
-          "originX": 0.6441,
-          "originY": 1
-        },
-        "idle": {
-          "frames": 4,
-          "w": 265,
-          "h": 431,
-          "originX": 0.5862,
-          "originY": 0.9985
-        },
-        "sit": {
-          "frames": 2,
-          "w": 382,
-          "h": 437,
-          "originX": 0.4981,
-          "originY": 1
-        },
-        "dazed": {
-          "frames": 2,
-          "w": 376,
-          "h": 313,
-          "originX": 0.4924,
-          "originY": 1
-        }
-      }
-    },
     "koush": {
       "archers": {
+        "idle": {
+          "frames": 4,
+          "w": 226,
+          "h": 430,
+          "originX": 0.3921,
+          "originY": 1
+        },
         "attack": {
           "frames": 4,
           "w": 326,
@@ -139,13 +86,6 @@
           "originX": 0.4758,
           "originY": 0.9986
         },
-        "idle": {
-          "frames": 4,
-          "w": 226,
-          "h": 430,
-          "originX": 0.3921,
-          "originY": 1
-        },
         "sit": {
           "frames": 2,
           "w": 375,
@@ -158,6 +98,66 @@
           "w": 369,
           "h": 317,
           "originX": 0.3889,
+          "originY": 1
+        }
+      }
+    },
+    "carthage": {
+      "fantassin": {
+        "idle": {
+          "frames": 4,
+          "w": 265,
+          "h": 431,
+          "originX": 0.5862,
+          "originY": 0.9985
+        },
+        "attack": {
+          "frames": 4,
+          "w": 470,
+          "h": 361,
+          "originX": 0.4122,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 395,
+          "h": 384,
+          "originX": 0.659,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 337,
+          "h": 428,
+          "originX": 0.6295,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 344,
+          "h": 375,
+          "originX": 0.6519,
+          "originY": 0.9848
+        },
+        "victory": {
+          "frames": 2,
+          "w": 335,
+          "h": 475,
+          "originX": 0.6441,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 382,
+          "h": 437,
+          "originX": 0.4981,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 376,
+          "h": 313,
+          "originX": 0.4924,
           "originY": 1
         }
       }

@@ -19,12 +19,41 @@ export const TERRAIN_COLORS: Readonly<Record<TerrainType, number>> = {
   qg: 0xb8b04a,
 };
 
-export const TEAM_COLORS: Readonly<Record<PlayerId, number>> = {
-  koush: 0x3a73d1,
-  carthage: 0xd13a2e,
-  kemet: 0xe0b02a,
-  aksoum: 0x3a9a4a,
+/**
+ * Rampes d'équipe des sprites, du plus sombre au plus clair : les mêmes que le pipeline
+ * (`tools/asset-pipeline/src/palette.ts`, `docs/art-bible.md`). Les dessins des combats sont
+ * recolorés sur ces rampes : une unité a la même couleur sur la carte et en combat.
+ */
+export const TEAM_RAMPS: Readonly<Record<PlayerId, readonly [number, number, number, number]>> = {
+  carthage: [0x4a1218, 0x8e1f24, 0xd13a2e, 0xf2735a],
+  koush: [0x16234a, 0x24418e, 0x3a73d1, 0x73b4f2],
+  kemet: [0x4a3512, 0x8e6a1f, 0xd1a72e, 0xf2d65a],
+  aksoum: [0x123a1e, 0x1f6e34, 0x2eae4e, 0x6fde85],
 };
+
+/** Couleur d'équipe : le ton moyen-clair de la rampe, le plus présent sur les sprites. */
+export const TEAM_COLORS: Readonly<Record<PlayerId, number>> = {
+  koush: TEAM_RAMPS.koush[2],
+  carthage: TEAM_RAMPS.carthage[2],
+  kemet: TEAM_RAMPS.kemet[2],
+  aksoum: TEAM_RAMPS.aksoum[2],
+};
+
+/**
+ * Couleurs communes à tous les soldats, relevées sur l'atlas des unités (les 4 peuples
+ * partagent les mêmes sprites, seule la rampe d'équipe change). Mêmes valeurs dans
+ * `art/specs/couleurs.json` pour la génération des dessins.
+ */
+export const SPRITE_COLORS = {
+  skin: 0xc65922,
+  skinShade: 0x9f5021,
+  hair: 0x4d1f0f,
+  gold: 0xd69625,
+  goldLight: 0xfac777,
+  cream: 0xefd6a8,
+  wood: 0x9f5021,
+  stone: 0x816a4c,
+} as const;
 
 export const NEUTRAL_COLOR = 0xd8d0c0;
 export const OUTLINE_COLOR = 0x2b1b17;

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { PlayerId, TerrainType, UnitType } from '@antiqua/engine';
-import { OUTLINE_COLOR, TEAM_COLORS, darken } from '../view/palette';
+import { OUTLINE_COLOR, SPRITE_COLORS, TEAM_COLORS, TEAM_RAMPS, darken } from '../view/palette';
 import {
   DRAWN_H,
   DRAWN_W,
@@ -212,10 +212,11 @@ export function decorTexture(scene: Phaser.Scene, terrain: TerrainType): string 
 
 // ——— Images provisoires ———
 
-const SKIN = 0x8a5a3c;
-const CREAM = 0xf3e6c4;
-const BRONZE = 0xc8963c;
-const WOOD = 0x7a4a26;
+// Couleurs des sprites de carte : le provisoire ressemble déjà au soldat de la carte.
+const SKIN = SPRITE_COLORS.skin;
+const CREAM = SPRITE_COLORS.cream;
+const BRONZE = SPRITE_COLORS.gold;
+const WOOD = SPRITE_COLORS.wood;
 const LINE = 6;
 
 /** Armes d'hast et boucliers, ou arc, selon l'unité. */
@@ -367,7 +368,9 @@ function placeholderDecor(scene: Phaser.Scene): string {
 
 export const SPARK = 'd:fx:spark';
 export const DUST = 'd:fx:dust';
-export const ARROW = 'd:fx:arrow';
+const ARROW = 'd:fx:arrow';
+/** Flèche aux couleurs d'un peuple. */
+export const arrowTexture = (people: PlayerId): string => `${ARROW}:${people}`;
 export const SLASH = 'd:fx:slash';
 export const STONE = 'd:fx:stone';
 /** Étoile d'étourdissement, qui tourne au-dessus de la tête des vaincus. */
@@ -400,12 +403,18 @@ export function createEffectTextures(scene: Phaser.Scene): void {
     g.fillStyle(0xe8d3a0, 0.9).fillCircle(32, 32, 30);
     g.fillStyle(0xf6e7c0, 0.9).fillCircle(26, 26, 16);
   });
-  make(ARROW, 96, 14, (g) => {
-    g.fillStyle(OUTLINE_COLOR, 1).fillRect(0, 5, 84, 5);
-    g.fillStyle(0xe8d8b0, 1).fillRect(8, 6, 70, 3);
-    g.fillStyle(BRONZE, 1).fillTriangle(78, 0, 78, 14, 96, 7);
-    g.fillStyle(CREAM, 1).fillTriangle(0, 0, 16, 6, 0, 6).fillTriangle(0, 14, 16, 8, 0, 8);
-  });
+  // Une flèche par peuple : pointe dorée et empennage aux couleurs de l'équipe, comme le
+  // carquois des archers sur la carte.
+  for (const people of Object.keys(TEAM_RAMPS) as PlayerId[]) {
+    const [, dark, mid] = TEAM_RAMPS[people];
+    make(arrowTexture(people), 96, 14, (g) => {
+      g.fillStyle(OUTLINE_COLOR, 1).fillRect(0, 5, 84, 5);
+      g.fillStyle(WOOD, 1).fillRect(8, 6, 70, 3);
+      g.fillStyle(BRONZE, 1).fillTriangle(78, 0, 78, 14, 96, 7);
+      g.fillStyle(mid, 1).fillTriangle(0, 0, 18, 6, 0, 6).fillTriangle(0, 14, 18, 8, 0, 8);
+      g.fillStyle(dark, 1).fillRect(0, 5, 18, 4);
+    });
+  }
   make(SLASH, 220, 220, (g) => {
     g.lineStyle(14, 0xffffff, 1);
     g.beginPath().arc(110, 110, 90, -2.4, -0.2, false).strokePath();
@@ -430,8 +439,9 @@ export function createEffectTextures(scene: Phaser.Scene): void {
     }
   });
   make(STONE, 64, 64, (g) => {
-    g.fillStyle(0x8a8478, 1).fillCircle(32, 32, 26);
+    // Pierre grise, comme dans le godet de la catapulte sur la carte.
+    g.fillStyle(SPRITE_COLORS.stone, 1).fillCircle(32, 32, 26);
     g.lineStyle(5, OUTLINE_COLOR, 1).strokeCircle(32, 32, 26);
-    g.fillStyle(0xb0aa9c, 1).fillCircle(24, 24, 8);
+    g.fillStyle(0xa89c88, 1).fillCircle(24, 24, 8);
   });
 }

@@ -17,6 +17,7 @@
     "assets:build": "pnpm --filter @antiqua/asset-pipeline build:assets",
     "assets:cover": "pnpm --filter @antiqua/asset-pipeline build:cover",
     "assets:dessin": "pnpm --filter @antiqua/asset-pipeline build:drawn",
+    "art:generer": "pnpm --filter @antiqua/asset-pipeline generate",
     "match": "pnpm --filter @antiqua/cli match"
   },
   "devDependencies": {

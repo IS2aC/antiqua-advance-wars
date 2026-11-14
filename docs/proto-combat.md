@@ -4,6 +4,61 @@ But : vérifier qu'une scène de combat en grand dessin animé 2D (style de la p
 dans le jeu, avec **une seule rencontre** : fantassin carthaginois contre archers de Koush.
 Si le résultat plaît, on produit les autres unités de la même façon.
 
+## Génération automatique (`pnpm art:generer`)
+
+Plus de copier-coller dans ChatGPT : la commande pilote l'API d'images d'OpenAI à partir des
+fiches de `art/specs/`, contrôle chaque image, la régénère si elle rate, la range à sa place
+et lance l'assemblage (`pnpm assets:dessin`).
+
+**Règle de couleur (d'après les sprites).** Sur la carte, les 4 peuples ont le même soldat :
+peau cuivrée, cheveux bruns frisés, or, crème, bois ; seule la rampe d'équipe change. Les
+dessins de combat suivent la même règle : chaque unité est dessinée **une seule fois, en
+rouge**, dans `unites/<unité>/`, puis `pnpm assets:dessin` recolore le rouge d'équipe vers la
+rampe de chaque peuple (peau, or et crème ne bougent pas). Les flèches et les coups prennent
+aussi la couleur du peuple. Couleurs relevées : `art/specs/couleurs.json`.
+
+| Fichier | Contenu |
+| --- | --- |
+| `art/specs/couleurs.json` | couleurs des sprites (peau, cheveux, or, crème, bois) et rampes d'équipe |
+| `art/specs/style.json` | blocs communs : style dessin animé, fond blanc, cadrage, références |
+| `art/specs/unites.json` | par unité : sprite de référence, équipement, 4 cases de chaque planche |
+| `art/specs/portraits.json` | chef de chaque peuple, 4 expressions (dans la couleur du peuple) |
+| `art/specs/decors.json` | un décor par terrain |
+
+Chaque planche de poses est générée avec le **sprite de la carte joint en référence** ; les
+5 planches de séquences, avec la planche de poses jointe (même personnage, même taille).
+
+Contrôles automatiques (sinon nouvel essai, 3 au plus) : 4 dessins séparés, rien de coupé
+au bord, pieds sur la même ligne, rouge d'équipe présent (pour la recoloration), taille de la
+planche de repos comparée aux poses (correction écrite d'office dans `reglages.json`). Les
+essais ratés restent dans `.essais/` ; la meilleure image est gardée, marquée « à revoir ».
+
+```bash
+pnpm art:generer --liste                 # ce qui serait généré et le coût prévu, sans rien envoyer
+pnpm art:generer --liste --prompts       # idem, avec les prompts complets
+pnpm art:generer --unite fantassin --budget 5
+pnpm art:generer --unite archers --planche attaque --refaire
+pnpm art:generer --portraits --peuple koush
+pnpm art:generer --decors
+pnpm art:generer --tout --budget 15
+pnpm art:generer --faux --tout --dossier /tmp/essai   # essai complet, sans clé ni dépense
+```
+
+- Clé : une ligne `OPENAI_API_KEY=sk-...` dans `.env` à la racine (ignoré par git). OpenAI
+  demande de vérifier l'organisation avant d'utiliser les modèles GPT Image.
+- Réglages facultatifs dans `.env` : `OPENAI_IMAGE_MODEL` (défaut `gpt-image-2`),
+  `OPENAI_IMAGE_QUALITE` (`high`), `OPENAI_IMAGE_PRIX` (`5,8,30` : dollars par million de
+  jetons texte, image en entrée, image en sortie), `OPENAI_IMAGE_ESTIMATION` (`0.25`).
+- `--budget` (10 $ par défaut) : la commande s'arrête avant de le dépasser. Le coût réel de
+  chaque image (jetons facturés) s'affiche et se cumule dans `generation.json`.
+- Une image déjà présente n'est pas refaite sans `--refaire`.
+- Validation : `art/raw/combat-dessine/validation.html` (image, contrôles, coût, prompt,
+  commande pour la refaire). Animation : banc d'essai « Animation (proto) ».
+- Une ancienne planche `peuples/<peuple>/<unité>/` reste prioritaire sur la planche commune
+  (et n'est pas recolorée) : la déplacer dans `archives/` (ignoré) pour utiliser la nouvelle.
+
+Volume : 6 unités × 6 planches = 36 images, + 4 portraits et 8 décors.
+
 ## Qui fait quoi
 
 | Étape | Qui | Quoi |
