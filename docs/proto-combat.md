@@ -310,3 +310,99 @@ Do not draw any stars, birds or symbols above his head.
 
 [STYLE BLOCK]
 ```
+
+## Archers de Koush — 5 planches (20 dessins)
+
+Même méthode que le fantassin : une conversation par planche, 4 images par planche, caméra
+fixe, fond blanc uni. Joins **à chaque fois** `art/raw/proto-combat/koush-archers.png` (la
+planche de 4 poses) comme référence, et termine chaque prompt par le bloc de style.
+
+| Planche | Fichier | Cases (de gauche à droite) |
+| --- | --- | --- |
+| 1 | `koush-archers-repos.png` | neutre · inspiration · arc qui balance · retour |
+| 2 | `koush-archers-attaque.png` | prendre une flèche · encocher · arc bandé · lâcher |
+| 3 | `koush-archers-charge.png` | petits pas 1 · petits pas 2 · coup reçu · recul |
+| 4 | `koush-archers-chute.png` | perte d'équilibre · à genoux · arc levé · cri de victoire |
+| 5 | `koush-archers-sonne.png` | bascule · assis · étourdi à gauche · étourdi à droite |
+
+Le début commun des 5 prompts :
+
+```text
+Use the attached pose sheet as the exact reference for this young Kushite archer: same face, same blue headband, same cream linen kilt with blue belt, same blue sash across the chest, same gold arm bands, same leather quiver and long wooden bow, same proportions and SAME SIZE as the first (idle) pose.
+```
+
+### Planche 1 — Repos → `koush-archers-repos.png`
+
+```text
+[DÉBUT COMMUN]
+
+Create 4 frames of a hand-drawn animation sequence, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera: the archer stays at exactly the same place in each column, both feet planted on the same baseline, facing RIGHT in a 3/4 side view. Subtle idle breathing loop, the changes between frames are small:
+1. Relaxed ready stance, bow held low in the left hand.
+2. Inhale: chest slightly raised, shoulders up a few pixels.
+3. Exhale: shoulders relaxed, the bow swings slightly forward, sash moving.
+4. The bow swings slightly back, the headband ends flutter a little.
+
+[STYLE BLOCK]
+```
+
+### Planche 2 — Tir → `koush-archers-attaque.png`
+
+```text
+[DÉBUT COMMUN]
+
+Create 4 frames of a hand-drawn animation sequence of shooting an arrow, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera: the feet stay planted at the same spot in each column, on the same baseline, facing RIGHT in a 3/4 side view.
+1. Reaching back over the shoulder to the quiver and pulling out an arrow, bow held low.
+2. Nocking the arrow on the string, bow raised in front, starting to draw.
+3. Full draw: bow fully bent, string pulled back to the cheek, aiming right, intense focus.
+4. Release and follow-through: the string has snapped forward, the arrow is gone, the drawing hand flung back open, bow arm still extended, a few short speed lines at the string in the same ink style.
+
+[STYLE BLOCK]
+```
+
+### Planche 3 — Petits pas et coup reçu → `koush-archers-charge.png`
+
+```text
+[DÉBUT COMMUN]
+
+Create 4 frames side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera, feet on the same baseline, facing RIGHT in a 3/4 side view.
+Frames 1-2: a light jogging step forward, bow held in the left hand, body slightly leaning forward.
+1. Left foot forward, right foot pushing off behind.
+2. Feet passing under the body, one foot on the ground.
+Frames 3-4: getting hit.
+3. Impact: head snapped back, eyes squeezed, bow knocked upward, body jolted, standing in place.
+4. Recoil: stumbling one step backward, off balance, free arm out, bow still in hand.
+
+[STYLE BLOCK]
+```
+
+### Planche 4 — Chute et victoire → `koush-archers-chute.png`
+
+```text
+[DÉBUT COMMUN]
+
+Create 4 frames side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera, feet on the same baseline, facing RIGHT in a 3/4 side view.
+Frames 1-2: defeat.
+1. Staggering backward: knees buckling, bow slipping from the hand.
+2. Down on one knee, head lowered, bow lying on the ground.
+Frames 3-4: victory.
+3. Bow raised high above the head in one hand, proud and confident smile.
+4. Victory cheer: mouth wide open, bow still raised, other fist pumped, chest out.
+
+[STYLE BLOCK]
+```
+
+### Planche 5 — Sonné → `koush-archers-sonne.png`
+
+```text
+[DÉBUT COMMUN]
+
+Create 4 frames of a funny, gentle hand-drawn cartoon sequence, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera, on the same ground baseline, facing RIGHT in a 3/4 side view. The archer is knocked out in a comical, non-violent way, like in a family animated film: no blood, no injury.
+1. Losing balance: knocked backward, arms flailing, bow flying out of his hand, a few arrows spilling from the quiver.
+2. Landing: sitting down hard on the ground, legs stretched forward, bow lying on the ground beside him, arrows scattered, headband slipped over one eye.
+3. Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.
+4. Dazed: same sitting position, upper body swaying to the right, same dizzy face. Frames 3 and 4 must be almost identical except for the sway, so they can loop.
+
+Do not draw any stars, birds or symbols above his head.
+
+[STYLE BLOCK]
+```
