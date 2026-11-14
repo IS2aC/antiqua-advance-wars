@@ -85,6 +85,20 @@
           "h": 431,
           "originX": 0.5862,
           "originY": 0.9985
+        },
+        "sit": {
+          "frames": 2,
+          "w": 382,
+          "h": 437,
+          "originX": 0.4981,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 376,
+          "h": 313,
+          "originX": 0.4924,
+          "originY": 1
         }
       }
     }

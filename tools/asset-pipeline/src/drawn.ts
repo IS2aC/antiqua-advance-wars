@@ -47,9 +47,10 @@ export const SEQUENCE_SHEETS = {
     { anim: 'victory', from: 2, count: 2 },
   ],
   // Vaincu sonné : il tombe assis (2 images), puis vacille, étourdi (2 images en boucle).
+  // Les deux parties sont calées sur la même image (assis) : la première est en l'air.
   sonne: [
-    { anim: 'sit', from: 0, count: 2 },
-    { anim: 'dazed', from: 2, count: 2 },
+    { anim: 'sit', from: 0, count: 2, anchorFrom: 1 },
+    { anim: 'dazed', from: 2, count: 2, anchorFrom: 1 },
   ],
 } as const;
 export type SequenceSheet = keyof typeof SEQUENCE_SHEETS;
@@ -430,7 +431,13 @@ export interface SequenceLayout {
 export function layoutSequence(
   frames: readonly SeparatedFrame[],
   cellWidth: number,
-  group: { readonly anim: string; readonly from: number; readonly count: number },
+  group: {
+    readonly anim: string;
+    readonly from: number;
+    readonly count: number;
+    /** Image de la planche qui sert de repère (par défaut, la première de l'animation). */
+    readonly anchorFrom?: number;
+  },
 ): SequenceLayout {
   const local = Array.from({ length: group.count }, (_, k) => {
     const i = group.from + k;
@@ -444,12 +451,20 @@ export function layoutSequence(
   const minY = Math.min(...local.map((f) => f.y));
   const maxX = Math.max(...local.map((f) => f.x + f.frame.box.w));
   const maxY = Math.max(...local.map((f) => f.y + f.frame.box.h));
-  const first = local[0];
-  const anchorX = first
-    ? first.x +
-      feetCenterX(first.frame.pixels, { x: 0, y: 0, w: first.frame.box.w, h: first.frame.box.h })
+  // Repère : une image de la planche, dans les coordonnées de sa case (comme les autres).
+  const anchorIndex = group.anchorFrom ?? group.from;
+  const anchorFrame = frames[anchorIndex];
+  const anchorX = anchorFrame
+    ? anchorFrame.box.x -
+      anchorIndex * cellWidth +
+      feetCenterX(anchorFrame.pixels, {
+        x: 0,
+        y: 0,
+        w: anchorFrame.box.w,
+        h: anchorFrame.box.h,
+      })
     : minX;
-  const anchorY = first ? first.y + first.frame.box.h : maxY;
+  const anchorY = anchorFrame ? anchorFrame.box.y + anchorFrame.box.h : maxY;
   const width = maxX - minX;
   const height = maxY - minY;
   return {

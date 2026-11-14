@@ -229,3 +229,19 @@ describe('pieds', () => {
     expect(feetCenterX(feet, { x: 0, y: 0, w: 50, h: 20 })).toBeCloseTo(24.5);
   });
 });
+
+describe('repère partagé', () => {
+  it('cale une animation sur une autre image de la planche', () => {
+    // Case 0 : dessin en l'air (bas à y 20) ; case 1 : dessin posé (bas à y 40), 4 px plus à droite.
+    const sheet = image(100, 40, (x, y) => {
+      const air = x >= 10 && x < 20 && y >= 5 && y < 20;
+      const seated = x >= 64 && x < 74 && y >= 20 && y < 40;
+      return air || seated ? INK : [0, 0, 0, 0];
+    });
+    const frames = separateFrames(sheet, 2);
+    const layout = layoutSequence(frames, 50, { anim: 'sit', from: 0, count: 2, anchorFrom: 1 });
+    // Cadre commun : x 10..24 (local), y 5..40 ; repère = pieds du dessin posé (x 18.5, y 40).
+    expect(layout.originX).toBeCloseTo((18.5 - 10) / 14);
+    expect(layout.originY).toBe(1);
+  });
+});
