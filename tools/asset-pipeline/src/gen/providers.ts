@@ -1,5 +1,6 @@
 /**
- * Générateurs d'images : l'API d'images d'OpenAI, et un faux générateur (dessins schématiques
+ * Générateurs d'images : OpenRouter (qui revend les modèles d'OpenAI, de Google…), l'API
+ * d'images d'OpenAI en direct, et un faux générateur (dessins schématiques
  * faits localement, gratuit) pour essayer toute la chaîne sans clé ni dépense.
  */
 import sharp from 'sharp';
@@ -130,6 +131,91 @@ export function openAiProvider(options: OpenAiOptions): ImageProvider {
             // Réponse non JSON : on garde le texte brut.
           }
           throw new Error(`OpenAI ${response.status} : ${message}`);
+        }
+        await sleep(5_000 * attempt);
+      }
+    },
+  };
+}
+
+// ——— OpenRouter ———
+
+export interface OpenRouterOptions {
+  readonly apiKey: string;
+  /** Identifiant OpenRouter, par exemple `openai/gpt-image-2`. */
+  readonly model: string;
+  readonly quality: string;
+  readonly estimateUsd: number;
+}
+
+/** Corps de la requête OpenRouter (`POST /api/v1/images`). Pur, testé. */
+export function openRouterBody(
+  options: Pick<OpenRouterOptions, 'model' | 'quality'>,
+  job: Job,
+  references: readonly Reference[],
+): Record<string, unknown> {
+  const openai = options.model.startsWith('openai/');
+  return {
+    model: options.model,
+    prompt: job.prompt,
+    n: 1,
+    // 1536×1024 : le format de toutes les planches.
+    aspect_ratio: '3:2',
+    // `quality` et `output_format` n'existent que chez certains modèles (ceux d'OpenAI).
+    ...(openai ? { quality: options.quality, output_format: 'png' } : {}),
+    ...(references.length > 0
+      ? {
+          input_references: references.map((ref) => ({
+            type: 'image_url',
+            image_url: { url: `data:image/png;base64,${ref.data.toString('base64')}` },
+          })),
+        }
+      : {}),
+  };
+}
+
+export function openRouterProvider(options: OpenRouterOptions): ImageProvider {
+  return {
+    name: `OpenRouter ${options.model}${options.model.startsWith('openai/') ? ` (${options.quality})` : ''}`,
+    estimateUsd: options.estimateUsd,
+    async generate(job, references) {
+      for (let attempt = 1; ; attempt++) {
+        const response = await fetch('https://openrouter.ai/api/v1/images', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${options.apiKey}`,
+            'Content-Type': 'application/json',
+            'X-Title': 'Alkebulan art pipeline',
+          },
+          body: JSON.stringify(openRouterBody(options, job, references)),
+          signal: AbortSignal.timeout(300_000),
+        });
+        if (response.ok) {
+          const body = (await response.json()) as {
+            data?: { b64_json?: string }[];
+            usage?: { cost?: number };
+          };
+          const b64 = body.data?.[0]?.b64_json;
+          if (!b64) throw new Error("Réponse d'OpenRouter sans image.");
+          // Les générations ratées (502) ne sont pas facturées ; `usage.cost` = montant débité.
+          const costUsd =
+            typeof body.usage?.cost === 'number' ? body.usage.cost : options.estimateUsd;
+          return { png: await sharp(Buffer.from(b64, 'base64')).png().toBuffer(), costUsd };
+        }
+        const text = await response.text();
+        const retry = response.status === 429 || response.status >= 500;
+        if (!retry || attempt >= 4) {
+          let message = text;
+          try {
+            message = (JSON.parse(text) as { error?: { message?: string } }).error?.message ?? text;
+          } catch {
+            // Réponse non JSON : on garde le texte brut.
+          }
+          const hint =
+            response.status === 402
+              ? ' (crédits OpenRouter insuffisants : recharger le compte)'
+              : '';
+          throw new Error(`OpenRouter ${response.status} : ${message}${hint}`);
         }
         await sleep(5_000 * attempt);
       }

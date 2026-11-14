@@ -6,7 +6,8 @@ Si le résultat plaît, on produit les autres unités de la même façon.
 
 ## Génération automatique (`pnpm art:generer`)
 
-Plus de copier-coller dans ChatGPT : la commande pilote l'API d'images d'OpenAI à partir des
+Plus de copier-coller dans ChatGPT : la commande pilote un générateur d'images (OpenRouter,
+ou OpenAI en direct) à partir des
 fiches de `art/specs/`, contrôle chaque image, la régénère si elle rate, la range à sa place
 et lance l'assemblage (`pnpm assets:dessin`).
 
@@ -17,13 +18,13 @@ rouge**, dans `unites/<unité>/`, puis `pnpm assets:dessin` recolore le rouge d'
 rampe de chaque peuple (peau, or et crème ne bougent pas). Les flèches et les coups prennent
 aussi la couleur du peuple. Couleurs relevées : `art/specs/couleurs.json`.
 
-| Fichier | Contenu |
-| --- | --- |
-| `art/specs/couleurs.json` | couleurs des sprites (peau, cheveux, or, crème, bois) et rampes d'équipe |
-| `art/specs/style.json` | blocs communs : style dessin animé, fond blanc, cadrage, références |
-| `art/specs/unites.json` | par unité : sprite de référence, équipement, 4 cases de chaque planche |
-| `art/specs/portraits.json` | chef de chaque peuple, 4 expressions (dans la couleur du peuple) |
-| `art/specs/decors.json` | un décor par terrain |
+| Fichier                    | Contenu                                                                  |
+| -------------------------- | ------------------------------------------------------------------------ |
+| `art/specs/couleurs.json`  | couleurs des sprites (peau, cheveux, or, crème, bois) et rampes d'équipe |
+| `art/specs/style.json`     | blocs communs : style dessin animé, fond blanc, cadrage, références      |
+| `art/specs/unites.json`    | par unité : sprite de référence, équipement, 4 cases de chaque planche   |
+| `art/specs/portraits.json` | chef de chaque peuple, 4 expressions (dans la couleur du peuple)         |
+| `art/specs/decors.json`    | un décor par terrain                                                     |
 
 Chaque planche de poses est générée avec le **sprite de la carte joint en référence** ; les
 5 planches de séquences, avec la planche de poses jointe (même personnage, même taille).
@@ -44,11 +45,14 @@ pnpm art:generer --tout --budget 15
 pnpm art:generer --faux --tout --dossier /tmp/essai   # essai complet, sans clé ni dépense
 ```
 
-- Clé : une ligne `OPENAI_API_KEY=sk-...` dans `.env` à la racine (ignoré par git). OpenAI
-  demande de vérifier l'organisation avant d'utiliser les modèles GPT Image.
-- Réglages facultatifs dans `.env` : `OPENAI_IMAGE_MODEL` (défaut `gpt-image-2`),
-  `OPENAI_IMAGE_QUALITE` (`high`), `OPENAI_IMAGE_PRIX` (`5,8,30` : dollars par million de
-  jetons texte, image en entrée, image en sortie), `OPENAI_IMAGE_ESTIMATION` (`0.25`).
+- Clé : une ligne `OPENROUTER_API_KEY=sk-or-...` dans `.env` à la racine (ignoré par git),
+  utilisée en priorité ; sinon `OPENAI_API_KEY=sk-...` pour OpenAI en direct (organisation
+  vérifiée obligatoire). Sur OpenRouter, le coût de chaque image est celui débité (`usage.cost`).
+- Réglages facultatifs dans `.env` : `OPENROUTER_IMAGE_MODEL` (défaut `openai/gpt-image-2` ;
+  autres possibles : `google/gemini-3-pro-image`, `black-forest-labs/flux.2-pro`…),
+  `OPENAI_IMAGE_MODEL` (`gpt-image-2`), `IMAGE_QUALITE` (`high`), `IMAGE_ESTIMATION`
+  (`0.25`, coût prévu d'une image pour le budget), `OPENAI_IMAGE_PRIX` (`5,8,30`, OpenAI
+  direct seulement).
 - `--budget` (10 $ par défaut) : la commande s'arrête avant de le dépasser. Le coût réel de
   chaque image (jetons facturés) s'affiche et se cumule dans `generation.json`.
 - Une image déjà présente n'est pas refaite sans `--refaire`.
@@ -61,13 +65,13 @@ Volume : 6 unités × 6 planches = 36 images, + 4 portraits et 8 décors.
 
 ## Qui fait quoi
 
-| Étape | Qui | Quoi |
-| --- | --- | --- |
-| 1 | Toi | Générer les 5 images dans ChatGPT (prompts ci-dessous), une par une |
-| 2 | Toi | Les déposer dans `art/raw/combat-dessine/` avec les noms exacts |
-| 3 | Claude (en parallèle) | Couche de combat haute définition, mise en scène en 6 temps, effets, interface, avec des images provisoires |
-| 4 | Claude | Brancher tes images : découpe des poses, détourage, mise à l'échelle |
-| 5 | Ensemble | Tester dans le navigateur, juger, corriger les prompts si besoin |
+| Étape | Qui                   | Quoi                                                                                                        |
+| ----- | --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 1     | Toi                   | Générer les 5 images dans ChatGPT (prompts ci-dessous), une par une                                         |
+| 2     | Toi                   | Les déposer dans `art/raw/combat-dessine/` avec les noms exacts                                             |
+| 3     | Claude (en parallèle) | Couche de combat haute définition, mise en scène en 6 temps, effets, interface, avec des images provisoires |
+| 4     | Claude                | Brancher tes images : découpe des poses, détourage, mise à l'échelle                                        |
+| 5     | Ensemble              | Tester dans le navigateur, juger, corriger les prompts si besoin                                            |
 
 ## Étape 1 — Les 5 images à générer
 
@@ -221,12 +225,12 @@ But : comparer dans le jeu un fantassin animé avec 16 dessins à l'archer rest�
 Les 16 dessins sont répartis sur **4 planches de 4 cases**, une planche par action, chaque
 case étant une image de la séquence, dans l'ordre.
 
-| Planche | Fichier | Cases (de gauche à droite) |
-| --- | --- | --- |
-| 1 | `peuples/carthage/fantassin/repos.png` | repos neutre · inspiration · cape vers l'arrière · cape vers l'avant |
-| 2 | `peuples/carthage/fantassin/attaque.png` | préparation · image de vitesse · coup · suite du mouvement |
-| 3 | `peuples/carthage/fantassin/charge.png` | course 1 · course 2 · coup reçu · recul |
-| 4 | `peuples/carthage/fantassin/chute.png` | déséquilibre · à terre · victoire, lance levée · victoire, cri |
+| Planche | Fichier                                  | Cases (de gauche à droite)                                           |
+| ------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| 1       | `peuples/carthage/fantassin/repos.png`   | repos neutre · inspiration · cape vers l'arrière · cape vers l'avant |
+| 2       | `peuples/carthage/fantassin/attaque.png` | préparation · image de vitesse · coup · suite du mouvement           |
+| 3       | `peuples/carthage/fantassin/charge.png`  | course 1 · course 2 · coup reçu · recul                              |
+| 4       | `peuples/carthage/fantassin/chute.png`   | déséquilibre · à terre · victoire, lance levée · victoire, cri       |
 
 Règles communes :
 
@@ -339,7 +343,6 @@ Dans le jeu : ombre douce sous chaque soldat, repos en aller-retour (6 images/s)
 de l'image de vitesse (14 images/s) avec un gel de 90 ms à l'impact, coup reçu, chute, et
 victoire pour le camp qui a perdu le moins. Une unité sans séquence garde ses 4 poses.
 
-
 Mise en scène :
 
 - **Foule vivante** : chaque soldat a sa taille (±5 %), sa teinte (second rang voilé) et son
@@ -381,13 +384,13 @@ Même méthode que le fantassin : une conversation par planche, 4 images par pla
 fixe, fond blanc uni. Joins **à chaque fois** `art/raw/combat-dessine/peuples/koush/archers/poses.png` (la
 planche de 4 poses) comme référence, et termine chaque prompt par le bloc de style.
 
-| Planche | Fichier | Cases (de gauche à droite) |
-| --- | --- | --- |
-| 1 | `peuples/koush/archers/repos.png` | neutre · inspiration · arc qui balance · retour |
-| 2 | `peuples/koush/archers/attaque.png` | prendre une flèche · encocher · arc bandé · lâcher |
-| 3 | `peuples/koush/archers/charge.png` | petits pas 1 · petits pas 2 · coup reçu · recul |
-| 4 | `peuples/koush/archers/chute.png` | perte d'équilibre · à genoux · arc levé · cri de victoire |
-| 5 | `peuples/koush/archers/sonne.png` | bascule · assis · étourdi à gauche · étourdi à droite |
+| Planche | Fichier                             | Cases (de gauche à droite)                                |
+| ------- | ----------------------------------- | --------------------------------------------------------- |
+| 1       | `peuples/koush/archers/repos.png`   | neutre · inspiration · arc qui balance · retour           |
+| 2       | `peuples/koush/archers/attaque.png` | prendre une flèche · encocher · arc bandé · lâcher        |
+| 3       | `peuples/koush/archers/charge.png`  | petits pas 1 · petits pas 2 · coup reçu · recul           |
+| 4       | `peuples/koush/archers/chute.png`   | perte d'équilibre · à genoux · arc levé · cri de victoire |
+| 5       | `peuples/koush/archers/sonne.png`   | bascule · assis · étourdi à gauche · étourdi à droite     |
 
 Le début commun des 5 prompts :
 

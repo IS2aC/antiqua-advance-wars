@@ -5,7 +5,7 @@ import { UNIT_SHEETS, recolorTeam, teamWeight, toRamp } from '../src/drawn';
 import { checkUnitSheet } from '../src/gen/checks';
 import { emptyJournal, validationPage } from '../src/gen/journal';
 import { colorBlock, planJobs, unitPrompt } from '../src/gen/prompts';
-import { costFromUsage, parseRates, DEFAULT_RATES } from '../src/gen/providers';
+import { costFromUsage, openRouterBody, parseRates, DEFAULT_RATES } from '../src/gen/providers';
 import { loadSpecs, validateSpecs } from '../src/gen/specs';
 import type { RgbaImage } from '../src/image';
 import { TEAM_RAMPS } from '../src/palette';
@@ -161,6 +161,41 @@ describe('coûts', () => {
   it('lit les tarifs de .env, sinon garde ceux par défaut', () => {
     expect(parseRates('5, 10, 40')).toEqual({ textInput: 5, imageInput: 10, imageOutput: 40 });
     expect(parseRates('n’importe quoi')).toBe(DEFAULT_RATES);
+  });
+});
+
+describe('OpenRouter', () => {
+  it('envoie le prompt, le format 3:2 et les références en base64', () => {
+    const [job] = planJobs(
+      specs,
+      { ...ALL, units: ['archers'], sheets: ['repos'], withPortraits: false, withDecors: false },
+      COMBAT_UNITS,
+      PEOPLES,
+      UNIT_SHEETS,
+    );
+    const body = openRouterBody({ model: 'openai/gpt-image-2', quality: 'high' }, job!, [
+      { name: 'poses.png', data: Buffer.from('abc') },
+    ]);
+    expect(body).toMatchObject({
+      model: 'openai/gpt-image-2',
+      aspect_ratio: '3:2',
+      quality: 'high',
+      output_format: 'png',
+      input_references: [{ type: 'image_url', image_url: { url: 'data:image/png;base64,YWJj' } }],
+    });
+    expect(body.prompt).toContain('attached pose sheet');
+  });
+  it('n’envoie pas les réglages propres à OpenAI aux autres modèles', () => {
+    const [job] = planJobs(
+      specs,
+      { ...ALL, withUnits: false, withPortraits: false, decors: ['savane'] },
+      COMBAT_UNITS,
+      PEOPLES,
+      UNIT_SHEETS,
+    );
+    const body = openRouterBody({ model: 'google/gemini-3-pro-image', quality: 'high' }, job!, []);
+    expect(body).not.toHaveProperty('quality');
+    expect(body).not.toHaveProperty('input_references');
   });
 });
 

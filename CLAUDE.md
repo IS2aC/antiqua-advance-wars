@@ -65,7 +65,7 @@ pnpm build            # build de tous les packages
 pnpm assets:build     # pipeline d'assets : art/raw → apps/game/public/assets/atlas + report.html
 pnpm assets:cover     # images de la page de garde : art/static → apps/game/public/assets/garde (WebP)
 pnpm assets:dessin    # combats dessinés (proto) : art/raw/combat-dessine → apps/game/public/assets/combat-hd
-pnpm art:generer      # génère les dessins de combat via OpenAI (fiches art/specs/, --liste, --faux, --budget)
+pnpm art:generer      # génère les dessins de combat via OpenRouter ou OpenAI (fiches art/specs/, --liste, --faux, --budget)
 pnpm match            # match aléatoire en ligne de commande (moteur seul)
 ```
 

@@ -1,8 +1,8 @@
 /**
  * Génération des dessins de combat : `pnpm art:generer`.
  *
- * Lit le catalogue `art/specs/`, assemble les prompts, appelle l'API d'images d'OpenAI (ou le
- * faux générateur avec `--faux`), contrôle chaque image et la régénère si elle rate, la range
+ * Lit le catalogue `art/specs/`, assemble les prompts, appelle un générateur d'images
+ * (OpenRouter, ou OpenAI en direct, ou le faux générateur avec `--faux`), contrôle chaque image et la régénère si elle rate, la range
  * à son emplacement fixe dans `art/raw/combat-dessine/`, tient le journal des coûts, écrit la
  * page de validation, puis lance l'assemblage (`pnpm assets:dessin`).
  *
@@ -14,10 +14,11 @@
  *   pnpm art:generer --tout --budget 15
  *   pnpm art:generer --faux --dossier /tmp/essai  essai complet, sans clé ni dépense
  *
- * Clé : `OPENAI_API_KEY` dans `.env` à la racine du dépôt (jamais commité).
- * Réglages facultatifs : `OPENAI_IMAGE_MODEL` (gpt-image-2), `OPENAI_IMAGE_QUALITE` (high),
+ * Clé dans `.env` à la racine du dépôt (jamais commité) : `OPENROUTER_API_KEY` (utilisée en
+ * priorité) ou `OPENAI_API_KEY`. Réglages facultatifs : `OPENROUTER_IMAGE_MODEL`
+ * (openai/gpt-image-2), `OPENAI_IMAGE_MODEL` (gpt-image-2), `IMAGE_QUALITE` (high),
  * `OPENAI_IMAGE_PRIX` (« 5,8,30 » $ par million de jetons texte, image en entrée, image en
- * sortie), `OPENAI_IMAGE_ESTIMATION` (coût prévu d'une image, 0.25 $).
+ * sortie, OpenAI direct seulement), `IMAGE_ESTIMATION` (coût prévu d'une image, 0.25 $).
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
@@ -34,6 +35,7 @@ import { planJobs, type Job } from './gen/prompts';
 import {
   fakeProvider,
   openAiProvider,
+  openRouterProvider,
   parseRates,
   type ImageProvider,
   type Reference,
@@ -179,7 +181,7 @@ async function main(): Promise<void> {
     : DEFAULT_OUT;
   const budget = Number(values.budget);
   const tries = Math.max(1, Math.round(Number(values.essais)) || 1);
-  const estimate = Number(process.env.OPENAI_IMAGE_ESTIMATION) || 0.25;
+  const estimate = Number(process.env.IMAGE_ESTIMATION) || 0.25;
   const pending = jobs.filter((job) => values.refaire || !existsSync(join(out, `${job.id}.png`)));
 
   if (values.liste) {
@@ -200,19 +202,29 @@ async function main(): Promise<void> {
 
   let provider: ImageProvider = fakeProvider;
   if (!values.faux) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
+    const quality = process.env.IMAGE_QUALITE ?? 'high';
+    const openRouterKey = process.env.OPENROUTER_API_KEY;
+    const openAiKey = process.env.OPENAI_API_KEY;
+    if (openRouterKey) {
+      provider = openRouterProvider({
+        apiKey: openRouterKey,
+        model: process.env.OPENROUTER_IMAGE_MODEL ?? 'openai/gpt-image-2',
+        quality,
+        estimateUsd: estimate,
+      });
+    } else if (openAiKey) {
+      provider = openAiProvider({
+        apiKey: openAiKey,
+        model: process.env.OPENAI_IMAGE_MODEL ?? 'gpt-image-2',
+        quality,
+        rates: parseRates(process.env.OPENAI_IMAGE_PRIX),
+        estimateUsd: estimate,
+      });
+    } else {
       throw new Error(
-        'Clé OpenAI absente : ajoute une ligne OPENAI_API_KEY=sk-... dans le fichier .env à la racine du dépôt (il n’est jamais commité), ou essaie avec --faux.',
+        'Clé absente : ajoute une ligne OPENROUTER_API_KEY=sk-or-... (ou OPENAI_API_KEY=sk-...) dans le fichier .env à la racine du dépôt (il n’est jamais commité), ou essaie avec --faux.',
       );
     }
-    provider = openAiProvider({
-      apiKey,
-      model: process.env.OPENAI_IMAGE_MODEL ?? 'gpt-image-2',
-      quality: process.env.OPENAI_IMAGE_QUALITE ?? 'high',
-      rates: parseRates(process.env.OPENAI_IMAGE_PRIX),
-      estimateUsd: estimate,
-    });
   }
 
   const journalPath = join(out, 'generation.json');
