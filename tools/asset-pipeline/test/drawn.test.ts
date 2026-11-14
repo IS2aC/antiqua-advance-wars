@@ -3,6 +3,8 @@ import {
   FIGURE_IDLE_HEIGHT,
   borderColors,
   classifyDrawnFile,
+  feetCenterX,
+  layoutSequence,
   figureScale,
   removeBackground,
   splitColumns,
@@ -163,5 +165,33 @@ describe('poches de fond enfermées', () => {
       { pockets: true },
     );
     expect(alphaAt(out, 20, 20)).toBe(0);
+  });
+});
+
+describe('séquences « caméra fixe »', () => {
+  it('reconnaît les planches de séquence', () => {
+    expect(classifyDrawnFile('carthage-fantassin-attaque', ['carthage'], ['fantassin'])).toEqual({
+      kind: 'sequence',
+      people: 'carthage',
+      unit: 'fantassin',
+      sheet: 'attaque',
+    });
+    expect(classifyDrawnFile('carthage-fantassin-danse', ['carthage'], ['fantassin'])).toBeNull();
+  });
+
+  it('garde la position de chaque dessin dans sa case et ancre aux pieds', () => {
+    // Deux cases de 50 px ; le second dessin est 6 px plus à droite dans sa case.
+    const sheet = image(100, 40, (x, y) => {
+      const first = x >= 10 && x < 20 && y >= 10 && y < 40;
+      const second = x >= 66 && x < 76 && y >= 10 && y < 40;
+      return first || second ? INK : [0, 0, 0, 0];
+    });
+    const boxes = splitColumns(sheet, 2);
+    expect(feetCenterX(sheet, boxes[0]!)).toBeCloseTo(14.5);
+    const layout = layoutSequence(sheet, boxes, 50, { anim: 'run', from: 0, count: 2 });
+    expect(layout.width).toBe(16);
+    expect(layout.frames.map((f) => f.dx)).toEqual([0, 6]);
+    expect(layout.originX).toBeCloseTo(4.5 / 16);
+    expect(layout.originY).toBe(1);
   });
 });

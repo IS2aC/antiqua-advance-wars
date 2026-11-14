@@ -2,12 +2,14 @@
  * Combats dessinés (prototype) : art/raw/proto-combat → apps/game/public/assets/combat-hd.
  *
  * - `<peuple>-<unité>.png` : 4 poses (repos, attaque, coup reçu, à terre) → une image par pose ;
+ * - `<peuple>-<unité>-<planche>.png` : séquences (repos, attaque, charge, chute), 4 images
+ *   chacune, mises à la même échelle que les poses (corrigeable dans `echelles.json`) ;
  * - `portrait-<peuple>.png` : 4 expressions → une image par expression (256×256) ;
  * - `decor-<nom>.png` : décor recadré en 1920×1152.
  * Plus `manifest.json`, que le jeu lit pour savoir ce qui existe (le reste est provisoire).
  * Lancement : `pnpm assets:dessin`.
  */
-import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, parse, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -17,9 +19,13 @@ import {
   DRAWN_DECOR_W,
   DRAWN_EXPRESSIONS,
   DRAWN_POSES,
+  FIGURE_IDLE_HEIGHT,
   PORTRAIT_SIZE,
+  SEQUENCE_CELLS,
+  SEQUENCE_SHEETS,
   classifyDrawnFile,
   figureScale,
+  layoutSequence,
   portraitScale,
   removeBackground,
   splitColumns,
@@ -36,8 +42,18 @@ interface PoseInfo {
   readonly h: number;
 }
 
+interface AnimInfo {
+  readonly frames: number;
+  readonly w: number;
+  readonly h: number;
+  readonly originX: number;
+  readonly originY: number;
+}
+
 interface DrawnManifest {
   figures: Record<string, Record<string, Record<string, PoseInfo>>>;
+  /** Séquences par peuple et unité : images `<anim>-<i>.webp`. */
+  anims: Record<string, Record<string, Record<string, AnimInfo>>>;
   portraits: string[];
   decors: string[];
 }
@@ -69,10 +85,67 @@ async function writePiece(
   return { w, h };
 }
 
+/**
+ * Image d'une séquence : le dessin posé à sa place dans le cadre commun de l'animation
+ * (transparent autour), puis mis à l'échelle.
+ */
+async function writeFrame(
+  image: RgbaImage,
+  frame: { readonly box: Box; readonly dx: number; readonly dy: number },
+  layout: { readonly width: number; readonly height: number },
+  scale: number,
+  w: number,
+  h: number,
+  output: string,
+): Promise<void> {
+  const { box } = frame;
+  const piece = await raw(image)
+    .extract({ left: box.x, top: box.y, width: box.w, height: box.h })
+    .png()
+    .toBuffer();
+  const canvas = await sharp({
+    create: {
+      width: Math.ceil(layout.width),
+      height: Math.ceil(layout.height),
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite([{ input: piece, left: Math.round(frame.dx), top: Math.round(frame.dy) }])
+    .png()
+    .toBuffer();
+  await sharp(canvas)
+    .resize({ width: w, height: h, kernel: 'lanczos3' })
+    .webp({ quality: 90, alphaQuality: 100, effort: 5 })
+    .toFile(output);
+}
+
+/**
+ * Corrections d'échelle par planche (`echelles.json` à côté des images) : ChatGPT ne
+ * dessine pas toujours le personnage à la même taille d'une planche à l'autre.
+ * Exemple : { "carthage-fantassin-repos": 0.92 }.
+ */
+async function readScaleFixes(): Promise<Record<string, number>> {
+  try {
+    const data = JSON.parse(await readFile(join(SOURCE, 'echelles.json'), 'utf8')) as unknown;
+    if (!data || typeof data !== 'object') return {};
+    return Object.fromEntries(
+      Object.entries(data).filter(
+        (entry): entry is [string, number] => typeof entry[1] === 'number',
+      ),
+    );
+  } catch {
+    return {};
+  }
+}
+
 async function main(): Promise<void> {
   await rm(OUT, { recursive: true, force: true });
   await mkdir(OUT, { recursive: true });
-  const manifest: DrawnManifest = { figures: {}, portraits: [], decors: [] };
+  const manifest: DrawnManifest = { figures: {}, anims: {}, portraits: [], decors: [] };
+  /** Échelle des poses de chaque unité : les séquences s'y alignent. */
+  const poseScales = new Map<string, number>();
+  const scaleFixes = await readScaleFixes();
   let files: string[] = [];
   try {
     files = (await readdir(SOURCE)).filter((f) => IMAGE_EXTENSIONS.has(extname(f).toLowerCase()));
@@ -80,7 +153,11 @@ async function main(): Promise<void> {
     console.log(`[dessin] ${SOURCE} absent : tout restera provisoire.`);
   }
 
-  for (const file of files.sort()) {
+  // Les séquences en dernier : elles prennent l'échelle des poses de leur unité.
+  const isSequence = (f: string) =>
+    classifyDrawnFile(parse(f).name, PEOPLES, COMBAT_UNITS)?.kind === 'sequence';
+  const ordered = [...files.sort().filter((f) => !isSequence(f)), ...files.filter(isSequence)];
+  for (const file of ordered) {
     const role = classifyDrawnFile(parse(file).name, PEOPLES, COMBAT_UNITS);
     if (!role) {
       console.warn(`[dessin] ${file} : nom non reconnu, ignoré (voir docs/proto-combat.md).`);
@@ -99,11 +176,52 @@ async function main(): Promise<void> {
     }
 
     const source = await loadImage(input);
-    const image = removeBackground(source, { pockets: role.kind === 'figure' });
+    const image = removeBackground(source, { pockets: role.kind !== 'portrait' });
+
+    if (role.kind === 'sequence') {
+      const key = `${role.people}-${role.unit}`;
+      const boxes = splitColumns(image, SEQUENCE_CELLS);
+      // Sans planche de poses : la première image debout fait la hauteur de référence.
+      const base = poseScales.get(key) ?? FIGURE_IDLE_HEIGHT / (boxes[0]?.h ?? FIGURE_IDLE_HEIGHT);
+      const fix = scaleFixes[parse(file).name] ?? 1;
+      const scale = base * fix;
+      const dir = join(OUT, role.people, role.unit);
+      await mkdir(dir, { recursive: true });
+      const cellWidth = image.width / SEQUENCE_CELLS;
+      const anims = ((manifest.anims[role.people] ??= {})[role.unit] ??= {});
+      for (const group of SEQUENCE_SHEETS[role.sheet]) {
+        const layout = layoutSequence(image, boxes, cellWidth, group);
+        const w = Math.max(1, Math.round(layout.width * scale));
+        const h = Math.max(1, Math.round(layout.height * scale));
+        for (const [i, frame] of layout.frames.entries()) {
+          await writeFrame(
+            image,
+            frame,
+            layout,
+            scale,
+            w,
+            h,
+            join(dir, `${layout.anim}-${i}.webp`),
+          );
+        }
+        anims[layout.anim] = {
+          frames: layout.frames.length,
+          w,
+          h,
+          originX: Number(layout.originX.toFixed(4)),
+          originY: Number(layout.originY.toFixed(4)),
+        };
+      }
+      console.log(
+        `[dessin] ${file} → ${role.people}/${role.unit} : ${SEQUENCE_SHEETS[role.sheet].map((g) => g.anim).join(', ')} (×${scale.toFixed(2)}${fix !== 1 ? `, correction ×${fix}` : ''})`,
+      );
+      continue;
+    }
 
     if (role.kind === 'figure') {
       const boxes = splitColumns(image, DRAWN_POSES.length);
       const scale = figureScale(boxes);
+      poseScales.set(`${role.people}-${role.unit}`, scale);
       const dir = join(OUT, role.people, role.unit);
       await mkdir(dir, { recursive: true });
       const poses: Record<string, PoseInfo> = {};

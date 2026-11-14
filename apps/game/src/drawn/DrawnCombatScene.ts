@@ -9,8 +9,11 @@ import {
   SLASH,
   SPARK,
   STONE,
+  createDrawnAnimations,
   createEffectTextures,
   decorTexture,
+  drawnAnimation,
+  type DrawnAnim,
   portraitFacesLeft,
   portraitTexture,
   poseTexture,
@@ -42,6 +45,10 @@ export interface DrawnCombatData {
  * Déroulé : 1) l'attaquant seul, plein écran ; 2) son bandeau descend ; 3) l'écran se
  * partage et le défenseur arrive ; 4) l'attaque ; 5) l'impact (PV qui descendent,
  * chutes), puis la riposte éventuelle ; 6) expressions finales et retour à la carte.
+ *
+ * Une unité dont les séquences sont dessinées (16 dessins) joue de vraies animations :
+ * repos en boucle, préparation, course, coup (gel à l'impact), coup reçu, chute, victoire.
+ * Les autres retombent sur leurs 4 poses, animées par le code.
  */
 
 const FONT = '"Plus Jakarta Sans", system-ui, sans-serif';
@@ -51,9 +58,23 @@ const HUD_W = 900;
 const HUD_H = 176;
 const HUD_MARGIN = 24;
 const PORTRAIT = 150;
+/** Gel de l'image au moment où le coup porte : c'est ce qui donne du poids. */
+const HITSTOP_MS = 90;
+/** Décalage entre deux soldats d'un même rang : jamais de chorégraphie synchronisée. */
+const STAGGER_MS = 60;
+
+/** Pose de secours quand la séquence n'est pas dessinée. */
+const FALLBACK_POSE: Readonly<Record<DrawnAnim, Pose>> = {
+  idle: 'idle',
+  run: 'attack',
+  attack: 'attack',
+  hit: 'hit',
+  fall: 'down',
+  victory: 'idle',
+};
 
 interface Figure {
-  readonly image: Phaser.GameObjects.Image;
+  readonly image: Phaser.GameObjects.Sprite;
   readonly homeX: number;
   readonly baseScale: number;
   breathing: Phaser.Tweens.Tween | null;
@@ -86,6 +107,7 @@ export class DrawnCombatScene extends StagedScene {
   create(data: DrawnCombatData): void {
     this.beginStage(data.speed);
     createEffectTextures(this);
+    createDrawnAnimations(this);
     const { setup } = data;
     const attackerSide = setup.left.role === 'attaquant' ? 'left' : 'right';
 
@@ -154,49 +176,34 @@ export class DrawnCombatScene extends StagedScene {
     // 6) Expressions finales, puis retour à la carte.
     const left = data.setup.left;
     const right = data.setup.right;
-    this.setExpression(this.views.left, finalExpression(left, right));
-    this.setExpression(this.views.right, finalExpression(right, left));
-    await this.wait(900);
+    const endings: Record<Side, Expression> = {
+      left: finalExpression(left, right),
+      right: finalExpression(right, left),
+    };
+    for (const side of ['left', 'right'] as const) {
+      const view = this.views[side];
+      this.setExpression(view, endings[side]);
+      // Le vainqueur lève son arme.
+      if (endings[side] === 'smile') {
+        view.figures.forEach((figure, i) => {
+          void this.wait(i * STAGGER_MS).then(() => this.act(view, figure, 'victory'));
+        });
+      }
+    }
+    await this.wait(1100);
     await this.finish(data.onDone);
   }
 
   private async playStrike(strike: Strike, from: SideView, to: SideView): Promise<void> {
     this.setExpression(from, 'shout');
     if (strike.ranged) {
-      for (const figure of from.figures) this.setPose(from, figure, 'attack');
+      for (const figure of from.figures) void this.act(from, figure, 'attack');
       await this.wait(260);
       await this.volley(from, to, from.side.unitType === 'catapulte');
+      await this.impact(to, strike);
     } else {
-      // Anticipation (léger recul), puis charge vers l'ennemi.
-      await Promise.all(
-        from.figures.map((figure) =>
-          this.tween({
-            targets: figure.image,
-            x: figure.homeX - from.dir * 36,
-            duration: 160,
-            ease: 'Quad.easeOut',
-          }),
-        ),
-      );
-      for (const figure of from.figures) {
-        this.setPose(from, figure, 'attack');
-        this.puff(from, figure.image.x - from.dir * 40, figure.image.y);
-      }
-      await Promise.all(
-        from.figures.map((figure) =>
-          this.tween({
-            targets: figure.image,
-            x: figure.homeX + from.dir * 170,
-            duration: 190,
-            ease: 'Quad.easeIn',
-          }),
-        ),
-      );
-      // Le coup porte de l'autre côté : une entaille sur chaque cible.
-      for (const figure of to.figures) this.slash(to, figure);
+      await this.charge(from, to, strike);
     }
-
-    await this.impact(to, strike);
 
     for (const figure of from.figures) {
       if (!strike.ranged) {
@@ -207,9 +214,49 @@ export class DrawnCombatScene extends StagedScene {
           ease: 'Quad.easeOut',
         });
       }
-      this.setPose(from, figure, 'idle');
+      void this.act(from, figure, 'idle');
     }
     if (from.hp > 0) this.setExpression(from, 'neutral');
+  }
+
+  /**
+   * Corps à corps : préparation (léger recul), course vers l'ennemi, puis le coup. Avec une
+   * séquence dessinée, le coup part de l'image de vitesse et l'impact tombe sur l'image
+   * d'extension, avec un gel ; sinon, pose d'attaque et impact à l'arrivée.
+   */
+  private async charge(from: SideView, to: SideView, strike: Strike): Promise<void> {
+    const animated = drawnAnimation(this, from.side.owner, from.side.unitType, 'attack');
+    await Promise.all(
+      from.figures.map(async (figure, i) => {
+        await this.wait(i * STAGGER_MS);
+        this.still(from, figure, 'attack', 0);
+        await this.tween({
+          targets: figure.image,
+          x: figure.homeX - from.dir * 36,
+          duration: 180,
+          ease: 'Quad.easeOut',
+        });
+      }),
+    );
+    await this.wait(80);
+    await Promise.all(
+      from.figures.map(async (figure, i) => {
+        await this.wait(i * STAGGER_MS);
+        void this.act(from, figure, 'run');
+        this.puff(from, figure.image.x - from.dir * 40, figure.image.y);
+        await this.tween({
+          targets: figure.image,
+          x: figure.homeX + from.dir * 170,
+          duration: 230,
+          ease: 'Quad.easeIn',
+        });
+        if (animated) figure.image.play({ key: animated.key, startFrame: 1 });
+      }),
+    );
+    // Image de vitesse, puis extension (deux images à 14 par seconde).
+    if (animated) await this.wait(130);
+    for (const figure of to.figures) this.slash(to, figure);
+    await this.impact(to, strike);
   }
 
   /** Tir : les projectiles quittent l'écran du tireur, puis tombent sur la cible. */
@@ -275,16 +322,19 @@ export class DrawnCombatScene extends StagedScene {
     });
   }
 
-  /** Impact : éclair, secousse, PV qui descendent, figurants qui tombent. */
+  /** Impact : éclair, gel, secousse, PV qui descendent, figurants qui tombent. */
   private async impact(target: SideView, strike: Strike): Promise<void> {
     this.setExpression(target, 'hurt');
-    target.camera.shake(220, 0.01);
     this.flashHalf(target);
-
+    const remaining = drawnFigureCount(target.side.unitType, strike.targetHpAfter);
     for (const figure of target.figures) {
-      this.setPose(target, figure, 'hit');
+      void this.act(target, figure, 'hit');
       figure.image.setTint(0xffffff).setTintMode(Phaser.TintModes.FILL);
-      this.time.delayedCall(90, () => figure.image.clearTint());
+    }
+    await this.hitstop(HITSTOP_MS);
+    target.camera.shake(220, 0.01);
+    for (const figure of target.figures) {
+      this.time.delayedCall(40, () => figure.image.clearTint());
       void this.tween({
         targets: figure.image,
         x: figure.homeX - target.dir * 34,
@@ -303,19 +353,28 @@ export class DrawnCombatScene extends StagedScene {
       onUpdate: () => this.setHp(target, Math.round(counter.value)),
     });
 
-    const remaining = drawnFigureCount(target.side.unitType, strike.targetHpAfter);
     const fallen = target.figures.splice(remaining);
     const falls = fallen.map(async (figure, i) => {
-      await this.wait(220 + i * 90);
-      this.setPose(target, figure, 'down');
+      await this.wait(240 + i * 110);
+      await this.act(target, figure, 'fall');
       this.puff(target, figure.image.x, figure.image.y);
       await this.tween({ targets: figure.image, alpha: 0, duration: 450, delay: 450 });
     });
 
     await Promise.all([countdown, ...falls]);
     this.setHp(target, strike.targetHpAfter);
-    await this.wait(200);
-    for (const figure of target.figures) this.setPose(target, figure, 'idle');
+    await this.wait(150);
+    for (const figure of target.figures) void this.act(target, figure, 'idle');
+  }
+
+  /** Arrêt sur image : tweens et animations figés un instant (en temps réel). */
+  private async hitstop(ms: number): Promise<void> {
+    if (this.skipped) return;
+    this.tweens.pauseAll();
+    this.anims.pauseAll();
+    await new Promise((resolve) => window.setTimeout(resolve, ms / this.tweens.timeScale));
+    this.tweens.resumeAll();
+    this.anims.resumeAll();
   }
 
   private async finish(onDone: () => void): Promise<void> {
@@ -350,15 +409,21 @@ export class DrawnCombatScene extends StagedScene {
       const pose = poseTexture(this, side.owner, side.unitType, 'idle', FIGURE_SCREEN_H);
       const baseScale = pose.scale * slot.scale;
       const image = this.add
-        .image(homeX, slot.y, pose.key)
+        .sprite(homeX, slot.y, pose.key)
         .setOrigin(0.5, 1)
         .setScale(baseScale)
         .setFlipX(dir < 0)
         .setDepth(slot.y);
-      // Second rang un peu voilé : profondeur.
-      if (slot.scale < 1) image.setTint(0xd8d0c0);
       const figure: Figure = { image, homeX, baseScale, breathing: null };
-      this.breathe(figure);
+      const idle = drawnAnimation(this, side.owner, side.unitType, 'idle');
+      if (idle) {
+        // Repos dessiné : chaque soldat démarre à une image différente.
+        image
+          .setOrigin(dir < 0 ? 1 - idle.originX : idle.originX, idle.originY)
+          .play({ key: idle.key, startFrame: i % idle.frames.length });
+      } else {
+        this.breathe(figure);
+      }
       figures.push(figure);
     }
     // Le premier rang devant le second.
@@ -524,12 +589,53 @@ export class DrawnCombatScene extends StagedScene {
 
   private setPose(view: SideView, figure: Figure, pose: Pose): void {
     const texture = poseTexture(this, view.side.owner, view.side.unitType, pose, FIGURE_SCREEN_H);
-    figure.image.setTexture(texture.key).setAngle(texture.angle * view.dir);
+    figure.image
+      .setTexture(texture.key)
+      .setOrigin(0.5, 1)
+      .setAngle(texture.angle * view.dir);
     if (pose === 'down') {
       figure.breathing?.stop();
       figure.breathing = null;
       figure.image.setScale(figure.baseScale);
     }
+  }
+
+  /**
+   * Joue une animation de la séquence dessinée ; se résout à sa fin (aussitôt pour une
+   * boucle). Sans séquence, la pose de secours, animée par le code.
+   */
+  private act(view: SideView, figure: Figure, action: DrawnAnim): Promise<void> {
+    const anim = drawnAnimation(this, view.side.owner, view.side.unitType, action);
+    const sprite = figure.image;
+    if (!anim) {
+      sprite.anims.stop();
+      this.setPose(view, figure, FALLBACK_POSE[action]);
+      return Promise.resolve();
+    }
+    sprite.setOrigin(this.originX(view, anim.originX), anim.originY).setAngle(0);
+    sprite.play(anim.key, true);
+    if (action === 'idle' || action === 'run' || this.skipped) return Promise.resolve();
+    return Promise.race([
+      new Promise<void>((resolve) => sprite.once('animationcomplete', () => resolve())),
+      this.skipSignal,
+    ]);
+  }
+
+  /** Ancrage horizontal : un personnage retourné (camp de droite) a ses pieds en miroir. */
+  private originX(view: SideView, originX: number): number {
+    return view.dir < 0 ? 1 - originX : originX;
+  }
+
+  /** Une seule image de la séquence (la préparation, par exemple), ou la pose de secours. */
+  private still(view: SideView, figure: Figure, action: DrawnAnim, index: number): void {
+    const anim = drawnAnimation(this, view.side.owner, view.side.unitType, action);
+    const texture = anim?.frames[index];
+    if (!anim || !texture) return;
+    figure.image.anims.stop();
+    figure.image
+      .setTexture(texture)
+      .setOrigin(this.originX(view, anim.originX), anim.originY)
+      .setAngle(0);
   }
 
   /** Respiration de repos : le figurant ne reste jamais figé. */

@@ -19,8 +19,18 @@ import {
 const BASE = 'assets/combat-hd/';
 const MANIFEST = 'drawn-manifest';
 
+interface AnimInfo {
+  readonly frames: number;
+  readonly originX: number;
+  readonly originY: number;
+}
+
 interface DrawnManifest {
   readonly figures: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
+  /** Séquences (16 dessins) : peuple → unité → animation. */
+  readonly anims?: Readonly<
+    Record<string, Readonly<Record<string, Readonly<Record<string, AnimInfo>>>>>
+  >;
   readonly portraits: readonly string[];
   readonly decors: readonly string[];
 }
@@ -28,6 +38,67 @@ interface DrawnManifest {
 const figureKey = (people: string, unit: string, pose: string) => `d:fig:${people}:${unit}:${pose}`;
 const portraitKey = (people: string, expression: string) => `d:por:${people}:${expression}`;
 const decorKey = (name: string) => `d:decor:${name}`;
+const animFrameKey = (people: string, unit: string, anim: string, i: number) =>
+  `d:anim:${people}:${unit}:${anim}:${i}`;
+const animKey = (people: string, unit: string, anim: string) => `d:${people}:${unit}:${anim}`;
+
+/** Animations des séquences et leur cadence (images par seconde, boucle ou non). */
+export const DRAWN_ANIMS = {
+  idle: { rate: 6, loop: true },
+  run: { rate: 10, loop: true },
+  attack: { rate: 14, loop: false },
+  hit: { rate: 10, loop: false },
+  fall: { rate: 8, loop: false },
+  victory: { rate: 5, loop: false },
+} as const;
+export type DrawnAnim = keyof typeof DRAWN_ANIMS;
+
+export interface DrawnAnimation {
+  readonly key: string;
+  readonly originX: number;
+  readonly originY: number;
+  /** Texture de chaque image (pour afficher une image seule, comme l'anticipation). */
+  readonly frames: readonly string[];
+}
+
+/** Crée une fois les animations Phaser des séquences chargées. */
+export function createDrawnAnimations(scene: Phaser.Scene): void {
+  const manifest = scene.cache.json.get(MANIFEST) as Partial<DrawnManifest> | undefined;
+  for (const [people, units] of Object.entries(manifest?.anims ?? {})) {
+    for (const [unit, anims] of Object.entries(units)) {
+      for (const [anim, info] of Object.entries(anims)) {
+        const spec = DRAWN_ANIMS[anim as DrawnAnim] as (typeof DRAWN_ANIMS)[DrawnAnim] | undefined;
+        const key = animKey(people, unit, anim);
+        if (!spec || scene.anims.exists(key)) continue;
+        const frames = Array.from({ length: info.frames }, (_, i) => ({
+          key: animFrameKey(people, unit, anim, i),
+        })).filter((frame) => scene.textures.exists(frame.key));
+        if (frames.length === 0) continue;
+        scene.anims.create({ key, frames, frameRate: spec.rate, repeat: spec.loop ? -1 : 0 });
+      }
+    }
+  }
+}
+
+/** L'animation d'une unité, si sa séquence a été dessinée. */
+export function drawnAnimation(
+  scene: Phaser.Scene,
+  people: PlayerId,
+  unit: UnitType,
+  anim: DrawnAnim,
+): DrawnAnimation | null {
+  const key = animKey(people, unit, anim);
+  if (!scene.anims.exists(key)) return null;
+  const manifest = scene.cache.json.get(MANIFEST) as Partial<DrawnManifest> | undefined;
+  const info = manifest?.anims?.[people]?.[unit]?.[anim];
+  if (!info) return null;
+  return {
+    key,
+    originX: info.originX,
+    originY: info.originY,
+    frames: Array.from({ length: info.frames }, (_, i) => animFrameKey(people, unit, anim, i)),
+  };
+}
 
 /** Charge le manifeste puis, dans la même passe, les images qu'il annonce. */
 export function preloadDrawn(scene: Phaser.Scene): void {
@@ -38,6 +109,18 @@ export function preloadDrawn(scene: Phaser.Scene): void {
       for (const [unit, poses] of Object.entries(units)) {
         for (const pose of Object.keys(poses as object)) {
           scene.load.image(figureKey(people, unit, pose), `${BASE}${people}/${unit}/${pose}.webp`);
+        }
+      }
+    }
+    for (const [people, units] of Object.entries(manifest?.anims ?? {})) {
+      for (const [unit, anims] of Object.entries(units)) {
+        for (const [anim, info] of Object.entries(anims)) {
+          for (let i = 0; i < info.frames; i++) {
+            scene.load.image(
+              animFrameKey(people, unit, anim, i),
+              `${BASE}${people}/${unit}/${anim}-${i}.webp`,
+            );
+          }
         }
       }
     }

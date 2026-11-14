@@ -151,3 +151,112 @@ art/raw/proto-combat/
 ```
 
 Tu peux les déposer au fur et à mesure : chaque image remplace l'image provisoire correspondante.
+
+## Expérience « 16 dessins » — fantassin carthaginois
+
+But : comparer dans le jeu un fantassin animé avec 16 dessins à l'archer resté à 4 poses.
+Les 16 dessins sont répartis sur **4 planches de 4 cases**, une planche par action, chaque
+case étant une image de la séquence, dans l'ordre.
+
+| Planche | Fichier | Cases (de gauche à droite) |
+| --- | --- | --- |
+| 1 | `carthage-fantassin-repos.png` | repos neutre · inspiration · cape vers l'arrière · cape vers l'avant |
+| 2 | `carthage-fantassin-attaque.png` | préparation · image de vitesse · coup · suite du mouvement |
+| 3 | `carthage-fantassin-charge.png` | course 1 · course 2 · coup reçu · recul |
+| 4 | `carthage-fantassin-chute.png` | déséquilibre · à terre · victoire, lance levée · victoire, cri |
+
+Règles communes :
+
+- Une conversation par planche. Joins **à chaque fois** `art/raw/proto-combat/carthage-fantassin.png`
+  (la planche actuelle) : c'est la référence du personnage et de sa taille.
+- **Caméra fixe** : dans une planche, les 4 cases sont des images d'un même plan. Le
+  personnage reste au même endroit dans sa case, le pied d'appui ne bouge pas sauf si le geste
+  le déplace. C'est ce qui évite qu'il tremble à l'écran.
+- Fond **blanc uni**, sans damier.
+- À vérifier : même personnage et même taille que la référence ; 4 cases de même largeur ;
+  pieds sur la même ligne ; rien de coupé ; tourné vers la droite.
+
+Le bloc de style (identique pour les 4 planches) :
+
+```text
+Style: classic hand-drawn 2D feature animation, 1990s cel look. Simple, appealing shapes and a strong readable silhouette. Clean uniform ink outline, few interior lines, no muscle definition lines, no fabric wrinkles beyond one or two folds, no small ornaments. Flat color fills with ONE darker shadow tone, no gradients, no texture, no painterly rendering, no glow.
+
+Plain solid pure white background (#FFFFFF), no checkerboard, no ground shadow, no ground line, no text, no labels, no frame, no cell borders.
+```
+
+### Planche 1 — Repos → `carthage-fantassin-repos.png`
+
+```text
+Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
+
+Create 4 frames of a hand-drawn animation sequence, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera: the soldier stays at exactly the same place in each column, both feet planted on the same baseline, facing RIGHT in a 3/4 side view. Subtle idle breathing loop, the changes between frames are small:
+1. Neutral ready stance, spear upright in the right hand, shield in front.
+2. Inhale: chest slightly raised, shoulders up a few pixels, head a touch higher.
+3. Exhale: shoulders relaxed, the cape swings slightly backward.
+4. The cape swings slightly forward, the crest leans a little forward.
+
+[STYLE BLOCK]
+```
+
+### Planche 2 — Attaque → `carthage-fantassin-attaque.png`
+
+```text
+Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
+
+Create 4 frames of a hand-drawn animation sequence of a spear thrust, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera: the back foot stays planted at the same spot in each column, feet on the same baseline, facing RIGHT in a 3/4 side view.
+1. Anticipation: weight shifted onto the back leg, spear pulled back at shoulder height, shield tucked, body coiled, determined face.
+2. Motion smear frame, like in classic hand-drawn animation: the body lunging forward, the arm and spear stretched and elongated into a fast blurred shape with a few speed lines drawn in the same ink style.
+3. Full extension: deep lunge, front knee bent, spear fully thrust forward, shouting, the cape flying behind.
+4. Follow-through: still extended but settling, spear tip lowering slightly, cape falling back.
+
+[STYLE BLOCK]
+```
+
+### Planche 3 — Charge et coup reçu → `carthage-fantassin-charge.png`
+
+```text
+Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
+
+Create 4 frames side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera, feet on the same baseline, facing RIGHT in a 3/4 side view.
+Frames 1-2: a running charge cycle, spear held forward at waist height, shield in front.
+1. Running, left leg forward, right leg pushing off behind, body leaning forward, cape flowing back.
+2. Running, legs passing under the body, one foot on the ground, body slightly higher.
+Frames 3-4: getting hit.
+3. Impact: head snapped back, eyes squeezed, shield knocked upward, body jolted, standing in place.
+4. Recoil: stumbling one step backward, off balance, arms out, spear still in hand.
+
+[STYLE BLOCK]
+```
+
+### Planche 4 — Chute et victoire → `carthage-fantassin-chute.png`
+
+```text
+Use the attached pose sheet as the exact reference for this Carthaginian soldier: same face, same helmet with red crest, same red tunic and cape, same round shield with the red palm tree, same proportions and SAME SIZE as the first (idle) pose.
+
+Create 4 frames side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera, feet on the same baseline, facing RIGHT in a 3/4 side view.
+Frames 1-2: defeat.
+1. Staggering: knees buckling, leaning backward, spear slipping from the hand, shield lowered.
+2. Down: kneeling on the ground, head lowered, spear lying on the ground.
+Frames 3-4: victory.
+3. Spear raised high above the head, shield held up, proud and confident.
+4. Victory shout: mouth wide open, spear still raised, chest out, cape flying.
+
+[STYLE BLOCK]
+```
+
+Remplace `[STYLE BLOCK]` par le bloc de style ci-dessus avant d'envoyer.
+
+### Traitement et réglages
+
+`pnpm assets:dessin` découpe chaque planche en suivant les vides entre les dessins, mais garde
+la position de chaque dessin dans sa case : le mouvement d'une image à l'autre est celui que
+ChatGPT a dessiné. Chaque animation est ancrée aux pieds de sa première image, et mise à la
+même échelle que la planche de 4 poses de l'unité.
+
+ChatGPT ne dessine pas toujours le personnage à la même taille d'une planche à l'autre. Une
+correction par planche se règle dans `art/raw/proto-combat/echelles.json` (par exemple
+`{ "carthage-fantassin-repos": 0.92 }` : la planche de repos était dessinée 8 % trop grande).
+
+Dans le jeu : repos en boucle (6 images/s), préparation, course (10 images/s), coup à partir
+de l'image de vitesse (14 images/s) avec un gel de 90 ms à l'impact, coup reçu, chute, et
+victoire pour le camp qui a perdu le moins. Une unité sans séquence garde ses 4 poses.

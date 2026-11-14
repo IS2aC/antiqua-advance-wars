@@ -41,6 +41,54 @@
       }
     }
   },
+  "anims": {
+    "carthage": {
+      "fantassin": {
+        "attack": {
+          "frames": 4,
+          "w": 386,
+          "h": 361,
+          "originX": 0.5658,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 386,
+          "h": 384,
+          "originX": 0.7153,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 357,
+          "h": 428,
+          "originX": 0.6509,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 344,
+          "h": 374,
+          "originX": 0.6519,
+          "originY": 0.9867
+        },
+        "victory": {
+          "frames": 2,
+          "w": 335,
+          "h": 475,
+          "originX": 0.6441,
+          "originY": 1
+        },
+        "idle": {
+          "frames": 4,
+          "w": 265,
+          "h": 430,
+          "originX": 0.5862,
+          "originY": 1
+        }
+      }
+    }
+  },
   "portraits": [
     "carthage",
     "koush"

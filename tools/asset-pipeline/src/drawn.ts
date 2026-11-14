@@ -27,10 +27,34 @@ const SOLID = 32;
 
 export type DrawnFile =
   | { kind: 'figure'; people: string; unit: string }
+  | { kind: 'sequence'; people: string; unit: string; sheet: SequenceSheet }
   | { kind: 'portrait'; people: string }
   | { kind: 'decor'; name: string };
 
-/** Nom de fichier → rôle : `<peuple>-<unité>`, `portrait-<peuple>`, `decor-<nom>`. */
+/**
+ * Planches de séquences (16 dessins par unité) : 4 planches de 4 images, chacune découpée
+ * en une ou deux animations. Gabarits et prompts : docs/proto-combat.md.
+ */
+export const SEQUENCE_SHEETS = {
+  repos: [{ anim: 'idle', from: 0, count: 4 }],
+  attaque: [{ anim: 'attack', from: 0, count: 4 }],
+  charge: [
+    { anim: 'run', from: 0, count: 2 },
+    { anim: 'hit', from: 2, count: 2 },
+  ],
+  chute: [
+    { anim: 'fall', from: 0, count: 2 },
+    { anim: 'victory', from: 2, count: 2 },
+  ],
+} as const;
+export type SequenceSheet = keyof typeof SEQUENCE_SHEETS;
+/** Images par planche de séquence. */
+export const SEQUENCE_CELLS = 4;
+
+/**
+ * Nom de fichier → rôle : `<peuple>-<unité>` (4 poses), `<peuple>-<unité>-<planche>`
+ * (séquence), `portrait-<peuple>`, `decor-<nom>`.
+ */
 export function classifyDrawnFile(
   baseName: string,
   peoples: readonly string[],
@@ -43,6 +67,22 @@ export function classifyDrawnFile(
   }
   const decor = /^decor-([a-z]+)$/.exec(name);
   if (decor?.[1]) return { kind: 'decor', name: decor[1] };
+  const sequence = /^([a-z]+)-([a-z]+)-([a-z]+)$/.exec(name);
+  if (
+    sequence?.[1] &&
+    sequence[2] &&
+    sequence[3] &&
+    peoples.includes(sequence[1]) &&
+    units.includes(sequence[2]) &&
+    sequence[3] in SEQUENCE_SHEETS
+  ) {
+    return {
+      kind: 'sequence',
+      people: sequence[1],
+      unit: sequence[2],
+      sheet: sequence[3] as SequenceSheet,
+    };
+  }
   const figure = /^([a-z]+)-([a-z]+)$/.exec(name);
   if (figure?.[1] && figure[2] && peoples.includes(figure[1]) && units.includes(figure[2])) {
     return { kind: 'figure', people: figure[1], unit: figure[2] };
@@ -315,4 +355,77 @@ export function figureScale(boxes: readonly Box[]): number {
 export function portraitScale(boxes: readonly Box[]): number {
   const largest = Math.max(1, ...boxes.map((box) => Math.max(box.w, box.h)));
   return PORTRAIT_SIZE / largest;
+}
+
+// ——— Séquences ———
+
+/** Abscisse moyenne des pieds : les pixels dessinés dans le bas du cadre (6 %). */
+export function feetCenterX(image: RgbaImage, box: Box): number {
+  const rows = Math.max(3, Math.round(box.h * 0.06));
+  let sum = 0;
+  let count = 0;
+  for (let y = box.y + box.h - rows; y < box.y + box.h; y++) {
+    for (let x = box.x; x < box.x + box.w; x++) {
+      if ((image.data[(y * image.width + x) * 4 + 3] ?? 0) > SOLID) {
+        sum += x;
+        count++;
+      }
+    }
+  }
+  return count > 0 ? sum / count : box.x + box.w / 2;
+}
+
+export interface PlacedFrame {
+  /** Le dessin dans la planche source. */
+  readonly box: Box;
+  /** Sa place dans le cadre commun de l'animation (pixels source). */
+  readonly dx: number;
+  readonly dy: number;
+}
+
+export interface SequenceLayout {
+  readonly anim: string;
+  /** Cadre commun à toutes les images de l'animation (pixels source). */
+  readonly width: number;
+  readonly height: number;
+  /** Point d'ancrage (pieds de la première image), en fraction du cadre. */
+  readonly originX: number;
+  readonly originY: number;
+  readonly frames: readonly PlacedFrame[];
+}
+
+/**
+ * Mise en page d'une animation tirée d'une planche « caméra fixe » : chaque dessin garde sa
+ * position dans sa case (le mouvement d'une image à l'autre est celui dessiné), toutes les
+ * images partagent un même cadre, et l'ancrage est pris aux pieds de la première image.
+ * `boxes` : les dessins trouvés dans la planche (un par case), `cellWidth` : largeur d'une case.
+ */
+export function layoutSequence(
+  image: RgbaImage,
+  boxes: readonly Box[],
+  cellWidth: number,
+  group: { readonly anim: string; readonly from: number; readonly count: number },
+): SequenceLayout {
+  const local = Array.from({ length: group.count }, (_, k) => {
+    const i = group.from + k;
+    const box = boxes[i] ?? { x: i * cellWidth, y: 0, w: 1, h: 1 };
+    return { box, x: box.x - i * cellWidth, y: box.y };
+  });
+  const minX = Math.min(...local.map((f) => f.x));
+  const minY = Math.min(...local.map((f) => f.y));
+  const maxX = Math.max(...local.map((f) => f.x + f.box.w));
+  const maxY = Math.max(...local.map((f) => f.y + f.box.h));
+  const first = local[0];
+  const anchorX = first ? feetCenterX(image, first.box) - group.from * cellWidth : minX;
+  const anchorY = first ? first.y + first.box.h : maxY;
+  const width = maxX - minX;
+  const height = maxY - minY;
+  return {
+    anim: group.anim,
+    width,
+    height,
+    originX: (anchorX - minX) / width,
+    originY: (anchorY - minY) / height,
+    frames: local.map((f) => ({ box: f.box, dx: f.x - minX, dy: f.y - minY })),
+  };
 }
