@@ -359,20 +359,42 @@ export function portraitScale(boxes: readonly Box[]): number {
 
 // ——— Séquences ———
 
-/** Abscisse moyenne des pieds : les pixels dessinés dans le bas du cadre (6 %). */
+/**
+ * Abscisse moyenne des pieds : les pixels dessinés dans le bas du cadre (6 %), sans les
+ * appuis trop fins (hampe de lance posée au sol, pointe d'arme) : seuls comptent les
+ * morceaux d'au moins 40 % de la largeur du plus large, c'est-à-dire les pieds.
+ */
 export function feetCenterX(image: RgbaImage, box: Box): number {
   const rows = Math.max(3, Math.round(box.h * 0.06));
+  const columns: number[] = [];
+  for (let x = box.x; x < box.x + box.w; x++) {
+    let count = 0;
+    for (let y = box.y + box.h - rows; y < box.y + box.h; y++) {
+      if ((image.data[(y * image.width + x) * 4 + 3] ?? 0) > SOLID) count++;
+    }
+    columns.push(count);
+  }
+  const runs: { start: number; end: number; weight: number }[] = [];
+  columns.forEach((count, i) => {
+    const last = runs[runs.length - 1];
+    if (count === 0) return;
+    if (last && last.end === i) {
+      last.end = i + 1;
+      last.weight += count;
+    } else runs.push({ start: i, end: i + 1, weight: count });
+  });
+  if (runs.length === 0) return box.x + box.w / 2;
+  const widest = Math.max(...runs.map((run) => run.end - run.start));
   let sum = 0;
-  let count = 0;
-  for (let y = box.y + box.h - rows; y < box.y + box.h; y++) {
-    for (let x = box.x; x < box.x + box.w; x++) {
-      if ((image.data[(y * image.width + x) * 4 + 3] ?? 0) > SOLID) {
-        sum += x;
-        count++;
-      }
+  let weight = 0;
+  for (const run of runs) {
+    if (run.end - run.start < widest * 0.4) continue;
+    for (let i = run.start; i < run.end; i++) {
+      sum += (box.x + i) * (columns[i] ?? 0);
+      weight += columns[i] ?? 0;
     }
   }
-  return count > 0 ? sum / count : box.x + box.w / 2;
+  return weight > 0 ? sum / weight : box.x + box.w / 2;
 }
 
 export interface PlacedFrame {

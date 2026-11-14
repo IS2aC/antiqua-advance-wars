@@ -216,3 +216,16 @@ describe('séquences « caméra fixe »', () => {
     expect(alphaIn(b, 42, 21)).toBe(255);
   });
 });
+
+describe('pieds', () => {
+  it('ignore la hampe de lance posée au sol', () => {
+    // Hampe fine (x 2..4) et deux pieds larges (x 10..20 et 30..40), tout en bas.
+    const feet = image(50, 20, (x, y) => {
+      if (y < 17) return [0, 0, 0, 0];
+      const spear = x >= 2 && x < 4;
+      const foot = (x >= 10 && x < 20) || (x >= 30 && x < 40);
+      return spear || foot ? INK : [0, 0, 0, 0];
+    });
+    expect(feetCenterX(feet, { x: 0, y: 0, w: 50, h: 20 })).toBeCloseTo(24.5);
+  });
+});

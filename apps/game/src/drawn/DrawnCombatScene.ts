@@ -6,6 +6,7 @@ import { OUTLINE_COLOR, TEAM_COLORS, darken } from '../view/palette';
 import {
   ARROW,
   DUST,
+  SHADOW,
   SLASH,
   SPARK,
   STONE,
@@ -62,6 +63,8 @@ const PORTRAIT = 150;
 const HITSTOP_MS = 90;
 /** Décalage entre deux soldats d'un même rang : jamais de chorégraphie synchronisée. */
 const STAGGER_MS = 60;
+/** Opacité des ombres au sol. */
+const SHADOW_ALPHA = 0.7;
 
 /** Pose de secours quand la séquence n'est pas dessinée. */
 const FALLBACK_POSE: Readonly<Record<DrawnAnim, Pose>> = {
@@ -77,6 +80,8 @@ interface Figure {
   readonly image: Phaser.GameObjects.Sprite;
   readonly homeX: number;
   readonly baseScale: number;
+  /** Ombre au sol : suit le soldat (position, transparence). */
+  readonly shadow: Phaser.GameObjects.Image;
   breathing: Phaser.Tweens.Tween | null;
 }
 
@@ -99,6 +104,8 @@ export class DrawnCombatScene extends StagedScene {
   private divider!: Phaser.GameObjects.Graphics;
   private uiCamera!: Phaser.Cameras.Scene2D.Camera;
   private views!: Record<Side, SideView>;
+  /** Tous les soldats, tombés compris : leurs ombres les suivent. */
+  private shadowed: Figure[] = [];
 
   constructor() {
     super('DrawnCombat');
@@ -106,6 +113,7 @@ export class DrawnCombatScene extends StagedScene {
 
   create(data: DrawnCombatData): void {
     this.beginStage(data.speed);
+    this.shadowed = [];
     // Les animations dessinées suivent la même vitesse (ralenti du banc d'essai compris).
     this.anims.globalTimeScale = data.speed;
     createEffectTextures(this);
@@ -134,6 +142,13 @@ export class DrawnCombatScene extends StagedScene {
     this.layoutCameras(attackerSide, 0);
 
     void this.run(data, attackerSide);
+  }
+
+  /** Les ombres suivent les soldats (charge, recul, chute qui s'efface). */
+  override update(): void {
+    for (const figure of this.shadowed) {
+      figure.shadow.setX(figure.image.x).setAlpha(SHADOW_ALPHA * figure.image.alpha);
+    }
   }
 
   // ——— Déroulé ———
@@ -416,7 +431,12 @@ export class DrawnCombatScene extends StagedScene {
         .setScale(baseScale)
         .setFlipX(dir < 0)
         .setDepth(slot.y);
-      const figure: Figure = { image, homeX, baseScale, breathing: null };
+      const shadow = this.add
+        .image(homeX, slot.y, SHADOW)
+        .setScale(baseScale * 0.95, baseScale * 0.95)
+        .setAlpha(SHADOW_ALPHA);
+      const figure: Figure = { image, homeX, baseScale, shadow, breathing: null };
+      this.shadowed.push(figure);
       const idle = drawnAnimation(this, side.owner, side.unitType, 'idle');
       if (idle) {
         // Repos dessiné : chaque soldat démarre à une image différente.
@@ -428,7 +448,8 @@ export class DrawnCombatScene extends StagedScene {
       }
       figures.push(figure);
     }
-    // Le premier rang devant le second.
+    // Les ombres sous tous les soldats, puis le premier rang devant le second.
+    for (const figure of figures) world.add(figure.shadow);
     figures
       .slice()
       .sort((a, b) => a.image.y - b.image.y)

@@ -42,14 +42,17 @@ const animFrameKey = (people: string, unit: string, anim: string, i: number) =>
   `d:anim:${people}:${unit}:${anim}:${i}`;
 const animKey = (people: string, unit: string, anim: string) => `d:${people}:${unit}:${anim}`;
 
-/** Animations des séquences et leur cadence (images par seconde, boucle ou non). */
+/**
+ * Animations des séquences et leur cadence (images par seconde, boucle ou non). Le repos
+ * se joue en aller-retour (1-2-3-4-3-2…) : pas de saut de la dernière image à la première.
+ */
 export const DRAWN_ANIMS = {
-  idle: { rate: 6, loop: true },
-  run: { rate: 10, loop: true },
-  attack: { rate: 14, loop: false },
-  hit: { rate: 10, loop: false },
-  fall: { rate: 8, loop: false },
-  victory: { rate: 5, loop: false },
+  idle: { rate: 6, loop: true, yoyo: true },
+  run: { rate: 10, loop: true, yoyo: false },
+  attack: { rate: 14, loop: false, yoyo: false },
+  hit: { rate: 10, loop: false, yoyo: false },
+  fall: { rate: 8, loop: false, yoyo: false },
+  victory: { rate: 5, loop: false, yoyo: false },
 } as const;
 export type DrawnAnim = keyof typeof DRAWN_ANIMS;
 
@@ -74,7 +77,13 @@ export function createDrawnAnimations(scene: Phaser.Scene): void {
           key: animFrameKey(people, unit, anim, i),
         })).filter((frame) => scene.textures.exists(frame.key));
         if (frames.length === 0) continue;
-        scene.anims.create({ key, frames, frameRate: spec.rate, repeat: spec.loop ? -1 : 0 });
+        scene.anims.create({
+          key,
+          frames,
+          frameRate: spec.rate,
+          repeat: spec.loop ? -1 : 0,
+          yoyo: spec.yoyo,
+        });
       }
     }
   }
@@ -358,6 +367,8 @@ export const DUST = 'd:fx:dust';
 export const ARROW = 'd:fx:arrow';
 export const SLASH = 'd:fx:slash';
 export const STONE = 'd:fx:stone';
+/** Ombre douce au sol, sous chaque soldat (256×64). */
+export const SHADOW = 'd:fx:shadow';
 
 /** Petites textures d'effets, dessinées une fois. */
 export function createEffectTextures(scene: Phaser.Scene): void {
@@ -395,6 +406,13 @@ export function createEffectTextures(scene: Phaser.Scene): void {
     g.beginPath().arc(110, 110, 90, -2.4, -0.2, false).strokePath();
     g.lineStyle(6, 0xfff4c8, 1);
     g.beginPath().arc(110, 110, 72, -2.2, -0.4, false).strokePath();
+  });
+  make(SHADOW, 256, 64, (g) => {
+    // Ellipses concentriques peu opaques : le centre, où elles se cumulent, est le plus sombre.
+    for (let i = 0; i < 10; i++) {
+      const k = 1 - i / 10;
+      g.fillStyle(0x3a2810, 0.1).fillEllipse(128, 32, 248 * k, 56 * k);
+    }
   });
   make(STONE, 64, 64, (g) => {
     g.fillStyle(0x8a8478, 1).fillCircle(32, 32, 26);

@@ -136,6 +136,31 @@ async function readScaleFixes(): Promise<Record<string, number>> {
   }
 }
 
+/**
+ * Calages manuels par animation (`calages.json` à côté des images), en pixels de l'image
+ * finale : pour corriger à l'œil un petit saut quand on passe d'une animation à l'autre.
+ * Exemple : { "carthage-fantassin": { "attack": 12 } } déplace le point d'ancrage de
+ * l'attaque de 12 px vers la droite, donc le personnage de 12 px vers l'arrière.
+ */
+async function readShifts(): Promise<Record<string, Record<string, number>>> {
+  try {
+    const data = JSON.parse(await readFile(join(SOURCE, 'calages.json'), 'utf8')) as unknown;
+    if (!data || typeof data !== 'object') return {};
+    const result: Record<string, Record<string, number>> = {};
+    for (const [unit, anims] of Object.entries(data)) {
+      if (!anims || typeof anims !== 'object') continue;
+      result[unit] = Object.fromEntries(
+        Object.entries(anims).filter(
+          (entry): entry is [string, number] => typeof entry[1] === 'number',
+        ),
+      );
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
 async function main(): Promise<void> {
   await rm(OUT, { recursive: true, force: true });
   await mkdir(OUT, { recursive: true });
@@ -143,6 +168,7 @@ async function main(): Promise<void> {
   /** Échelle des poses de chaque unité : les séquences s'y alignent. */
   const poseScales = new Map<string, number>();
   const scaleFixes = await readScaleFixes();
+  const shifts = await readShifts();
   let files: string[] = [];
   try {
     files = (await readdir(SOURCE)).filter((f) => IMAGE_EXTENSIONS.has(extname(f).toLowerCase()));
@@ -194,11 +220,13 @@ async function main(): Promise<void> {
         for (const [i, frame] of layout.frames.entries()) {
           await writeFrame(frame, layout, w, h, join(dir, `${layout.anim}-${i}.webp`));
         }
+        // Calage manuel (pixels de l'image finale, positif = le personnage recule).
+        const shift = shifts[key]?.[layout.anim] ?? 0;
         anims[layout.anim] = {
           frames: layout.frames.length,
           w,
           h,
-          originX: Number(layout.originX.toFixed(4)),
+          originX: Number((layout.originX + shift / w).toFixed(4)),
           originY: Number(layout.originY.toFixed(4)),
         };
       }

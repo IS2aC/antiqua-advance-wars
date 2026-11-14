@@ -266,6 +266,11 @@ ChatGPT ne dessine pas toujours le personnage à la même taille d'une planche �
 correction par planche se règle dans `art/raw/proto-combat/echelles.json` (par exemple
 `{ "carthage-fantassin-repos": 0.92 }` : la planche de repos était dessinée 8 % trop grande).
 
-Dans le jeu : repos en boucle (6 images/s), préparation, course (10 images/s), coup à partir
+Petits sauts entre deux animations : chaque animation est ancrée au centre des pieds de sa
+première image (sans la hampe de lance posée au sol). Pour corriger un saut à l'œil, un
+décalage en pixels par animation se règle dans `art/raw/proto-combat/calages.json`, par
+exemple `{ "carthage-fantassin": { "attack": 12 } }` (positif : le personnage recule).
+
+Dans le jeu : ombre douce sous chaque soldat, repos en aller-retour (6 images/s), préparation, course (10 images/s), coup à partir
 de l'image de vitesse (14 images/s) avec un gel de 90 ms à l'impact, coup reçu, chute, et
 victoire pour le camp qui a perdu le moins. Une unité sans séquence garde ses 4 poses.
