@@ -93,3 +93,19 @@ et garder un rendu fluide.
   des assets ordinaires.
 - Le jeu doit rester jouable hors ligne et sans scènes de combat (option « animations :
   courtes / complètes », comme dans le genre).
+
+## 5. Nouveaux peuples : Koush, Carthage, Almoravides, Ashanti — Kemet et Aksoum ensuite
+
+- Décision (novembre 2026) : les 4 peuples jouables deviennent **Koush** (bleu), **Carthage**
+  (rouge), **Almoravides** (vert) et **Ashanti** (jaune or), chacun avec son histoire, son
+  teint de peau, son dirigeant et son écusson. Fiches de référence et prompts :
+  `docs/planches-peuples.md`.
+- **Kemet et Aksoum viendront après**, comme 5e et 6e peuples, avec leur propre planche
+  (prompts à écrire sur le même gabarit) et une couleur à trouver.
+- À reprendre quand on le planifiera :
+  - moteur : la liste des peuples (`kemet`, `aksoum` → `almoravides`, `ashanti`), les cartes
+    et les noms affichés ;
+  - pipeline : `PEOPLES`, `art/specs/couleurs.json` (rampes vert et jaune réattribuées),
+    `art/specs/portraits.json` (dirigeants d'après les planches) ;
+  - sprites : chaque peuple ayant son look, il faudra des sprites de carte et des dessins de
+    combat propres à chaque peuple, au lieu d'un seul modèle rouge recoloré.
