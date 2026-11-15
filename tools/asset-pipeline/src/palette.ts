@@ -4,15 +4,15 @@ import { dirname } from 'node:path';
 import sharp from 'sharp';
 import { hexToRgb, rgbToHex, rgbToLab, type Lab, type Rgb } from './color';
 
-export type Faction = 'carthage' | 'koush' | 'kemet' | 'aksoum';
-export const FACTIONS: readonly Faction[] = ['carthage', 'koush', 'kemet', 'aksoum'];
+export type Faction = 'carthage' | 'koush' | 'ashanti' | 'almoravides';
+export const FACTIONS: readonly Faction[] = ['carthage', 'koush', 'ashanti', 'almoravides'];
 
 /** Rampes d'équipe (du plus sombre au plus clair), docs/art-bible.md. Carthage = source. */
 export const TEAM_RAMPS: Readonly<Record<Faction, readonly [string, string, string, string]>> = {
   carthage: ['#4A1218', '#8E1F24', '#D13A2E', '#F2735A'],
   koush: ['#16234A', '#24418E', '#3A73D1', '#73B4F2'],
-  kemet: ['#4A3512', '#8E6A1F', '#D1A72E', '#F2D65A'],
-  aksoum: ['#123A1E', '#1F6E34', '#2EAE4E', '#6FDE85'],
+  ashanti: ['#4A3512', '#8E6A1F', '#D1A72E', '#F2D65A'],
+  almoravides: ['#123A1E', '#1F6E34', '#2EAE4E', '#6FDE85'],
 };
 
 export const OUTLINE_HEX = '#2B1B17';

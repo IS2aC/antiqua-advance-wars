@@ -10,8 +10,8 @@
   "equipes": {
     "carthage": { "nom": "crimson red", "rampe": ["#4A1218", "#8E1F24", "#D13A2E", "#F2735A"] },
     "koush": { "nom": "royal blue", "rampe": ["#16234A", "#24418E", "#3A73D1", "#73B4F2"] },
-    "kemet": { "nom": "saffron yellow", "rampe": ["#4A3512", "#8E6A1F", "#D1A72E", "#F2D65A"] },
-    "aksoum": { "nom": "emerald green", "rampe": ["#123A1E", "#1F6E34", "#2EAE4E", "#6FDE85"] }
+    "ashanti": { "nom": "saffron yellow", "rampe": ["#4A3512", "#8E6A1F", "#D1A72E", "#F2D65A"] },
+    "almoravides": { "nom": "emerald green", "rampe": ["#123A1E", "#1F6E34", "#2EAE4E", "#6FDE85"] }
   },
   "equipeSource": "carthage"
 }

@@ -8,7 +8,12 @@ import type { GameState, PlayerId, TerrainType, UnitType } from '@antiqua/engine
 
 export const TERRAIN_ATLAS = 'terrain';
 export const BUILDING_ATLAS = 'buildings';
-export const PLAYERS_WITH_ART: readonly PlayerId[] = ['koush', 'carthage', 'kemet', 'aksoum'];
+export const PLAYERS_WITH_ART: readonly PlayerId[] = [
+  'koush',
+  'carthage',
+  'ashanti',
+  'almoravides',
+];
 export const unitAtlas = (owner: PlayerId) => `units-${owner}`;
 
 export function preloadArt(scene: Phaser.Scene): void {

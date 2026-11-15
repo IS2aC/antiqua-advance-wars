@@ -1,6 +1,6 @@
 {
  "frames": {
-  "building/caserne/aksoum": {
+  "building/caserne/almoravides": {
    "frame": {
     "x": 2,
     "y": 2,
@@ -20,7 +20,7 @@
     "h": 64
    }
   },
-  "building/caserne/carthage": {
+  "building/caserne/ashanti": {
    "frame": {
     "x": 36,
     "y": 2,
@@ -40,7 +40,7 @@
     "h": 64
    }
   },
-  "building/caserne/kemet": {
+  "building/caserne/carthage": {
    "frame": {
     "x": 70,
     "y": 2,
@@ -100,7 +100,7 @@
     "h": 64
    }
   },
-  "building/qg/aksoum": {
+  "building/qg/almoravides": {
    "frame": {
     "x": 172,
     "y": 2,
@@ -120,7 +120,7 @@
     "h": 64
    }
   },
-  "building/qg/carthage": {
+  "building/qg/ashanti": {
    "frame": {
     "x": 206,
     "y": 2,
@@ -140,7 +140,7 @@
     "h": 64
    }
   },
-  "building/qg/kemet": {
+  "building/qg/carthage": {
    "frame": {
     "x": 240,
     "y": 2,
@@ -200,7 +200,7 @@
     "h": 64
    }
   },
-  "building/village/aksoum": {
+  "building/village/almoravides": {
    "frame": {
     "x": 342,
     "y": 2,
@@ -220,7 +220,7 @@
     "h": 64
    }
   },
-  "building/village/carthage": {
+  "building/village/ashanti": {
    "frame": {
     "x": 376,
     "y": 2,
@@ -240,7 +240,7 @@
     "h": 64
    }
   },
-  "building/village/kemet": {
+  "building/village/carthage": {
    "frame": {
     "x": 410,
     "y": 2,

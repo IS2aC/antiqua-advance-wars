@@ -27,16 +27,16 @@ export const TERRAIN_COLORS: Readonly<Record<TerrainType, number>> = {
 export const TEAM_RAMPS: Readonly<Record<PlayerId, readonly [number, number, number, number]>> = {
   carthage: [0x4a1218, 0x8e1f24, 0xd13a2e, 0xf2735a],
   koush: [0x16234a, 0x24418e, 0x3a73d1, 0x73b4f2],
-  kemet: [0x4a3512, 0x8e6a1f, 0xd1a72e, 0xf2d65a],
-  aksoum: [0x123a1e, 0x1f6e34, 0x2eae4e, 0x6fde85],
+  ashanti: [0x4a3512, 0x8e6a1f, 0xd1a72e, 0xf2d65a],
+  almoravides: [0x123a1e, 0x1f6e34, 0x2eae4e, 0x6fde85],
 };
 
 /** Couleur d'équipe : le ton moyen-clair de la rampe, le plus présent sur les sprites. */
 export const TEAM_COLORS: Readonly<Record<PlayerId, number>> = {
   koush: TEAM_RAMPS.koush[2],
   carthage: TEAM_RAMPS.carthage[2],
-  kemet: TEAM_RAMPS.kemet[2],
-  aksoum: TEAM_RAMPS.aksoum[2],
+  ashanti: TEAM_RAMPS.ashanti[2],
+  almoravides: TEAM_RAMPS.almoravides[2],
 };
 
 /**

@@ -41,8 +41,8 @@ Chaque sprite est dessiné une seule fois en rouge. Le pipeline remplace les 4 r
 | --- | --- | --- | --- | --- |
 | Carthage (rouge, source) | `#4A1218` | `#8E1F24` | `#D13A2E` | `#F2735A` |
 | Koush (bleu) | `#16234A` | `#24418E` | `#3A73D1` | `#73B4F2` |
-| Kemet (jaune) | `#4A3512` | `#8E6A1F` | `#D1A72E` | `#F2D65A` |
-| Aksoum (vert) | `#123A1E` | `#1F6E34` | `#2EAE4E` | `#6FDE85` |
+| Ashanti (jaune) | `#4A3512` | `#8E6A1F` | `#D1A72E` | `#F2D65A` |
+| Almoravides (vert) | `#123A1E` | `#1F6E34` | `#2EAE4E` | `#6FDE85` |
 
 Contour : `#2B1B17` (brun-noir, jamais de noir pur). Magenta `#FF00FF` = fond à rendre transparent.
 

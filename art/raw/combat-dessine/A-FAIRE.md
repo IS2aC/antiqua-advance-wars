@@ -26,7 +26,7 @@ aucune
 
 ## Portraits (`portraits/<peuple>.png`)
 
-· Koush · · Carthage · · Kemet · · Aksoum
+· Koush · · Carthage · · Ashanti · · Almoravides
 
 ## Décors (`decors/<nom>.png`)
 
