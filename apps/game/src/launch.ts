@@ -5,7 +5,8 @@ import type { BattleData } from './scenes/BattleScene';
 
 /**
  * Lancement depuis la page de garde : `jeu.html?mode=ia|deux|continuer&carte=…`.
- * - ia : nouvelle partie, le joueur commande Koush, l'IA tous les autres peuples ;
+ * - ia : nouvelle partie, le joueur commande le peuple choisi (`peuple=`, Koush par défaut),
+ *   l'IA tous les autres ;
  * - deux : nouvelle partie à plusieurs sur le même écran (autant de joueurs que la carte) ;
  * - carte : identifiant de `maps.ts` (`gue-du-nil` par défaut, `carrefour` à 4 peuples) ;
  * - continuer : reprend la sauvegarde ; sans sauvegarde, nouvelle partie du mode `repli`.
@@ -13,15 +14,25 @@ import type { BattleData } from './scenes/BattleScene';
  */
 export type LaunchMode = 'ia' | 'deux' | 'continuer';
 
-/** En partie contre l'IA, le joueur commande Koush. */
-export const HUMAN_PLAYER: PlayerId = 'koush';
+/** En partie contre l'IA, peuple du joueur quand l'URL n'en choisit pas. */
+export const DEFAULT_HUMAN: PlayerId = 'koush';
 
-/** Camps joués par l'IA sur une carte : tous sauf Koush. */
-export const aiPlayersOf = (map: MapId): PlayerId[] =>
-  MAPS[map].players.filter((player) => player !== HUMAN_PLAYER);
+/** Peuple choisi (`peuple=`), s'il joue sur cette carte ; sinon le premier de la carte. */
+export function humanFromParam(value: string | null, map: MapId): PlayerId {
+  const players = MAPS[map].players;
+  const found = players.find((player) => player === value);
+  return found ?? (players.includes(DEFAULT_HUMAN) ? DEFAULT_HUMAN : (players[0] ?? DEFAULT_HUMAN));
+}
 
-function newGame(mode: string | null, map: MapId): BattleData | null {
-  if (mode === 'ia') return { aiPlayers: aiPlayersOf(map), map };
+/** Camps joués par l'IA sur une carte : tous sauf celui du joueur. */
+export const aiPlayersOf = (map: MapId, human: PlayerId = DEFAULT_HUMAN): PlayerId[] =>
+  MAPS[map].players.filter((player) => player !== human);
+
+function newGame(mode: string | null, params: URLSearchParams): BattleData | null {
+  const map = mapFromParam(params.get('carte'));
+  if (mode === 'ia') {
+    return { aiPlayers: aiPlayersOf(map, humanFromParam(params.get('peuple'), map)), map };
+  }
   if (mode === 'deux') return { map };
   return null;
 }
@@ -32,9 +43,9 @@ export function battleFromUrl(search: string = window.location.search): BattleDa
   if (mode === 'continuer') {
     const save = loadGame();
     if (save) return { state: save.state, aiPlayers: save.aiPlayers };
-    return newGame(params.get('repli'), mapFromParam(params.get('carte')));
+    return newGame(params.get('repli'), params);
   }
-  const data = newGame(mode, mapFromParam(params.get('carte')));
+  const data = newGame(mode, params);
   if (data) {
     // Nouvelle partie : l'ancienne sauvegarde est abandonnée.
     clearSave();

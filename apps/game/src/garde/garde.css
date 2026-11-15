@@ -433,3 +433,240 @@ body {
     transition: none;
   }
 }
+
+/* ——— Choix du peuple ——— */
+
+.choix {
+  width: min(1120px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid var(--gold-border);
+  border-radius: 20px;
+  background: var(--ivory);
+  color: var(--noble-brown);
+  box-shadow: 0 24px 60px rgba(52, 30, 15, 0.35);
+  overflow: auto;
+}
+
+.choix::backdrop {
+  background: rgba(52, 30, 15, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.choix[open] {
+  animation: choix-entree 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes choix-entree {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.choix__tete {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px 14px;
+  background: linear-gradient(var(--ivory) 80%, rgba(248, 245, 238, 0));
+}
+
+.choix__titre {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  color: var(--dark-brown);
+}
+
+.choix__carte {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.choix__fermer {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--noble-brown);
+  cursor: pointer;
+}
+
+.choix__fermer svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.choix__fermer:hover,
+.choix__fermer:focus-visible {
+  border-color: var(--gold);
+  outline: none;
+}
+
+.choix__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+  padding: 4px 24px 24px;
+}
+
+.peuple {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 2px solid var(--card-border);
+  border-radius: 16px;
+  background: var(--cream);
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+  container-type: inline-size;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.peuple:hover,
+.peuple:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--equipe);
+  box-shadow: 0 14px 30px rgba(52, 30, 15, 0.22);
+  outline: none;
+}
+
+.peuple__portrait {
+  position: relative;
+  display: block;
+  aspect-ratio: 6 / 7;
+  overflow: hidden;
+  border-bottom: 5px solid var(--equipe);
+}
+
+.peuple__portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  transition: transform 400ms ease;
+}
+
+.peuple:hover .peuple__portrait img,
+.peuple:focus-visible .peuple__portrait img {
+  transform: scale(1.04);
+}
+
+.peuple__ecusson {
+  position: absolute;
+  right: 12px;
+  /* À cheval sur le bas du portrait (hauteur du portrait = largeur × 7/6). */
+  top: calc(100cqi * 7 / 6 - 40px);
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+}
+
+.peuple__corps {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px 18px;
+}
+
+.peuple__nom {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--equipe-sombre);
+  padding-right: 56px;
+}
+
+.peuple__chef {
+  font-weight: 700;
+  color: var(--dark-brown);
+}
+
+.peuple__traits {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--equipe-sombre);
+}
+
+.peuple__texte {
+  margin-top: 4px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* Téléphone : cartes en ligne (portrait à gauche), pour voir plusieurs peuples à la fois. */
+@media (max-width: 560px) {
+  .choix__tete {
+    padding: 16px 16px 10px;
+  }
+
+  .choix__grille {
+    gap: 12px;
+    padding: 4px 16px 16px;
+  }
+
+  .peuple {
+    flex-direction: row;
+  }
+
+  .peuple__portrait {
+    flex: 0 0 36%;
+    aspect-ratio: auto;
+    border-bottom: 0;
+    border-right: 5px solid var(--equipe);
+  }
+
+  .peuple__ecusson {
+    top: auto;
+    bottom: 8px;
+    left: calc(36cqi - 30px);
+    right: auto;
+    width: 48px;
+    height: 48px;
+  }
+
+  .peuple__corps {
+    padding: 12px 14px 14px 26px;
+  }
+
+  .peuple__nom {
+    padding-right: 0;
+    font-size: 1.05rem;
+  }
+
+  .peuple__texte {
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choix[open],
+  .peuple,
+  .peuple__portrait img {
+    animation: none;
+    transition: none;
+  }
+}

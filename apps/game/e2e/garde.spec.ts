@@ -15,7 +15,12 @@ test('la page de garde lance une partie contre l’IA', async ({ page }) => {
   await expect(page.getByRole('button', { name: /Campagne/ })).toBeDisabled();
 
   await page.getByRole('link', { name: /Nouvelle partie/ }).click();
-  await expect(page).toHaveURL(/jeu\.html\?mode=continuer&repli=ia/);
+  // Choix du peuple : Koush ou Carthage sur « Le Gué du Nil ».
+  const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
+  await expect(choice).toBeVisible();
+  await expect(choice.getByRole('link')).toHaveCount(2);
+  await choice.getByRole('link', { name: /Royaume de Koush/ }).click();
+  await expect(page).toHaveURL(/jeu\.html\?mode=continuer.*repli=ia/);
   await waitForScene(page, 'Battle');
   await waitForMode(page, 'idle');
   expect((await state(page)).currentPlayer).toBe('koush');
@@ -56,6 +61,9 @@ test('la page de garde lance la carte à 4 royaumes, Koush contre 3 IA', async (
 
   await page.goto('/');
   await page.getByRole('link', { name: /Les 4 royaumes/ }).click();
+  const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
+  await expect(choice.getByRole('link')).toHaveCount(4);
+  await choice.getByRole('link', { name: /Royaume de Koush/ }).click();
   await expect(page).toHaveURL(/carte=carrefour/);
   await waitForScene(page, 'Battle');
   await waitForMode(page, 'idle');
@@ -76,4 +84,39 @@ test('la page de garde lance la carte à 4 royaumes, Koush contre 3 IA', async (
   expect((await state(page)).map.name).toBe('Le Carrefour des Royaumes');
 
   expect(errors).toEqual([]);
+});
+
+test('on peut choisir un autre peuple : Carthage contre 3 IA', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: /Les 4 royaumes/ }).click();
+  const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
+  // Au clavier : flèche droite vers Carthage, puis Entrée.
+  await expect(choice.getByRole('link', { name: /Royaume de Koush/ })).toBeFocused();
+  await page.keyboard.press('ArrowRight');
+  await expect(choice.getByRole('link', { name: /Carthage/ })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/peuple=carthage/);
+  await waitForScene(page, 'Battle');
+  // L'IA joue Koush (premier à jouer), puis la main revient à Carthage.
+  await expect
+    .poll(
+      async () => {
+        const current = await state(page);
+        const mode = await page.evaluate(() =>
+          (window as unknown as { __ANTIQUA__?: { mode(): string } }).__ANTIQUA__?.mode(),
+        );
+        return `${current.currentPlayer}/${mode}`;
+      },
+      { timeout: 120_000 },
+    )
+    .toBe('carthage/idle');
+});
+
+test('le choix du peuple se ferme sans lancer de partie', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: /Nouvelle partie/ }).click();
+  const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
+  await page.keyboard.press('Escape');
+  await expect(choice).toBeHidden();
+  await expect(page).toHaveURL(/\/$/);
 });

@@ -45,7 +45,12 @@
           </p>
 
           <nav class="garde__menu" aria-label="Menu principal">
-            <a class="action action--primary" href="./jeu.html?mode=ia" data-mode="ia">
+            <a
+              class="action action--primary"
+              href="./jeu.html?mode=ia"
+              data-mode="ia"
+              data-choix-carte="gue-du-nil"
+            >
               <span class="action__sheen" aria-hidden="true"></span>
               <span class="action__play" aria-hidden="true">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
@@ -80,13 +85,18 @@
               <span class="action__detail">même écran</span>
             </a>
 
-            <a class="action" href="./jeu.html?mode=ia&amp;carte=carrefour" data-mode="ia">
+            <a
+              class="action"
+              href="./jeu.html?mode=ia&amp;carte=carrefour"
+              data-mode="ia"
+              data-choix-carte="carrefour"
+            >
               <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 3v18M3 12h18" />
                 <path d="M5 5h4v4H5zM15 5h4v4h-4zM15 15h4v4h-4zM5 15h4v4H5z" />
               </svg>
               <span class="action__label">Les 4 royaumes</span>
-              <span class="action__detail">Koush contre 3 IA</span>
+              <span class="action__detail">toi contre 3 IA</span>
             </a>
 
             <!-- Provisoire : banc d'essai des combats dessinés, à retirer une fois validés. -->
@@ -120,6 +130,19 @@
         </footer>
       </section>
     </main>
+
+    <dialog class="choix" id="choix-peuple" aria-labelledby="choix-titre">
+      <header class="choix__tete">
+        <div>
+          <h2 id="choix-titre" class="choix__titre">Choisis ton peuple</h2>
+          <p class="choix__carte" id="choix-carte"></p>
+        </div>
+        <button class="choix__fermer" type="button" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="choix__grille" id="choix-grille"></div>
+    </dialog>
     <script type="module" src="/src/garde/garde.ts"></script>
   </body>
 </html>
