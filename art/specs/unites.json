@@ -96,6 +96,16 @@
         "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "heavy Nubian spearman of the Kingdom of Kush, a front-rank veteran",
+        "design": "Very dark brown skin, short tightly curled black hair and a short black beard. A team-color cloth headband with one white feather standing up at the back. No helmet. A team-color padded linen corselet with small gold studs and a brown leather belt with a gold buckle, gold armlets and bracers. White linen kilt with a team-color front panel. Brown leather sandals. A very tall oval cowhide shield covering most of the body: cream hide with large dark-brown irregular spots, a thin team-color rim and a round gold boss in the middle. A long heavy spear with a dark wooden shaft and a gold-bronze leaf-shaped spearhead.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      }
     }
   },
   "archers": {
@@ -140,6 +150,16 @@
         "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "young Nubian archer of the Kingdom of Kush, the Land of the Bow",
+        "design": "Very dark brown skin, short tightly curled black hair. A team-color cloth headband with two white feathers standing up at the back. No helmet. A team-color sash across the chest from the shoulder to the hip, a short warm-brown leather tunic, gold armlets and bracers. White linen kilt with a team-color front panel. Brown leather sandals. A long wooden bow in warm brown wood. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      }
     }
   },
   "cavalerie": {
@@ -184,6 +204,16 @@
         "Dazed: rider still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the horse sniffs his head.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the horse barely moves."
       ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "young Nubian light horseman of the Kingdom of Kush riding a horse",
+        "design": "Rider: very dark brown skin, short curly black hair under a team-color cloth head wrap with two loose tails flying behind, no feather. Cream tunic with a team-color sash, gold armlets, brown leather bracers, a light javelin with a dark shaft and a gold spearhead. Horse: sturdy bay horse, warm brown coat, dark brown mane and tail, black hooves, gold bridle ornaments, team-color saddle cloth with a gold hem and a team-color chest strap. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      }
     }
   },
   "char": {
@@ -228,6 +258,16 @@
         "Dazed: driver still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "Nubian war chariot of the Kingdom of Kush pulled by one horse, with its driver",
+        "design": "A light two-wheeled wooden war chariot: gold spoked wheels with gold rims, team-color side panel with a gold ram-head emblem (the ram of Amun) and gold trim. One bay horse pulling it (warm brown coat, dark mane and tail, gold bridle, team-color caparison with a gold pattern). The driver stands in the chariot: very dark brown skin, short curly black hair, a team-color headband with one white feather, no helmet, gold necklace and armlets, holding the reins and a spear with a gold spearhead. Horse, chariot and driver are ONE drawing; the horse faces right, in front of the chariot.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      }
     }
   },
   "catapulte": {
@@ -272,6 +312,16 @@
         "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "wooden siege engine of the Kingdom of Kush on wheels, with its Nubian crewman",
+        "design": "A wooden throwing engine on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold ram-head emblem on its side, a team-color banner with a gold ram-head on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: very dark brown skin, short curly black hair, a team-color headband with two tails, bare chest with a team-color sash, white linen kilt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      }
     }
   }
 }

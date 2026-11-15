@@ -255,12 +255,12 @@ describe('planches propres à un peuple', () => {
     expect(() =>
       planJobs(
         specs,
-        { ...ALL, units: ['char'], peoples: ['koush'], withPortraits: false, withDecors: false },
+        { ...ALL, units: ['char'], peoples: ['carthage'], withPortraits: false, withDecors: false },
         COMBAT_UNITS,
         PEOPLES,
         UNIT_SHEETS,
       ),
-    ).toThrow(/char\.peuples\.koush/);
+    ).toThrow(/char\.peuples\.carthage/);
   });
 });
 

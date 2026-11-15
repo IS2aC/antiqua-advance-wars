@@ -12,11 +12,11 @@ Entre parenthèses : une planche propre à un peuple, sans version commune.
 | Unité | poses | repos | attaque | charge | chute | sonné |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
 | Fantassin | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
-| Lancier | · | · | · | · | · | · |
-| Archers | · | · | · | · | · | · |
-| Cavalerie | · | · | · | · | · | · |
-| Char | · | · | · | · | · | · |
-| Catapulte | · | · | · | · | · | · |
+| Lancier | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Archers | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Cavalerie | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Char | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Catapulte | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 
 ## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)
 
@@ -28,6 +28,36 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/koush/fantassin/charge`
 - `peuples/koush/fantassin/chute`
 - `peuples/koush/fantassin/sonne`
+- `peuples/koush/lancier/poses`
+- `peuples/koush/lancier/repos`
+- `peuples/koush/lancier/attaque`
+- `peuples/koush/lancier/charge`
+- `peuples/koush/lancier/chute`
+- `peuples/koush/lancier/sonne`
+- `peuples/koush/archers/poses`
+- `peuples/koush/archers/repos`
+- `peuples/koush/archers/attaque`
+- `peuples/koush/archers/charge`
+- `peuples/koush/archers/chute`
+- `peuples/koush/archers/sonne`
+- `peuples/koush/cavalerie/poses`
+- `peuples/koush/cavalerie/repos`
+- `peuples/koush/cavalerie/attaque`
+- `peuples/koush/cavalerie/charge`
+- `peuples/koush/cavalerie/chute`
+- `peuples/koush/cavalerie/sonne`
+- `peuples/koush/char/poses`
+- `peuples/koush/char/repos`
+- `peuples/koush/char/attaque`
+- `peuples/koush/char/charge`
+- `peuples/koush/char/chute`
+- `peuples/koush/char/sonne`
+- `peuples/koush/catapulte/poses`
+- `peuples/koush/catapulte/repos`
+- `peuples/koush/catapulte/attaque`
+- `peuples/koush/catapulte/charge`
+- `peuples/koush/catapulte/chute`
+- `peuples/koush/catapulte/sonne`
 
 ## Portraits (`portraits/<peuple>.png`)
 

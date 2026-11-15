@@ -184,8 +184,8 @@ const CONNECT_ERRORS = new Set([
 ]);
 
 /**
- * `fetch` qui réessaie (5 fois, 2 s d'écart) quand la connexion ne s'établit pas : le réseau
- * de WSL en laisse parfois tomber une sur deux.
+ * `fetch` qui réessaie (5 fois, 2 s d'écart) quand la connexion ne s'établit pas : filet de
+ * sécurité pour un réseau capricieux (voir aussi `network.ts`).
  */
 export async function fetchConnecting(
   url: string,

@@ -18,6 +18,96 @@
           "w": 277,
           "h": 250
         }
+      },
+      "lancier": {
+        "idle": {
+          "w": 170,
+          "h": 420
+        },
+        "attack": {
+          "w": 287,
+          "h": 329
+        },
+        "hit": {
+          "w": 250,
+          "h": 390
+        },
+        "down": {
+          "w": 271,
+          "h": 268
+        }
+      },
+      "archers": {
+        "idle": {
+          "w": 249,
+          "h": 420
+        },
+        "attack": {
+          "w": 294,
+          "h": 444
+        },
+        "hit": {
+          "w": 241,
+          "h": 384
+        },
+        "down": {
+          "w": 272,
+          "h": 264
+        }
+      },
+      "cavalerie": {
+        "idle": {
+          "w": 320,
+          "h": 420
+        },
+        "attack": {
+          "w": 387,
+          "h": 377
+        },
+        "hit": {
+          "w": 303,
+          "h": 436
+        },
+        "down": {
+          "w": 297,
+          "h": 313
+        }
+      },
+      "char": {
+        "idle": {
+          "w": 410,
+          "h": 420
+        },
+        "attack": {
+          "w": 439,
+          "h": 395
+        },
+        "hit": {
+          "w": 448,
+          "h": 448
+        },
+        "down": {
+          "w": 477,
+          "h": 310
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "w": 419,
+          "h": 420
+        },
+        "attack": {
+          "w": 456,
+          "h": 415
+        },
+        "hit": {
+          "w": 473,
+          "h": 427
+        },
+        "down": {
+          "w": 431,
+          "h": 404
+        }
       }
     }
   },
@@ -79,6 +169,296 @@
           "h": 244,
           "originX": 0.6379,
           "originY": 0.9912
+        }
+      },
+      "lancier": {
+        "idle": {
+          "frames": 4,
+          "w": 208,
+          "h": 432,
+          "originX": 0.4404,
+          "originY": 0.9987
+        },
+        "attack": {
+          "frames": 4,
+          "w": 340,
+          "h": 287,
+          "originX": 0.325,
+          "originY": 0.9956
+        },
+        "run": {
+          "frames": 2,
+          "w": 261,
+          "h": 287,
+          "originX": 0.0978,
+          "originY": 0.9759
+        },
+        "hit": {
+          "frames": 2,
+          "w": 231,
+          "h": 279,
+          "originX": 0.5095,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 239,
+          "h": 357,
+          "originX": 0.5146,
+          "originY": 0.956
+        },
+        "victory": {
+          "frames": 2,
+          "w": 211,
+          "h": 503,
+          "originX": 0.3563,
+          "originY": 0.995
+        },
+        "sit": {
+          "frames": 2,
+          "w": 332,
+          "h": 420,
+          "originX": 0.2877,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 253,
+          "h": 257,
+          "originX": 0.439,
+          "originY": 0.9927
+        }
+      },
+      "archers": {
+        "idle": {
+          "frames": 4,
+          "w": 266,
+          "h": 424,
+          "originX": 0.4855,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 298,
+          "h": 441,
+          "originX": 0.5521,
+          "originY": 0.9983
+        },
+        "run": {
+          "frames": 2,
+          "w": 314,
+          "h": 396,
+          "originX": 0.7232,
+          "originY": 0.9981
+        },
+        "hit": {
+          "frames": 2,
+          "w": 297,
+          "h": 471,
+          "originX": 0.6305,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 282,
+          "h": 416,
+          "originX": 0.6767,
+          "originY": 0.8887
+        },
+        "victory": {
+          "frames": 2,
+          "w": 241,
+          "h": 478,
+          "originX": 0.6364,
+          "originY": 0.9969
+        },
+        "sit": {
+          "frames": 2,
+          "w": 348,
+          "h": 307,
+          "originX": 0.2175,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 269,
+          "h": 254,
+          "originX": 0.151,
+          "originY": 0.9824
+        }
+      },
+      "cavalerie": {
+        "idle": {
+          "frames": 4,
+          "w": 329,
+          "h": 419,
+          "originX": 0.5314,
+          "originY": 0.998
+        },
+        "attack": {
+          "frames": 4,
+          "w": 431,
+          "h": 403,
+          "originX": 0.3472,
+          "originY": 0.987
+        },
+        "run": {
+          "frames": 2,
+          "w": 383,
+          "h": 315,
+          "originX": 0.5158,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 315,
+          "h": 347,
+          "originX": 0.3911,
+          "originY": 0.9799
+        },
+        "fall": {
+          "frames": 2,
+          "w": 326,
+          "h": 387,
+          "originX": 0.6191,
+          "originY": 0.9348
+        },
+        "victory": {
+          "frames": 2,
+          "w": 302,
+          "h": 473,
+          "originX": 0.3862,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 352,
+          "h": 477,
+          "originX": 0.615,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 356,
+          "h": 327,
+          "originX": 0.609,
+          "originY": 1.0053
+        }
+      },
+      "char": {
+        "idle": {
+          "frames": 4,
+          "w": 453,
+          "h": 413,
+          "originX": 0.5002,
+          "originY": 0.9971
+        },
+        "attack": {
+          "frames": 4,
+          "w": 476,
+          "h": 346,
+          "originX": 0.2987,
+          "originY": 0.986
+        },
+        "run": {
+          "frames": 2,
+          "w": 464,
+          "h": 353,
+          "originX": 0.2902,
+          "originY": 0.9725
+        },
+        "hit": {
+          "frames": 2,
+          "w": 462,
+          "h": 432,
+          "originX": 0.3932,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 489,
+          "h": 419,
+          "originX": 0.6993,
+          "originY": 0.9855
+        },
+        "victory": {
+          "frames": 2,
+          "w": 444,
+          "h": 493,
+          "originX": 0.4028,
+          "originY": 0.9729
+        },
+        "sit": {
+          "frames": 2,
+          "w": 479,
+          "h": 541,
+          "originX": 0.7083,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 448,
+          "h": 453,
+          "originX": 0.788,
+          "originY": 0.9866
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "frames": 4,
+          "w": 448,
+          "h": 419,
+          "originX": 0.4308,
+          "originY": 0.9973
+        },
+        "attack": {
+          "frames": 4,
+          "w": 502,
+          "h": 453,
+          "originX": 0.422,
+          "originY": 0.969
+        },
+        "run": {
+          "frames": 2,
+          "w": 450,
+          "h": 425,
+          "originX": 0.5405,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 447,
+          "h": 434,
+          "originX": 0.4931,
+          "originY": 0.9973
+        },
+        "fall": {
+          "frames": 2,
+          "w": 498,
+          "h": 421,
+          "originX": 0.4992,
+          "originY": 0.9972
+        },
+        "victory": {
+          "frames": 2,
+          "w": 392,
+          "h": 504,
+          "originX": 0.3878,
+          "originY": 0.9884
+        },
+        "sit": {
+          "frames": 2,
+          "w": 502,
+          "h": 483,
+          "originX": 0.3638,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 447,
+          "h": 489,
+          "originX": 0.3091,
+          "originY": 0.988
         }
       }
     }

@@ -27,6 +27,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import './gen/network';
 import sharp from 'sharp';
 import { COMBAT_UNITS, PEOPLES } from './combat';
 import { UNIT_SHEETS } from './drawn';
