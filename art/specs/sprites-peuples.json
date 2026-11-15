@@ -25,7 +25,7 @@
         "koush": "UNIT: Nubian archer of Kush, the Land of the Bow. Very dark brown skin, short curled hair, a team-red headband with three white feathers standing up, a team-red sash across the chest, white linen kilt, gold armlets, a long wooden self bow and a leather quiver of arrows on the back. Sandals.",
         "carthage": "UNIT: archer in the service of Carthage. Warm olive-tan skin, short dark curly hair and short beard, a soft team-red cap, a team-red tunic with a leather belt, a curved composite bow and a quiver on the back. Sandals.",
         "almoravides": "UNIT: Almoravid archer of the Sahara. Brown skin, a clearly visible deep indigo-blue litham veil (#36427F) over mouth and nose, a team-red turban, a white wool tunic with a team-red sash, a wooden bow and a leather quiver on the back. Leather sandals.",
-        "ashanti": "UNIT: Asante scout archer of the forest. Very dark brown skin, a plain black headband, a team-red cloth around the waist and across one shoulder, a few small leather amulet pouches, a short wooden bow and a quiver on the back. Few gold touches. Barefoot."
+        "ashanti": "UNIT: Asante scout archer of the forest. Very dark brown skin, a plain black headband, a team-red cloth around the waist and across one shoulder, a few small leather amulet pouches, a short wooden bow and a quiver on the back. Few gold touches. Barefoot. The archer keeps exactly the same height and size in all 15 cells: the walking frames are as tall as the idle frames, feet on the bottom row, head at the same height."
       }
     },
     "cavalerie": {
@@ -41,7 +41,7 @@
       "format": "sprites-unités/cavaliers_lourds-rouge.png",
       "peuples": {
         "koush": "UNIT: war chariot of Kush. A light two-wheeled wooden chariot with team-red side panels and a gold ram-head ornament, pulled by a brown horse with a team-red blanket, driven by a very dark brown Nubian archer with a team-red headband and one white feather, holding a spear.",
-        "carthage": "UNIT: Punic war chariot of Carthage. A two-wheeled wooden chariot with team-red side panels and the gold sign of Tanit, pulled by a brown horse with a team-red blanket, driven by an olive-skinned warrior with a gold-bronze crested helmet (team-red crest) and a team-red cloak, holding a spear.",
+        "carthage": "UNIT: Punic war chariot of Carthage. A two-wheeled wooden chariot with team-red side panels and the gold sign of Tanit, pulled by a brown horse with a team-red blanket, driven by an olive-skinned warrior with a gold-bronze crested helmet (team-red crest) and a team-red cloak, holding a spear. No dust clouds, no puffs, no motion effects and nothing at all below the wheels.",
         "almoravides": "UNIT: Almoravid heavy cavalryman. A veiled rider (clearly visible deep indigo-blue litham #36427F, team-red turban) in brown leather and scale armor over a white robe, on a big grey Barb horse with a long team-red caparison, holding a long lance and a round white lamt shield with a team-red sign.",
         "ashanti": "UNIT: Asante war chief in a palanquin. A carved wooden palanquin carried on the shoulders of two very dark-skinned Asante bearers with team-red waist cloths; seated inside, a war chief with a black-and-gold headband and a team-red kente cloth, holding a spear, under a large team-red state umbrella with a small gold finial."
       }
