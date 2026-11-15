@@ -113,9 +113,15 @@ Homeland background: the dense tropical forest of Kumasi with red earth paths an
 ## Passage en style dessin animé (à partir d'une planche validée)
 
 Pour changer de style sans perdre les visages, les teints, les couleurs et les écussons, on
-joint la planche existante comme référence et on demande seulement un nouveau rendu :
+joint **deux images** : la planche à garder (contenu) puis une planche modèle du style voulu
+(la planche « Roi de Koush / Guerrier carthaginois »). Avec la seule planche de contenu, le
+modèle recopie aussi son rendu et le style change à peine. Coût constaté : 0,15 $ par planche
+(`openai/gpt-image-2`, qualité haute, 16:9).
 
 ```text
-Redraw this exact character reference sheet in a polished Disney-style 2D animated feature look blended with modern anime: clean confident ink outlines, flat bright colors with soft two-tone cel shading, warm sunny lighting, appealing slightly stylized proportions, large expressive eyes and readable expressions, simple painterly backgrounds. Not photorealistic, not a detailed oil painting.
-Keep everything else identical to the reference: the same layout and panels in the same places, the same characters with the same faces, facial features, beards, hair and ages, exactly the same skin tones, the same clothing and jewelry, the same team colors and palette swatches, the same emblem and the same objects, the same warriors and the same action scene. Keep all the texts and spell them exactly: {textes}.
+Two reference images are attached. Image 1 is the CONTENT reference: a character reference sheet whose layout, characters, faces, skin tones, clothing, colors, emblem, objects and texts must be kept. Image 2 is the STYLE reference only (ignore its characters, its layout and its texts).
+Redraw the sheet of image 1 entirely in the art style of image 2: a Disney-style 2D animated feature look blended with modern anime, bold clean black outlines, large flat areas of bright saturated color, simple two-tone cel shading with no painterly texture, no fine engraving detail, no crosshatching, smooth simplified shapes, slightly stylized heroic proportions, bigger expressive eyes with highlights, bright sky-blue backgrounds with soft cartoon clouds, a clean light cream background behind the panels. Simplify ornaments, jewelry and fabric patterns into bold readable cartoon shapes while keeping their colors and motifs.
+Keep from image 1: the same layout and panels in the same places, the same characters recognizable with the same face shapes, facial features, beards, hair and ages, exactly the same skin tones, the same clothing and jewelry, the same team colors and palette swatches, the same emblem and objects, the same warriors and action scene. Keep all the texts and spell them exactly: {textes}.
 ```
+
+Dans `{textes}`, mettre le logo, les titres de section et la ligne « Text » du peuple.
