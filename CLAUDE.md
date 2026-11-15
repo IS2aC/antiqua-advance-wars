@@ -25,7 +25,7 @@ Monorepo pnpm :
 
 ### Client de jeu (`apps/game/src`)
 
-- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. La page de garde lance `jeu.html?mode=ia|deux|continuer` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
+- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. La page de garde lance `jeu.html?mode=ia|deux|continuer&carte=…` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
 
 - `controller/BattleController.ts` : seul endroit qui transforme les entrées en `Action`, appelle `applyAction` et remplace l'état courant. Annuler un déplacement = revenir à l'état d'avant le `MOVE` (le moteur n'a rien tiré au hasard).
 - `animation/EventPlayer.ts` : joue les `GameEvent` dans l'ordre, puis recale la vue sur l'état final (`sync`).
@@ -33,7 +33,7 @@ Monorepo pnpm :
 - `drawn/` : combats dessinés (prototype, réglage « Scènes de combat : dessinées » dans la pause). Second jeu Phaser en 1920×1152, sans pixel art, superposé au canvas de la carte le temps d'un combat (`DrawnStage.ts`) ; `DrawnCombatScene.ts` compose le déroulé en 6 temps à partir du même `CombatSetup`. Images : `art/raw/combat-dessine/` (un dossier par unité, `unites/<unité>/` : `poses`, `repos`, `attaque`, `charge`, `chute`, `sonne`, dessinés une fois en rouge comme les sprites puis recolorés par peuple ; `peuples/<peuple>/<unité>/` prioritaire et non recoloré ; `A-FAIRE.md` généré liste ce qui manque) → `pnpm assets:dessin` (détourage, séparation des dessins, recoloration, séquences calées) → `public/assets/combat-hd/` ; ce qui manque est dessiné en provisoire. Génération : `pnpm art:generer` (fiches `art/specs/`, contrôles, budget, `validation.html`). Banc d'essai provisoire : `jeu.html?mode=proto` (entrée « Animation (proto) » de la page de garde, `ProtoBench.ts`). Prompts : `docs/proto-combat.md`.
 - IA adverse : `packages/engine/src/ai/greedy-ai.ts` (`chooseGreedyAction`, `planTurn`), gloutonne et déterministe. Le contrôleur joue le tour de l'IA action par action via l'`EventPlayer` (mode `ai`, bouton « Accélérer »). La sauvegarde garde les camps joués par l'IA (`aiPlayers`).
 - `view/` : objets d'affichage seulement (carte, unités, curseur, zones, flèche, menus, HUD, bandeau). Les éléments fixés à l'écran passent par `pinToScreen()` (contournement d'un bug de `Container.setScrollFactor` dans Phaser 4.2).
-- La carte vient du moteur (`GUE_DU_NIL`), pas d'un fichier Tiled : une seule source de vérité tant qu'on ne dessine pas les cartes dans Tiled.
+- Les cartes viennent du moteur (`GUE_DU_NIL` à 2 peuples, `CARREFOUR` à 4 peuples, symétrique par quart de tour), pas d'un fichier Tiled : une seule source de vérité tant qu'on ne dessine pas les cartes dans Tiled. Choix par l'URL (`jeu.html?mode=ia&carte=carrefour`, registre `apps/game/src/maps.ts`) ; contre l'IA, le joueur commande Koush et l'IA tous les autres peuples.
 - En développement, le jeu est exposé sur `window.__ANTIQUA_GAME__` (tests de bout en bout, console).
 
 ### Rendu pixel art

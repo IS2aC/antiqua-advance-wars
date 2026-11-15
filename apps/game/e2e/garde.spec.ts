@@ -41,11 +41,39 @@ test('la page de garde propose de continuer une partie sauvegardée', async ({ p
   await page.goto('/');
   const resume = page.getByRole('link', { name: /Continuer la partie/ });
   await expect(resume).toBeVisible();
-  await expect(resume).toContainText("Jour 7 · contre l'IA");
+  await expect(resume).toContainText("Le Gué du Nil · jour 7 · contre l'IA");
   await expect(resume).toBeFocused();
 
   await resume.click();
   await waitForScene(page, 'Battle');
   await waitForMode(page, 'idle');
   expect((await state(page)).day).toBe(7);
+});
+
+test('la page de garde lance la carte à 4 royaumes, Koush contre 3 IA', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+
+  await page.goto('/');
+  await page.getByRole('link', { name: /Les 4 royaumes/ }).click();
+  await expect(page).toHaveURL(/carte=carrefour/);
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  const current = await state(page);
+  expect(current.map.name).toBe('Le Carrefour des Royaumes');
+  expect(current.players.map((player) => player.id)).toEqual([
+    'koush',
+    'carthage',
+    'almoravides',
+    'ashanti',
+  ]);
+  expect(current.currentPlayer).toBe('koush');
+
+  // Recharger reprend la même carte.
+  await page.reload();
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  expect((await state(page)).map.name).toBe('Le Carrefour des Royaumes');
+
+  expect(errors).toEqual([]);
 });

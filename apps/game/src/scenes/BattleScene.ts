@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
-import { GUE_DU_NIL, createGame, type GameState, type PlayerId } from '@antiqua/engine';
+import { createGame, type GameState, type PlayerId } from '@antiqua/engine';
+import { DEFAULT_MAP, MAPS, mapOfState, type MapId } from '../maps';
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
@@ -28,8 +29,10 @@ import { UnitLayer } from '../view/UnitLayer';
 export interface BattleData {
   /** Partie sauvegardée à reprendre ; sinon, nouvelle partie. */
   readonly state?: GameState;
-  /** Camps joués par l'IA ; absent ou vide : partie à deux sur le même écran. */
+  /** Camps joués par l'IA ; absent ou vide : partie à plusieurs sur le même écran. */
   readonly aiPlayers?: readonly PlayerId[];
+  /** Carte d'une nouvelle partie (par défaut « Le Gué du Nil »). */
+  readonly map?: MapId;
 }
 
 /** Développement : accès à l'état courant pour la console et les tests de bout en bout. */
@@ -39,10 +42,11 @@ export interface DebugHook {
   mode(): string;
 }
 
-/** Partie sur « Le Gué du Nil » : contre l'IA, ou à deux sur le même écran. */
+/** Partie sur une des cartes de `maps.ts` : contre l'IA, ou à plusieurs sur le même écran. */
 export class BattleScene extends Phaser.Scene {
   private initial: GameState | null = null;
   private aiPlayers: readonly PlayerId[] = [];
+  private map: MapId = DEFAULT_MAP;
 
   constructor() {
     super('Battle');
@@ -51,6 +55,7 @@ export class BattleScene extends Phaser.Scene {
   init(data: BattleData): void {
     this.initial = data.state ?? null;
     this.aiPlayers = data.aiPlayers ?? [];
+    this.map = data.state ? mapOfState(data.state) : (data.map ?? DEFAULT_MAP);
   }
 
   create(): void {
@@ -58,7 +63,7 @@ export class BattleScene extends Phaser.Scene {
     createUnitAnimations(this);
     createFigureAnimations(this);
     const state =
-      this.initial ?? createGame(GUE_DU_NIL, { seed: Math.floor(Math.random() * 2 ** 31) });
+      this.initial ?? createGame(MAPS[this.map], { seed: Math.floor(Math.random() * 2 ** 31) });
 
     this.cameras.main.setBounds(0, 0, state.map.width * TILE_SIZE, state.map.height * TILE_SIZE);
 
@@ -86,7 +91,7 @@ export class BattleScene extends Phaser.Scene {
       state,
       { cursor, overlay, arrow, menu, hud, player, forecast, endScreen, pauseMenu },
       (choice) => {
-        if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers });
+        if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers, map: this.map });
         else goToCover();
       },
       this.aiPlayers,

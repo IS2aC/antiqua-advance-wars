@@ -10,8 +10,8 @@ const resume = document.querySelector<HTMLAnchorElement>('#continuer');
 const detail = document.querySelector<HTMLElement>('#continuer-detail');
 
 if (save && resume && detail) {
-  const mode = save.aiPlayers.length > 0 ? "contre l'IA" : 'à deux';
-  detail.textContent = `Jour ${save.state.day} · ${mode}`;
+  const mode = save.aiPlayers.length > 0 ? "contre l'IA" : 'même écran';
+  detail.textContent = `${save.state.map.name} · jour ${save.state.day} · ${mode}`;
   resume.hidden = false;
 }
 
