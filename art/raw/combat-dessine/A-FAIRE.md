@@ -11,7 +11,7 @@ Entre parenthèses : une ancienne planche propre à un peuple, sans version comm
 
 | Unité | poses | repos | attaque | charge | chute | sonné |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Fantassin | (Carthage) | (Carthage) | (Carthage) | (Carthage) | (Carthage) | (Carthage) |
+| Fantassin | · | · | · | · | · | · |
 | Lancier | · | · | · | · | · | · |
 | Archers | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 | Cavalerie | · | · | · | · | · | · |
@@ -22,12 +22,6 @@ Entre parenthèses : une ancienne planche propre à un peuple, sans version comm
 
 Prioritaires sur la planche commune pour ce peuple, et non recolorées.
 
-- `peuples/carthage/fantassin/poses`
-- `peuples/carthage/fantassin/repos`
-- `peuples/carthage/fantassin/attaque`
-- `peuples/carthage/fantassin/charge`
-- `peuples/carthage/fantassin/chute`
-- `peuples/carthage/fantassin/sonne`
 - `peuples/koush/archers/poses`
 - `peuples/koush/archers/repos`
 - `peuples/koush/archers/attaque`
