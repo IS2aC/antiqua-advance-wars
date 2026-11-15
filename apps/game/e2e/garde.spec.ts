@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { SAVE_KEY, state, waitForMode, waitForScene } from './helpers';
 
 /** Page de garde : elle mène au jeu dans le bon mode et propose de reprendre la partie. */
-test('la page de garde lance une partie contre l’IA', async ({ page }) => {
+test('à deux joueurs : on choisit son peuple et celui de l’IA', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
@@ -14,16 +14,32 @@ test('la page de garde lance une partie contre l’IA', async ({ page }) => {
   await expect(page.getByRole('link', { name: /Continuer la partie/ })).toBeHidden();
   await expect(page.getByRole('button', { name: /Campagne/ })).toBeDisabled();
 
-  await page.getByRole('link', { name: /Nouvelle partie/ }).click();
-  // Choix du peuple : Koush ou Carthage sur « Le Gué du Nil ».
+  await page.getByRole('link', { name: /À deux joueurs/ }).click();
+  // Duel : son peuple parmi les 4, puis celui de l'IA parmi les 3 autres.
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
   await expect(choice).toBeVisible();
-  await expect(choice.getByRole('link')).toHaveCount(2);
-  await choice.getByRole('link', { name: /Royaume de Koush/ }).click();
+  await expect(choice.getByRole('link')).toHaveCount(4);
+  await choice.getByRole('link', { name: /Empire ashanti/ }).click();
+  const rival = page.getByRole('dialog', { name: "Choisis le peuple de l'IA" });
+  await expect(rival.getByRole('link')).toHaveCount(3);
+  await expect(rival.getByRole('link', { name: /Empire ashanti/ })).toHaveCount(0);
+  await rival.getByRole('link', { name: /Almoravides/ }).click();
   await expect(page).toHaveURL(/jeu\.html\?mode=continuer.*repli=ia/);
   await waitForScene(page, 'Battle');
   await waitForMode(page, 'idle');
-  expect((await state(page)).currentPlayer).toBe('koush');
+  const current = await state(page);
+  expect(current.map.name).toBe('Le Gué du Nil');
+  expect(current.players.map((player) => player.id)).toEqual(['ashanti', 'almoravides']);
+  expect(current.currentPlayer).toBe('ashanti');
+
+  // Recharger reprend la partie avec les mêmes peuples.
+  await page.reload();
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  expect((await state(page)).players.map((player) => player.id)).toEqual([
+    'ashanti',
+    'almoravides',
+  ]);
 
   expect(errors).toEqual([]);
 });
@@ -60,7 +76,7 @@ test('la page de garde lance la carte à 4 royaumes, Koush contre 3 IA', async (
   page.on('pageerror', (error) => errors.push(error.message));
 
   await page.goto('/');
-  await page.getByRole('link', { name: /Les 4 royaumes/ }).click();
+  await page.getByRole('link', { name: /À quatre joueurs/ }).click();
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
   await expect(choice.getByRole('link')).toHaveCount(4);
   await choice.getByRole('link', { name: /Royaume de Koush/ }).click();
@@ -88,7 +104,7 @@ test('la page de garde lance la carte à 4 royaumes, Koush contre 3 IA', async (
 
 test('on peut choisir un autre peuple : Carthage contre 3 IA', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: /Les 4 royaumes/ }).click();
+  await page.getByRole('link', { name: /À quatre joueurs/ }).click();
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
   // Au clavier : flèche droite vers Carthage, puis Entrée.
   await expect(choice.getByRole('link', { name: /Royaume de Koush/ })).toBeFocused();
@@ -112,10 +128,14 @@ test('on peut choisir un autre peuple : Carthage contre 3 IA', async ({ page }) 
     .toBe('carthage/idle');
 });
 
-test('le choix du peuple se ferme sans lancer de partie', async ({ page }) => {
+test('Échap revient au choix de son peuple, puis ferme sans lancer de partie', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: /Nouvelle partie/ }).click();
+  await page.getByRole('link', { name: /À deux joueurs/ }).click();
+  await page.getByRole('dialog', { name: 'Choisis ton peuple' }).getByRole('link').first().click();
+  await expect(page.getByRole('dialog', { name: "Choisis le peuple de l'IA" })).toBeVisible();
+  await page.keyboard.press('Escape');
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
+  await expect(choice.getByRole('link')).toHaveCount(4);
   await page.keyboard.press('Escape');
   await expect(choice).toBeHidden();
   await expect(page).toHaveURL(/\/$/);

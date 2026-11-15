@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { createGame, type GameState, type PlayerId } from '@antiqua/engine';
+import { assignPeoples, createGame, type GameState, type PlayerId } from '@antiqua/engine';
 import { DEFAULT_MAP, MAPS, mapOfState, type MapId } from '../maps';
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
@@ -33,6 +33,8 @@ export interface BattleData {
   readonly aiPlayers?: readonly PlayerId[];
   /** Carte d'une nouvelle partie (par défaut « Le Gué du Nil »). */
   readonly map?: MapId;
+  /** Peuples de la nouvelle partie, dans l'ordre de jeu (absent : ceux de la carte). */
+  readonly peoples?: readonly PlayerId[];
 }
 
 /** Développement : accès à l'état courant pour la console et les tests de bout en bout. */
@@ -47,6 +49,7 @@ export class BattleScene extends Phaser.Scene {
   private initial: GameState | null = null;
   private aiPlayers: readonly PlayerId[] = [];
   private map: MapId = DEFAULT_MAP;
+  private peoples: readonly PlayerId[] | null = null;
 
   constructor() {
     super('Battle');
@@ -56,14 +59,17 @@ export class BattleScene extends Phaser.Scene {
     this.initial = data.state ?? null;
     this.aiPlayers = data.aiPlayers ?? [];
     this.map = data.state ? mapOfState(data.state) : (data.map ?? DEFAULT_MAP);
+    // « Rejouer » relance avec les mêmes peuples, même après une reprise de sauvegarde.
+    this.peoples = data.state?.players.map((player) => player.id) ?? data.peoples ?? null;
   }
 
   create(): void {
     createPanelTextures(this);
     createUnitAnimations(this);
     createFigureAnimations(this);
+    const definition = this.peoples ? assignPeoples(MAPS[this.map], this.peoples) : MAPS[this.map];
     const state =
-      this.initial ?? createGame(MAPS[this.map], { seed: Math.floor(Math.random() * 2 ** 31) });
+      this.initial ?? createGame(definition, { seed: Math.floor(Math.random() * 2 ** 31) });
 
     this.cameras.main.setBounds(0, 0, state.map.width * TILE_SIZE, state.map.height * TILE_SIZE);
 
@@ -91,8 +97,13 @@ export class BattleScene extends Phaser.Scene {
       state,
       { cursor, overlay, arrow, menu, hud, player, forecast, endScreen, pauseMenu },
       (choice) => {
-        if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers, map: this.map });
-        else goToCover();
+        if (choice === 'rejouer') {
+          this.scene.restart({
+            aiPlayers: this.aiPlayers,
+            map: this.map,
+            ...(this.peoples ? { peoples: this.peoples } : {}),
+          });
+        } else goToCover();
       },
       this.aiPlayers,
     );

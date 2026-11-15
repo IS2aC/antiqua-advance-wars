@@ -2,7 +2,8 @@
  * Page de garde : propose de reprendre la partie sauvegardée (si elle existe) et mène au
  * jeu (`jeu.html`) avec le mode choisi. Aucune dépendance à Phaser : la page reste légère.
  */
-import { MAPS, mapFromParam } from '../maps';
+import type { PlayerId } from '@antiqua/engine';
+import { MAPS, mapFromParam, type MapId } from '../maps';
 import { loadGame } from '../persistence/save';
 import './garde.css';
 import { PEOPLE_CARDS } from './peuples';
@@ -17,55 +18,86 @@ if (save && resume && detail) {
   resume.hidden = false;
 }
 
-// Une partie en cours passe en premier ; sinon « Nouvelle partie ».
+// Une partie en cours passe en premier ; sinon « À deux joueurs ».
 const first = document.querySelector<HTMLElement>(save ? '#continuer' : '.action--primary');
 first?.focus({ preventScroll: true });
 
 // ——— Choix du peuple ———
-// « Nouvelle partie » et « Les 4 royaumes » ouvrent d'abord le choix du peuple : une carte par
-// peuple de la carte de jeu (portrait du dirigeant, écusson, traits). Sans JavaScript, les
-// liens lancent directement la partie avec Koush.
+// « À deux joueurs » : on choisit son peuple parmi les 4, puis celui de l'IA parmi les 3
+// autres (la carte du Gué du Nil est réattribuée). « À quatre joueurs » : son peuple, l'IA
+// prend les 3 autres. Chaque carte : portrait du dirigeant, écusson, traits. Sans
+// JavaScript, les liens lancent directement la partie avec Koush.
 const dialog = document.querySelector<HTMLDialogElement>('#choix-peuple');
 const grid = document.querySelector<HTMLElement>('#choix-grille');
-const mapLabel = document.querySelector<HTMLElement>('#choix-carte');
+const title = document.querySelector<HTMLElement>('#choix-titre');
+const subtitle = document.querySelector<HTMLElement>('#choix-carte');
+const back = document.querySelector<HTMLButtonElement>('.choix__retour');
+const ALL_PEOPLES = Object.keys(PEOPLE_CARDS) as PlayerId[];
 
-function openPeopleChoice(mapParam: string): void {
-  if (!dialog || !grid || !mapLabel) return;
-  const map = mapFromParam(mapParam);
-  const definition = MAPS[map];
-  mapLabel.textContent = `${definition.name} · ${definition.players.length} peuples`;
-  grid.replaceChildren(
-    ...definition.players.map((id) => {
-      const card = PEOPLE_CARDS[id];
-      const link = document.createElement('a');
-      link.className = 'peuple';
-      link.href = `./jeu.html?mode=ia&carte=${map}&peuple=${id}`;
-      link.style.setProperty('--equipe', card.color);
-      link.style.setProperty('--equipe-sombre', card.dark);
-      link.innerHTML = `
-        <span class="peuple__portrait">
-          <img src="./assets/garde/peuples/${id}-roi.webp" alt="" width="480" height="560" loading="lazy" />
-        </span>
-        <img class="peuple__ecusson" src="./assets/garde/peuples/${id}-ecusson.webp" alt="" loading="lazy" />
-        <span class="peuple__corps">
-          <span class="peuple__nom"></span>
-          <span class="peuple__chef"></span>
-          <span class="peuple__traits"></span>
-          <span class="peuple__texte"></span>
-        </span>`;
-      const fill = (selector: string, text: string) => {
-        const element = link.querySelector(selector);
-        if (element) element.textContent = text;
-      };
-      fill('.peuple__nom', card.name);
-      fill('.peuple__chef', card.leader);
-      fill('.peuple__traits', card.traits);
-      fill('.peuple__texte', card.text);
-      link.setAttribute('aria-label', `${card.name}, ${card.leader}`);
-      return link;
-    }),
-  );
-  dialog.showModal();
+/** Étape du choix : son peuple, puis (en duel) celui de l'IA. */
+interface ChoiceStep {
+  readonly map: MapId;
+  readonly duel: boolean;
+  /** Peuple déjà choisi par le joueur (deuxième étape du duel). */
+  readonly human?: PlayerId;
+}
+let step: ChoiceStep | null = null;
+
+function peopleCard(id: PlayerId, href: string): HTMLAnchorElement {
+  const card = PEOPLE_CARDS[id];
+  const link = document.createElement('a');
+  link.className = 'peuple';
+  link.href = href;
+  link.dataset.peuple = id;
+  link.style.setProperty('--equipe', card.color);
+  link.style.setProperty('--equipe-sombre', card.dark);
+  link.innerHTML = `
+    <span class="peuple__portrait">
+      <img src="./assets/garde/peuples/${id}-roi.webp" alt="" width="480" height="560" loading="lazy" />
+    </span>
+    <img class="peuple__ecusson" src="./assets/garde/peuples/${id}-ecusson.webp" alt="" loading="lazy" />
+    <span class="peuple__corps">
+      <span class="peuple__nom"></span>
+      <span class="peuple__chef"></span>
+      <span class="peuple__traits"></span>
+      <span class="peuple__texte"></span>
+    </span>`;
+  const fill = (selector: string, text: string) => {
+    const element = link.querySelector(selector);
+    if (element) element.textContent = text;
+  };
+  fill('.peuple__nom', card.name);
+  fill('.peuple__chef', card.leader);
+  fill('.peuple__traits', card.traits);
+  fill('.peuple__texte', card.text);
+  link.setAttribute('aria-label', `${card.name}, ${card.leader}`);
+  return link;
+}
+
+function showStep(next: ChoiceStep): void {
+  if (!dialog || !grid || !title || !subtitle || !back) return;
+  step = next;
+  const name = MAPS[next.map].name;
+  const launch = `./jeu.html?mode=ia&carte=${next.map}`;
+  let ids: PlayerId[];
+  let href: (id: PlayerId) => string;
+  if (next.duel && next.human) {
+    const human = next.human;
+    title.textContent = "Choisis le peuple de l'IA";
+    subtitle.textContent = `${name} · tu joues ${PEOPLE_CARDS[human].name}`;
+    ids = ALL_PEOPLES.filter((id) => id !== human);
+    href = (id) => `${launch}&peuple=${human}&adversaire=${id}`;
+  } else {
+    title.textContent = 'Choisis ton peuple';
+    ids = next.duel ? ALL_PEOPLES : [...MAPS[next.map].players];
+    subtitle.textContent = next.duel
+      ? `${name} · duel contre l'IA`
+      : `${name} · toi contre ${ids.length - 1} IA`;
+    href = (id) => `${launch}&peuple=${id}`;
+  }
+  back.hidden = !(next.duel && next.human);
+  grid.replaceChildren(...ids.map((id) => peopleCard(id, href(id))));
+  if (!dialog.open) dialog.showModal();
   grid.querySelector<HTMLElement>('.peuple')?.focus();
 }
 
@@ -73,9 +105,28 @@ for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-choix-car
   link.addEventListener('click', (event) => {
     if (!dialog) return;
     event.preventDefault();
-    openPeopleChoice(link.dataset.choixCarte ?? '');
+    showStep({ map: mapFromParam(link.dataset.choixCarte ?? ''), duel: 'duel' in link.dataset });
   });
 }
+// Duel, première étape : le peuple choisi mène au choix de l'IA au lieu de lancer la partie.
+grid?.addEventListener('click', (event) => {
+  const card = (event.target as Element).closest<HTMLAnchorElement>('.peuple');
+  const id = card?.dataset.peuple as PlayerId | undefined;
+  if (!step?.duel || step.human || !id) return;
+  event.preventDefault();
+  showStep({ ...step, human: id });
+});
+const stepBack = () => {
+  if (step) showStep({ map: step.map, duel: step.duel });
+};
+back?.addEventListener('click', stepBack);
+// Échap à la deuxième étape : revenir au choix de son peuple plutôt que tout fermer.
+dialog?.addEventListener('cancel', (event) => {
+  if (step?.human) {
+    event.preventDefault();
+    stepBack();
+  }
+});
 dialog?.querySelector('.choix__fermer')?.addEventListener('click', () => dialog.close());
 // Clic sur le fond (en dehors du panneau) : fermer.
 dialog?.addEventListener('click', (event) => {

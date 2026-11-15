@@ -517,9 +517,48 @@ body {
   outline: none;
 }
 
+.choix__retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 6px -6px;
+  padding: 4px 8px 4px 4px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.choix__retour[hidden] {
+  display: none;
+}
+
+.choix__retour svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.choix__retour:hover,
+.choix__retour:focus-visible {
+  background: var(--cream);
+  color: var(--noble-brown);
+  outline: none;
+}
+
 .choix__grille {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  /* Largeur bornée et centrée : 3 peuples gardent la largeur des cartes à 4. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 256px));
+  justify-content: center;
   gap: 16px;
   padding: 4px 24px 24px;
 }
@@ -624,6 +663,7 @@ body {
   }
 
   .choix__grille {
+    grid-template-columns: 1fr;
     gap: 12px;
     padding: 4px 16px 16px;
   }

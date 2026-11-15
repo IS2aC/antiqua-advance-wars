@@ -1,4 +1,4 @@
-import type { PlayerId } from '@antiqua/engine';
+import { FACTIONS, type PlayerId } from '@antiqua/engine';
 import { clearSave, loadGame } from './persistence/save';
 import { MAPS, mapFromParam, type MapId } from './maps';
 import type { BattleData } from './scenes/BattleScene';
@@ -6,7 +6,8 @@ import type { BattleData } from './scenes/BattleScene';
 /**
  * Lancement depuis la page de garde : `jeu.html?mode=ia|deux|continuer&carte=…`.
  * - ia : nouvelle partie, le joueur commande le peuple choisi (`peuple=`, Koush par défaut),
- *   l'IA tous les autres ;
+ *   l'IA tous les autres ; sur une carte à 2 camps, `adversaire=` choisit le peuple de l'IA
+ *   (n'importe lequel des 4 : la carte est réattribuée, le joueur prend le premier camp) ;
  * - deux : nouvelle partie à plusieurs sur le même écran (autant de joueurs que la carte) ;
  * - carte : identifiant de `maps.ts` (`gue-du-nil` par défaut, `carrefour` à 4 peuples) ;
  * - continuer : reprend la sauvegarde ; sans sauvegarde, nouvelle partie du mode `repli`.
@@ -28,9 +29,25 @@ export function humanFromParam(value: string | null, map: MapId): PlayerId {
 export const aiPlayersOf = (map: MapId, human: PlayerId = DEFAULT_HUMAN): PlayerId[] =>
   MAPS[map].players.filter((player) => player !== human);
 
+const isPeople = (value: string | null): value is PlayerId =>
+  value !== null && Object.hasOwn(FACTIONS, value);
+
+/**
+ * Duel contre l'IA avec deux peuples choisis (`peuple=` et `adversaire=`, différents) sur
+ * une carte à 2 camps ; sinon null (les peuples de la carte).
+ */
+export function duelPeoples(map: MapId, params: URLSearchParams): [PlayerId, PlayerId] | null {
+  const human = params.get('peuple');
+  const rival = params.get('adversaire');
+  if (MAPS[map].players.length !== 2 || !isPeople(human) || !isPeople(rival)) return null;
+  return human === rival ? null : [human, rival];
+}
+
 function newGame(mode: string | null, params: URLSearchParams): BattleData | null {
   const map = mapFromParam(params.get('carte'));
   if (mode === 'ia') {
+    const duel = duelPeoples(map, params);
+    if (duel) return { aiPlayers: [duel[1]], map, peoples: duel };
     return { aiPlayers: aiPlayersOf(map, humanFromParam(params.get('peuple'), map)), map };
   }
   if (mode === 'deux') return { map };
