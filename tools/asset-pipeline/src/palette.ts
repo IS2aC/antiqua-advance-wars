@@ -22,8 +22,9 @@ const TEAM_SIZE = 4;
 const GENERAL_SIZE = PALETTE_SIZE - TEAM_SIZE - 1;
 
 /**
- * Palette maître antiqua-32 : 27 couleurs générales tirées des planches, le contour,
- * puis les 4 rouges réservés (indices 28 à 31, utilisés nulle part ailleurs).
+ * Palette maître antiqua-32 : 27 couleurs générales tirées des planches (fichier figé), les
+ * couleurs ajoutées (`EXTRA_HEX`), le contour, puis les 4 rouges réservés (les derniers
+ * indices, utilisés nulle part ailleurs).
  */
 export interface Palette {
   readonly colors: readonly Rgb[];
@@ -32,13 +33,24 @@ export interface Palette {
   readonly teamStart: number;
 }
 
+/**
+ * Couleurs ajoutées à la main aux couleurs tirées des planches (absentes des premières
+ * planches) : indigo sombre et indigo du voile (litham) des Almoravides.
+ */
+export const EXTRA_HEX: readonly string[] = ['#1F2552', '#36427F'];
+
 function makePalette(general: readonly Rgb[]): Palette {
-  const colors = [...general, hexToRgb(OUTLINE_HEX), ...TEAM_RAMPS.carthage.map(hexToRgb)];
+  const colors = [
+    ...general,
+    ...EXTRA_HEX.map(hexToRgb),
+    hexToRgb(OUTLINE_HEX),
+    ...TEAM_RAMPS.carthage.map(hexToRgb),
+  ];
   return {
     colors,
     labs: colors.map(rgbToLab),
-    outlineIndex: general.length,
-    teamStart: general.length + 1,
+    outlineIndex: general.length + EXTRA_HEX.length,
+    teamStart: general.length + EXTRA_HEX.length + 1,
   };
 }
 
@@ -115,7 +127,9 @@ export async function loadOrCreatePalette(
   const palette = makePalette(general);
   await mkdir(dirname(pngPath), { recursive: true });
   const strip = Buffer.alloc(PALETTE_SIZE * 4);
-  palette.colors.forEach(([r, g, b], index) => strip.set([r, g, b, 255], index * 4));
+  [...general, hexToRgb(OUTLINE_HEX), ...TEAM_RAMPS.carthage.map(hexToRgb)].forEach(
+    ([r, g, b], index) => strip.set([r, g, b, 255], index * 4),
+  );
   await writeFile(
     pngPath,
     await sharp(strip, { raw: { width: PALETTE_SIZE, height: 1, channels: 4 } })

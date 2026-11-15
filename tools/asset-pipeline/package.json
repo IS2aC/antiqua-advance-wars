@@ -10,7 +10,8 @@
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "generate": "tsx src/generate.ts"
+    "generate": "tsx src/generate.ts",
+    "sprites": "tsx src/sprites-peuples.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
