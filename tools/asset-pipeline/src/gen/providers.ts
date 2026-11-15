@@ -174,13 +174,44 @@ export function openRouterBody(
   };
 }
 
+/** Échecs de connexion : la requête n'est pas partie, donc rien n'est facturé. */
+const CONNECT_ERRORS = new Set([
+  'UND_ERR_CONNECT_TIMEOUT',
+  'ECONNREFUSED',
+  'ENOTFOUND',
+  'EAI_AGAIN',
+  'ENETUNREACH',
+]);
+
+/**
+ * `fetch` qui réessaie (5 fois, 2 s d'écart) quand la connexion ne s'établit pas : le réseau
+ * de WSL en laisse parfois tomber une sur deux.
+ */
+export async function fetchConnecting(
+  url: string,
+  init: RequestInit,
+  tries = 5,
+  wait = 2000,
+): Promise<Response> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fetch(url, init);
+    } catch (error) {
+      const code = (error as { cause?: { code?: string } }).cause?.code;
+      if (attempt >= tries || !code || !CONNECT_ERRORS.has(code)) throw error;
+      console.warn(`[art] connexion impossible (${code}), nouvel essai ${attempt + 1}/${tries}…`);
+      await new Promise((done) => setTimeout(done, wait));
+    }
+  }
+}
+
 export function openRouterProvider(options: OpenRouterOptions): ImageProvider {
   return {
     name: `OpenRouter ${options.model}${options.model.startsWith('openai/') ? ` (${options.quality})` : ''}`,
     estimateUsd: options.estimateUsd,
     async generate(job, references) {
       for (let attempt = 1; ; attempt++) {
-        const response = await fetch('https://openrouter.ai/api/v1/images', {
+        const response = await fetchConnecting('https://openrouter.ai/api/v1/images', {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${options.apiKey}`,

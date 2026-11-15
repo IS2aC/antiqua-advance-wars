@@ -58,7 +58,7 @@ export function validationPage(
         : '';
     const flag =
       job.kind === 'unit'
-        ? `--unite ${job.unit} --planche ${job.sheet}`
+        ? `--unite ${job.unit} --planche ${job.sheet}${job.people ? ` --peuple ${job.people}` : ''}`
         : job.kind === 'portrait'
           ? `--portraits --peuple ${job.people}`
           : `--decors --decor ${job.id.split('/')[1]}`;

@@ -225,3 +225,69 @@ describe('page de validation', () => {
     expect(html).toContain('pnpm art:generer --unite archers --planche poses --refaire');
   });
 });
+
+describe('planches propres à un peuple', () => {
+  it('partent du sprite du peuple, avec son teint, et se rangent dans peuples/', () => {
+    const jobs = planJobs(
+      specs,
+      { ...ALL, units: ['fantassin'], peoples: ['koush'], withPortraits: false, withDecors: false },
+      COMBAT_UNITS,
+      PEOPLES,
+      UNIT_SHEETS,
+    );
+    expect(jobs).toHaveLength(6);
+    expect(jobs[0]).toMatchObject({
+      id: 'peuples/koush/fantassin/poses',
+      people: 'koush',
+      references: ['depot:art/raw/sprites-unités/peuples/koush/fantassins-rouge.png'],
+    });
+    expect(jobs[1]).toMatchObject({
+      id: 'peuples/koush/fantassin/repos',
+      references: ['peuples/koush/fantassin/poses.png'],
+    });
+    // Dessiné en rouge (recoloré au build), avec le teint relevé sur ses sprites.
+    expect(jobs[0]?.prompt).toContain('for this people');
+    expect(jobs[0]?.prompt).toContain('#D13A2E');
+    expect(jobs[0]?.prompt).toContain('#7A4420');
+    expect(jobs[0]?.prompt).toContain('cowhide');
+  });
+  it('refusent un peuple sans fiche', () => {
+    expect(() =>
+      planJobs(
+        specs,
+        { ...ALL, units: ['char'], peoples: ['koush'], withPortraits: false, withDecors: false },
+        COMBAT_UNITS,
+        PEOPLES,
+        UNIT_SHEETS,
+      ),
+    ).toThrow(/char\.peuples\.koush/);
+  });
+});
+
+describe('connexion', () => {
+  it('réessaie quand la connexion ne s’établit pas, pas sur une autre erreur', async () => {
+    const { fetchConnecting } = await import('../src/gen/providers');
+    const original = globalThis.fetch;
+    let calls = 0;
+    const fail = (code: string) =>
+      Object.assign(new TypeError('fetch failed'), { cause: { code } });
+    try {
+      globalThis.fetch = (async () => {
+        calls++;
+        if (calls < 3) throw fail('UND_ERR_CONNECT_TIMEOUT');
+        return new Response('ok');
+      }) as typeof fetch;
+      expect(await (await fetchConnecting('https://x', {}, 5, 0)).text()).toBe('ok');
+      expect(calls).toBe(3);
+      calls = 0;
+      globalThis.fetch = (async () => {
+        calls++;
+        throw fail('UND_ERR_SOCKET');
+      }) as typeof fetch;
+      await expect(fetchConnecting('https://x', {}, 5, 0)).rejects.toThrow('fetch failed');
+      expect(calls).toBe(1);
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+});

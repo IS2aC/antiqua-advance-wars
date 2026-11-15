@@ -7,11 +7,11 @@
 
 Comme les sprites de la carte, chaque unité est dessinée une seule fois, en rouge, dans
 `unites/<unité>/` (6 fichiers aux noms fixes), puis recolorée pour chaque peuple.
-Entre parenthèses : une ancienne planche propre à un peuple, sans version commune.
+Entre parenthèses : une planche propre à un peuple, sans version commune.
 
 | Unité | poses | repos | attaque | charge | chute | sonné |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Fantassin | · | · | · | · | · | · |
+| Fantassin | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 | Lancier | · | · | · | · | · | · |
 | Archers | · | · | · | · | · | · |
 | Cavalerie | · | · | · | · | · | · |
@@ -20,9 +20,14 @@ Entre parenthèses : une ancienne planche propre à un peuple, sans version comm
 
 ## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)
 
-Prioritaires sur la planche commune pour ce peuple, et non recolorées.
+Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et recolorées elles aussi.
 
-aucune
+- `peuples/koush/fantassin/poses`
+- `peuples/koush/fantassin/repos`
+- `peuples/koush/fantassin/attaque`
+- `peuples/koush/fantassin/charge`
+- `peuples/koush/fantassin/chute`
+- `peuples/koush/fantassin/sonne`
 
 ## Portraits (`portraits/<peuple>.png`)
 

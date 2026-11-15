@@ -1,6 +1,88 @@
 {
-  "figures": {},
-  "anims": {},
+  "figures": {
+    "koush": {
+      "fantassin": {
+        "idle": {
+          "w": 172,
+          "h": 420
+        },
+        "attack": {
+          "w": 436,
+          "h": 320
+        },
+        "hit": {
+          "w": 211,
+          "h": 376
+        },
+        "down": {
+          "w": 277,
+          "h": 250
+        }
+      }
+    }
+  },
+  "anims": {
+    "koush": {
+      "fantassin": {
+        "idle": {
+          "frames": 4,
+          "w": 193,
+          "h": 421,
+          "originX": 0.3215,
+          "originY": 0.9937
+        },
+        "attack": {
+          "frames": 4,
+          "w": 374,
+          "h": 293,
+          "originX": 0.4163,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 307,
+          "h": 300,
+          "originX": 0.0547,
+          "originY": 0.9737
+        },
+        "hit": {
+          "frames": 2,
+          "w": 272,
+          "h": 376,
+          "originX": 0.538,
+          "originY": 0.9981
+        },
+        "fall": {
+          "frames": 2,
+          "w": 362,
+          "h": 310,
+          "originX": 0.5661,
+          "originY": 0.9284
+        },
+        "victory": {
+          "frames": 2,
+          "w": 262,
+          "h": 483,
+          "originX": 0.6175,
+          "originY": 0.9926
+        },
+        "sit": {
+          "frames": 2,
+          "w": 284,
+          "h": 398,
+          "originX": 0.5733,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 273,
+          "h": 244,
+          "originX": 0.6379,
+          "originY": 0.9912
+        }
+      }
+    }
+  },
   "portraits": [],
   "decors": [
     "savane"

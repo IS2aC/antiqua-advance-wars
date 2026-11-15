@@ -29,10 +29,20 @@ export interface StyleSpec {
   readonly couleurs: string;
   readonly couleursPures: string;
   readonly referenceSprite: string;
+  /** Planche de poses propre à un peuple : son sprite de carte (en rouge d'équipe). */
+  readonly referenceSpritePeuple: string;
   readonly referencePoses: string;
   readonly cadrePoses: string;
   readonly cadreSequence: string;
   readonly sonne: string;
+}
+
+/** Version d'une unité propre à un peuple, d'après ses sprites de carte. */
+export interface PeopleUnitSpec {
+  readonly sujet: string;
+  readonly design: string;
+  /** Teint relevé sur ses sprites, à la place du teint commun. */
+  readonly peau?: { readonly base: string; readonly ombre: string };
 }
 
 export interface UnitSpec {
@@ -42,6 +52,8 @@ export interface UnitSpec {
   readonly sujet: string;
   readonly design: string;
   readonly planches: Readonly<Record<UnitSheet, Four>>;
+  /** Versions propres à un peuple (`peuples/<peuple>/<unité>/`) ; absentes : planche commune. */
+  readonly peuples?: Readonly<Record<string, PeopleUnitSpec>>;
 }
 
 export interface PortraitSpec {
@@ -87,6 +99,7 @@ export function validateSpecs(
     'couleurs',
     'couleursPures',
     'referenceSprite',
+    'referenceSpritePeuple',
     'referencePoses',
     'cadrePoses',
     'cadreSequence',
@@ -118,6 +131,13 @@ export function validateSpecs(
     }
     for (const key of ['nom', 'sprite', 'sujet', 'design'] as const) {
       if (!isText(spec[key])) errors.push(`unites.json : ${unit}.${key} manquant`);
+    }
+    for (const [people, own] of Object.entries(spec.peuples ?? {})) {
+      if (!specs.couleurs.equipes[people])
+        errors.push(`unites.json : ${unit}.peuples.${people} : peuple inconnu`);
+      if (!isText(own.sujet) || !isText(own.design)) {
+        errors.push(`unites.json : ${unit}.peuples.${people} : sujet ou design manquant`);
+      }
     }
     for (const sheet of UNIT_SHEETS) {
       if (!isFour(spec.planches?.[sheet])) {

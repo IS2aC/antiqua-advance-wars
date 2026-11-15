@@ -8,6 +8,7 @@
  *
  *   pnpm art:generer --liste                     ce qui serait généré, et le coût prévu
  *   pnpm art:generer --unite fantassin            les 6 planches du fantassin
+ *   pnpm art:generer --unite fantassin --peuple koush   sa version koushite (d'après ses sprites)
  *   pnpm art:generer --unite archers --planche attaque --refaire
  *   pnpm art:generer --portraits --peuple koush
  *   pnpm art:generer --decors
@@ -103,7 +104,7 @@ async function check(job: Job, png: Buffer, out: string): Promise<CheckResult> {
   const image = await toRgba(png);
   if (job.kind === 'portrait') return checkPortraitSheet(image);
   if (job.kind === 'decor') return { ok: true, problems: [], notes: [] };
-  const posesPath = join(out, `unites/${job.unit}/poses.png`);
+  const posesPath = join(out, dirname(job.id), 'poses.png');
   const reference =
     job.sheet !== 'poses' && existsSync(posesPath) ? idleHeight(await loadImage(posesPath)) : null;
   return checkUnitSheet(image, job.sheet as UnitSheet, reference);
@@ -302,7 +303,8 @@ async function main(): Promise<void> {
     await writeFile(target, best.png);
     made++;
     if (best.result.scale && job.unit && job.sheet) {
-      scales[`${job.unit}/${job.sheet}`] = best.result.scale;
+      // Même clé que `pnpm assets:dessin` : « <peuple>/<unité>/<planche> » ou « <unité>/<planche> ».
+      scales[`${job.people ? `${job.people}/` : ''}${job.unit}/${job.sheet}`] = best.result.scale;
     }
     journal.images[job.id] = {
       statut: best.result.ok ? 'ok' : 'a-revoir',
@@ -323,7 +325,7 @@ async function main(): Promise<void> {
   );
   // Une planche propre à un peuple reste prioritaire sur la planche commune : on le signale.
   const shadowed = jobs
-    .filter((job) => job.kind === 'unit')
+    .filter((job) => job.kind === 'unit' && !job.people)
     .flatMap((job) =>
       PEOPLES.filter((people) =>
         existsSync(join(out, `peuples/${people}/${job.unit}/${job.sheet}.png`)),
@@ -341,6 +343,8 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error(`[art] ${(error as Error).message}`);
+  const { message, cause } = error as Error & { cause?: { code?: string; message?: string } };
+  // « fetch failed » seul ne dit rien : la cause (délai, réseau…) est dans `cause`.
+  console.error(`[art] ${message}${cause ? ` (${cause.code ?? ''} ${cause.message ?? ''})` : ''}`);
   process.exit(1);
 });

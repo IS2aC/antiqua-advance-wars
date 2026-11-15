@@ -70,7 +70,7 @@ export const UNIT_SHEETS = ['poses', ...(Object.keys(SEQUENCE_SHEETS) as Sequenc
  * - `unites/<unité>/poses.png` et `unites/<unité>/<planche>.png` : planches communes aux
  *   4 peuples (rouge d'équipe, recolorées au build) ;
  * - `peuples/<peuple>/<unité>/poses.png` : les 4 poses de référence propres à un peuple
- *   (prioritaires sur la planche commune) ;
+ *   (d'après ses sprites, en rouge d'équipe, prioritaires sur la planche commune) ;
  * - `peuples/<peuple>/<unité>/<planche>.png` : une séquence (repos, attaque, charge, chute, sonne) ;
  * - `portraits/<peuple>.png` : 4 expressions ;
  * - `decors/<nom>.png` : un décor.
@@ -158,7 +158,7 @@ export function todoReport(
     '',
     'Comme les sprites de la carte, chaque unité est dessinée une seule fois, en rouge, dans',
     '`unites/<unité>/` (6 fichiers aux noms fixes), puis recolorée pour chaque peuple.',
-    'Entre parenthèses : une ancienne planche propre à un peuple, sans version commune.',
+    'Entre parenthèses : une planche propre à un peuple, sans version commune.',
     '',
     `| Unité | ${UNIT_SHEETS.map((sheet) => SHEET_LABELS[sheet] ?? sheet).join(' | ')} |`,
     `| --- | ${UNIT_SHEETS.map(() => ':---:').join(' | ')} |`,
@@ -166,7 +166,7 @@ export function todoReport(
     '',
     '## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)',
     '',
-    'Prioritaires sur la planche commune pour ce peuple, et non recolorées.',
+    'Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et recolorées elles aussi.',
     '',
     overrides.length > 0 ? overrides.map((path) => `- \`${path}\``).join('\n') : 'aucune',
     '',

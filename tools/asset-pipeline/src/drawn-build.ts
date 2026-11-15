@@ -5,8 +5,8 @@
  *   recolorées pour chaque peuple (comme les sprites de la carte) ;
  * - `unites/<unité>/<planche>.png` : séquences (repos, attaque, charge, chute, sonne),
  *   4 images chacune, à la même échelle que les poses ;
- * - `peuples/<peuple>/<unité>/<planche>.png` : planche propre à un peuple, prioritaire et
- *   non recolorée ;
+ * - `peuples/<peuple>/<unité>/<planche>.png` : planche propre à un peuple (d'après ses
+ *   sprites), prioritaire, dessinée en rouge et recolorée elle aussi ;
  * - `portraits/<peuple>.png` : 4 expressions → une image par expression (256×256) ;
  * - `decors/<nom>.png` : décor recadré en 1920×1152 ;
  * - `reglages.json` : corrections d'échelle par planche et calages par animation.
@@ -205,10 +205,9 @@ async function framesOf(file: string): Promise<Sheet> {
 
 const SOURCE_RAMP = toRamp(TEAM_RAMPS.carthage);
 
-/** Les dessins d'une planche pour un peuple : recolorés si la planche est commune. */
-async function framesFor(file: string, shared: boolean, people: Faction): Promise<Sheet> {
+/** Les dessins d'une planche pour un peuple, recolorés du rouge d'équipe vers sa couleur. */
+async function framesFor(file: string, people: Faction): Promise<Sheet> {
   const sheet = await framesOf(file);
-  if (!shared) return sheet;
   const ramp = toRamp(TEAM_RAMPS[people]);
   return {
     cellWidth: sheet.cellWidth,
@@ -276,7 +275,7 @@ async function main(): Promise<void> {
       let poseScale: number | null = null;
       const poses = pick('poses');
       if (poses) {
-        const { frames } = await framesFor(poses.file, poses.shared, people);
+        const { frames } = await framesFor(poses.file, people);
         poseScale = figureScale(frames.map((frame) => frame.box));
         await mkdir(dir, { recursive: true });
         const written: Record<string, PoseInfo> = {};
@@ -292,14 +291,14 @@ async function main(): Promise<void> {
         }
         (manifest.figures[people] ??= {})[unit] = written;
         console.log(
-          `[dessin] ${poses.file} → ${people}/${unit} : ${Object.keys(written).length} poses (×${poseScale.toFixed(2)}${poses.shared ? ', recoloré' : ''})`,
+          `[dessin] ${poses.file} → ${people}/${unit} : ${Object.keys(written).length} poses (×${poseScale.toFixed(2)}${poses.shared ? ', commune' : ''})`,
         );
       }
 
       for (const sheet of Object.keys(SEQUENCE_SHEETS) as SequenceSheet[]) {
         const source = pick(sheet);
         if (!source) continue;
-        const { frames, cellWidth } = await framesFor(source.file, source.shared, people);
+        const { frames, cellWidth } = await framesFor(source.file, people);
         // Sans planche de poses : la première image debout fait la hauteur de référence.
         const base = poseScale ?? FIGURE_IDLE_HEIGHT / (frames[0]?.box.h ?? FIGURE_IDLE_HEIGHT);
         const fix =
@@ -328,7 +327,7 @@ async function main(): Promise<void> {
           };
         }
         console.log(
-          `[dessin] ${source.file} → ${people}/${unit} : ${SEQUENCE_SHEETS[sheet].map((g) => g.anim).join(', ')} (×${scale.toFixed(2)}${fix !== 1 ? `, correction ×${fix}` : ''}${source.shared ? ', recoloré' : ''})`,
+          `[dessin] ${source.file} → ${people}/${unit} : ${SEQUENCE_SHEETS[sheet].map((g) => g.anim).join(', ')} (×${scale.toFixed(2)}${fix !== 1 ? `, correction ×${fix}` : ''}${source.shared ? ', commune' : ''})`,
         );
       }
     }

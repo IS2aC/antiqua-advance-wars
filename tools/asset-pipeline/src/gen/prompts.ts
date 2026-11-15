@@ -1,12 +1,13 @@
 /**
  * Prompts et liste des images à générer, à partir du catalogue `art/specs/`. Fonctions pures.
  *
- * Les unités sont dessinées une seule fois, en rouge d'équipe (`unites/<unité>/`), puis
- * recolorées pour chaque peuple par `pnpm assets:dessin`, comme les sprites de la carte.
+ * Les unités sont dessinées en rouge d'équipe, puis recolorées pour chaque peuple par
+ * `pnpm assets:dessin`, comme les sprites de la carte : une fois pour tous (`unites/<unité>/`),
+ * ou par peuple d'après ses propres sprites (`peuples/<peuple>/<unité>/`, avec `--peuple`).
  * La planche de poses prend le sprite de la carte comme référence ; les séquences prennent la
  * planche de poses (même personnage, même taille).
  */
-import type { Specs, UnitSheet, UnitSpec } from './specs';
+import type { PeopleUnitSpec, Specs, UnitSheet } from './specs';
 
 export const IMAGE_SIZE = '1536x1024';
 
@@ -28,13 +29,18 @@ export interface Job {
 }
 
 /** Bloc de couleurs, rempli avec les teintes relevées sur les sprites et l'équipe voulue. */
-export function colorBlock(specs: Specs, people: string, pure: boolean): string {
+export function colorBlock(
+  specs: Specs,
+  people: string,
+  pure: boolean,
+  skin: { readonly base: string; readonly ombre: string } = specs.couleurs.peau,
+): string {
   const c = specs.couleurs;
   const team = c.equipes[people];
   if (!team) throw new Error(`Équipe inconnue : ${people}`);
   const values: Record<string, string> = {
-    peau: c.peau.base,
-    peauOmbre: c.peau.ombre,
+    peau: skin.base,
+    peauOmbre: skin.ombre,
     cheveux: c.cheveux,
     or: c.or.base,
     orClair: c.or.clair,
@@ -51,20 +57,43 @@ export function colorBlock(specs: Specs, people: string, pure: boolean): string 
 
 const numbered = (cells: readonly string[]) => cells.map((cell, i) => `${i + 1}. ${cell}`);
 
-function character(unit: UnitSpec): string {
+function character(unit: Pick<PeopleUnitSpec, 'sujet' | 'design'>): string {
   return `Character: ${unit.sujet}. Design (team color = the team color below): ${unit.design}`;
 }
 
-export function unitPrompt(specs: Specs, unitName: string, sheet: UnitSheet): string {
+/** Version propre à un peuple d'une unité (erreur claire si la fiche n'existe pas). */
+function peopleUnit(specs: Specs, unitName: string, people: string): PeopleUnitSpec {
+  const own = specs.unites[unitName]?.peuples?.[people];
+  if (!own) {
+    throw new Error(
+      `Pas de fiche « ${unitName} » pour ${people} : ajoute unites.json → ${unitName}.peuples.${people}`,
+    );
+  }
+  return own;
+}
+
+/** Sprite de carte d'un peuple : même nom de fichier que le sprite commun. */
+export function peopleSprite(sprite: string, people: string): string {
+  const name = sprite.split('/').pop() ?? sprite;
+  return `art/raw/sprites-unités/peuples/${people}/${name}`;
+}
+
+export function unitPrompt(
+  specs: Specs,
+  unitName: string,
+  sheet: UnitSheet,
+  people?: string,
+): string {
   const unit = specs.unites[unitName];
   if (!unit) throw new Error(`Unité inconnue : ${unitName}`);
+  const own = people ? peopleUnit(specs, unitName, people) : null;
   const source = specs.couleurs.equipeSource;
   const s = specs.style;
   const poses = sheet === 'poses';
   return [
-    poses ? s.referenceSprite : s.referencePoses,
-    character(unit),
-    colorBlock(specs, source, true),
+    poses ? (own ? s.referenceSpritePeuple : s.referenceSprite) : s.referencePoses,
+    character(own ?? unit),
+    colorBlock(specs, source, true, own?.peau),
     poses ? s.cadrePoses : s.cadreSequence,
     poses ? 'Poses, left to right:' : 'Frames, left to right:',
     ...numbered(unit.planches[sheet]),
@@ -126,15 +155,22 @@ export function planJobs(
     for (const unit of units) {
       const spec = specs.unites[unit];
       if (!spec) throw new Error(`Unité inconnue : ${unit} (connues : ${allUnits.join(', ')})`);
-      for (const sheet of allSheets.filter((s) => sheets.includes(s))) {
-        jobs.push({
-          id: `unites/${unit}/${sheet}`,
-          kind: 'unit',
-          unit,
-          sheet,
-          prompt: unitPrompt(specs, unit, sheet),
-          references: sheet === 'poses' ? [`depot:${spec.sprite}`] : [`unites/${unit}/poses.png`],
-        });
+      // Avec --peuple : la version propre à chaque peuple (d'après ses sprites).
+      const targets: (string | null)[] = filter.peoples.length > 0 ? [...filter.peoples] : [null];
+      for (const people of targets) {
+        const dir = people ? `peuples/${people}/${unit}` : `unites/${unit}`;
+        const sprite = people ? peopleSprite(spec.sprite, people) : spec.sprite;
+        for (const sheet of allSheets.filter((s) => sheets.includes(s))) {
+          jobs.push({
+            id: `${dir}/${sheet}`,
+            kind: 'unit',
+            unit,
+            sheet,
+            ...(people ? { people } : {}),
+            prompt: unitPrompt(specs, unit, sheet, people ?? undefined),
+            references: sheet === 'poses' ? [`depot:${sprite}`] : [`${dir}/poses.png`],
+          });
+        }
       }
     }
   }

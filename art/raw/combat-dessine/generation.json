@@ -1,0 +1,61 @@
+{
+  "totalUsd": 1.0775,
+  "images": {
+    "peuples/koush/fantassin/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1763,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:01:24.888Z"
+    },
+    "peuples/koush/fantassin/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [
+        "échelle corrigée automatiquement : ×0.92"
+      ],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:02:30.243Z"
+    },
+    "peuples/koush/fantassin/attaque": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1803,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:03:34.133Z"
+    },
+    "peuples/koush/fantassin/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:04:38.086Z"
+    },
+    "peuples/koush/fantassin/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:05:42.853Z"
+    },
+    "peuples/koush/fantassin/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1805,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:06:45.225Z"
+    }
+  }
+}

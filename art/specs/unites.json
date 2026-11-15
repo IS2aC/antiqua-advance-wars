@@ -1,5 +1,5 @@
 {
-  "_doc": "Une fiche par unité, d'après son sprite de carte (`sprite`, joint comme référence à la planche de poses). Chaque planche a 4 cases, de gauche à droite. Équipe = la couleur d'équipe (rouge à la génération, recolorée ensuite pour chaque peuple). Ordre et découpage des planches : tools/asset-pipeline/src/drawn.ts (SEQUENCE_SHEETS).",
+  "_doc": "Une fiche par unité, d'après son sprite de carte (`sprite`, joint comme référence à la planche de poses). Chaque planche a 4 cases, de gauche à droite. Équipe = la couleur d'équipe (rouge à la génération, recolorée ensuite pour chaque peuple). Ordre et découpage des planches : tools/asset-pipeline/src/drawn.ts (SEQUENCE_SHEETS). `peuples.<peuple>` : version propre à un peuple, d'après son sprite (`art/raw/sprites-unités/peuples/<peuple>/`), générée avec `--peuple` dans `peuples/<peuple>/<unité>/`, en rouge aussi.",
   "fantassin": {
     "nom": "Fantassin",
     "sprite": "art/raw/sprites-unités/fantassins-rouge.png",
@@ -42,6 +42,16 @@
         "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "young Nubian spearman of the Kingdom of Kush",
+        "design": "Very dark brown skin. Short tightly curled black hair with a team-color cloth headband tied at the back, two short loose tails flying behind, and one small white feather. No helmet, no beard. Bare chest and arms, a thin gold bead necklace, gold armlets and bracers. White linen kilt with a team-color front panel hanging down the middle. Brown leather sandals. Tall oval cowhide shield: cream hide with large dark-brown irregular spots and a thin team-color rim. Spear with a dark wooden shaft and a gold-bronze leaf-shaped spearhead.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      }
     }
   },
   "lancier": {
