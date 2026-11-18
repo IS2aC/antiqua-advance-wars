@@ -113,6 +113,14 @@
           "base": "#7A4420",
           "ombre": "#5A2E14"
         }
+      },
+      "carthage": {
+        "sujet": "heavy Punic spearman of Carthage, a front-rank veteran",
+        "design": "Light olive-tan skin, short dark curly hair and a short dark beard. Closed gold-bronze helmet with large cheek guards and a short team-color horsehair crest. Heavy gold-bronze muscled cuirass with gold shoulder plates, team-color short sleeves, a team-color pleated skirt with a gold hem, gold-bronze greaves on the shins. Brown leather sandals. A tall oval shield with a team-color face, a thick gold rim, and in gold the sign of Tanit (a triangle topped by a small disk, with short horizontal arms) above a small palm tree. A long heavy spear with a dark wooden shaft and a gold leaf-shaped spearhead.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
       }
     }
   },
