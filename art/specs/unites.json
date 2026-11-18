@@ -132,7 +132,7 @@
     "planches": {
       "poses": [
         "Idle: relaxed ready stance, bow held low, quiver on the back.",
-        "Attack: drawing the bow to full extension, aiming right, arrow nocked.",
+        "Attack: full draw aiming UPWARD at about 45 degrees for a long-range volley over the battlefield: bow arm stretched up and forward to the upper right, arrow nocked and pointing up-right, body leaning back slightly, head tilted up toward the sky.",
         "Hit: recoiling backward, bow lowered, off balance.",
         "Defeated: sitting on the ground, head lowered, bow dropped beside him."
       ],
@@ -144,9 +144,9 @@
       ],
       "attaque": [
         "Reaching back over the shoulder to the quiver and pulling out an arrow, bow held low. The feet stay planted at the same spot in all 4 frames.",
-        "Nocking the arrow on the string, bow raised in front, starting to draw.",
-        "Full draw: bow fully bent, string pulled back to the cheek, aiming right, intense focus.",
-        "Release and follow-through: the string has snapped forward, the arrow is gone, the drawing hand flung back open, bow arm still extended, a few short speed lines at the string."
+        "Nocking the arrow on the string, bow rising toward the upper right, starting to draw.",
+        "Full draw aiming UPWARD at about 45 degrees toward the upper right sky: bow fully bent, string pulled back to the cheek, body leaning back slightly, head tilted up, intense focus. The arrow points up-right, never straight ahead.",
+        "Release and follow-through, still aiming UPWARD at about 45 degrees: the string has snapped forward, the arrow is gone, the drawing hand flung back open, bow arm still extended up toward the upper right, a few short speed lines at the string."
       ],
       "charge": [
         "Light jogging step forward, bow in the left hand, left foot forward, right foot pushing off.",
@@ -174,6 +174,14 @@
         "peau": {
           "base": "#7A4420",
           "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "Libyan-Punic archer of Carthage",
+        "design": "Light olive-tan skin, short dark curly hair and a short dark beard. A rounded team-color felt cap. No helmet, no armor. A team-color short-sleeved tunic to the knees, a brown leather strap across the chest from the shoulder to the hip, a brown leather belt with a gold buckle, brown leather bracers. Brown leather sandals. A recurve bow in warm orange-brown wood with cream grip wraps. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
         }
       }
     }

@@ -471,8 +471,9 @@ export class DrawnCombatScene extends StagedScene {
     const outgoing = shots.map(async ({ figure, k }) => {
       await release(figure);
       await this.wait(k * 90);
-      const sx = figure.image.x + from.dir * 60;
-      const sy = figure.image.y - 260 * figure.baseScale;
+      // Les archers tirent vers le haut (volée) : la flèche part de la main de l'arc, levée.
+      const sx = figure.image.x + from.dir * (heavy ? 60 : 80);
+      const sy = figure.image.y - (heavy ? 260 : 350) * figure.baseScale;
       const projectile = this.addTo(
         from,
         this.add.image(sx, sy, texture).setScale(1.5).setDepth(2000),

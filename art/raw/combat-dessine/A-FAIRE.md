@@ -13,7 +13,7 @@ Entre parenthèses : une planche propre à un peuple, sans version commune.
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
 | Fantassin | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) |
 | Lancier | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) |
-| Archers | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Archers | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) |
 | Cavalerie | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 | Char | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 | Catapulte | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
@@ -47,11 +47,17 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/koush/lancier/sonne`
 - `peuples/carthage/lancier/sonne`
 - `peuples/koush/archers/poses`
+- `peuples/carthage/archers/poses`
 - `peuples/koush/archers/repos`
+- `peuples/carthage/archers/repos`
 - `peuples/koush/archers/attaque`
+- `peuples/carthage/archers/attaque`
 - `peuples/koush/archers/charge`
+- `peuples/carthage/archers/charge`
 - `peuples/koush/archers/chute`
+- `peuples/carthage/archers/chute`
 - `peuples/koush/archers/sonne`
+- `peuples/carthage/archers/sonne`
 - `peuples/koush/cavalerie/poses`
 - `peuples/koush/cavalerie/repos`
 - `peuples/koush/cavalerie/attaque`

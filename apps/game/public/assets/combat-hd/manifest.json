@@ -39,20 +39,20 @@
       },
       "archers": {
         "idle": {
-          "w": 249,
+          "w": 176,
           "h": 420
         },
         "attack": {
-          "w": 294,
-          "h": 444
+          "w": 263,
+          "h": 465
         },
         "hit": {
-          "w": 449,
-          "h": 435
+          "w": 235,
+          "h": 370
         },
         "down": {
-          "w": 229,
-          "h": 236
+          "w": 262,
+          "h": 267
         }
       },
       "cavalerie": {
@@ -145,6 +145,24 @@
         "down": {
           "w": 344,
           "h": 328
+        }
+      },
+      "archers": {
+        "idle": {
+          "w": 231,
+          "h": 420
+        },
+        "attack": {
+          "w": 297,
+          "h": 483
+        },
+        "hit": {
+          "w": 322,
+          "h": 393
+        },
+        "down": {
+          "w": 366,
+          "h": 275
         }
       }
     }
@@ -270,59 +288,59 @@
       "archers": {
         "idle": {
           "frames": 4,
-          "w": 266,
-          "h": 424,
-          "originX": 0.4855,
+          "w": 183,
+          "h": 422,
+          "originX": 0.3941,
           "originY": 1
         },
         "attack": {
           "frames": 4,
-          "w": 298,
-          "h": 441,
-          "originX": 0.5521,
-          "originY": 0.9983
+          "w": 283,
+          "h": 427,
+          "originX": 0.4562,
+          "originY": 1
         },
         "run": {
           "frames": 2,
-          "w": 314,
-          "h": 396,
-          "originX": 0.7232,
-          "originY": 0.9981
+          "w": 225,
+          "h": 369,
+          "originX": 0.8157,
+          "originY": 1
         },
         "hit": {
           "frames": 2,
-          "w": 297,
-          "h": 471,
-          "originX": 0.6305,
+          "w": 271,
+          "h": 376,
+          "originX": 0.4445,
           "originY": 1
         },
         "fall": {
           "frames": 2,
-          "w": 282,
-          "h": 416,
-          "originX": 0.6767,
-          "originY": 0.8887
+          "w": 257,
+          "h": 355,
+          "originX": 0.3959,
+          "originY": 0.9724
         },
         "victory": {
           "frames": 2,
-          "w": 241,
-          "h": 478,
-          "originX": 0.6364,
-          "originY": 0.9969
+          "w": 199,
+          "h": 407,
+          "originX": 0.4915,
+          "originY": 1
         },
         "sit": {
           "frames": 2,
-          "w": 348,
-          "h": 307,
-          "originX": 0.2175,
+          "w": 306,
+          "h": 349,
+          "originX": 0.5455,
           "originY": 1
         },
         "dazed": {
           "frames": 2,
-          "w": 269,
-          "h": 254,
-          "originX": 0.151,
-          "originY": 0.9824
+          "w": 287,
+          "h": 293,
+          "originX": 0.5432,
+          "originY": 1
         }
       },
       "cavalerie": {
@@ -614,6 +632,64 @@
           "w": 333,
           "h": 337,
           "originX": 0.2999,
+          "originY": 1
+        }
+      },
+      "archers": {
+        "idle": {
+          "frames": 4,
+          "w": 235,
+          "h": 446,
+          "originX": 0.4299,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 323,
+          "h": 479,
+          "originX": 0.4213,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 239,
+          "h": 409,
+          "originX": 0.782,
+          "originY": 0.9983
+        },
+        "hit": {
+          "frames": 2,
+          "w": 320,
+          "h": 437,
+          "originX": 0.4786,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 320,
+          "h": 403,
+          "originX": 0.472,
+          "originY": 0.981
+        },
+        "victory": {
+          "frames": 2,
+          "w": 283,
+          "h": 483,
+          "originX": 0.5334,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 351,
+          "h": 425,
+          "originX": 0.4578,
+          "originY": 0.9951
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 334,
+          "h": 338,
+          "originX": 0.4587,
           "originY": 1
         }
       }
