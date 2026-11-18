@@ -16,6 +16,10 @@ test('lancer une partie, produire, déplacer, attaquer, finir le tour', async ({
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
+  // Scène de combat en pixel art, courte (les combats dessinés sont le réglage par défaut).
+  await page.addInitScript(() =>
+    localStorage.setItem('antiqua:options', '{"combatScenes":true,"combatStyle":"pixel"}'),
+  );
   await page.goto('/jeu.html');
   await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
   await page.reload();
