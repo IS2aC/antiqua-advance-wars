@@ -1,9 +1,11 @@
 import {
   FACTIONS,
+  TERRAINS,
   UNITS,
   UNIT_TYPES,
   isIndirect,
   type PlayerId,
+  type TerrainType,
   type UnitType,
 } from '@antiqua/engine';
 import type { CombatSetup, Strike } from '../combat/setup';
@@ -20,6 +22,7 @@ import { drawnStage } from './DrawnStage';
  */
 
 const PEOPLES: readonly PlayerId[] = ['carthage', 'koush', 'almoravides', 'ashanti'];
+const TERRAIN_TYPES = Object.keys(TERRAINS) as TerrainType[];
 
 const CSS = `
 .banc { position: fixed; inset: 0; display: grid; grid-template-columns: 300px 1fr; gap: 20px;
@@ -52,12 +55,19 @@ function options<T extends string>(values: readonly T[], label: (v: T) => string
     .join('');
 }
 
-function side(prefix: string, title: string, people: PlayerId, unit: UnitType): string {
+function side(
+  prefix: string,
+  title: string,
+  people: PlayerId,
+  unit: UnitType,
+  terrain: TerrainType,
+): string {
   return `
     <fieldset>
       <legend>${title}</legend>
       <label>Peuple<select name="${prefix}-peuple">${options(PEOPLES, (p) => FACTIONS[p].name, people)}</select></label>
       <label>Unité<select name="${prefix}-unite">${options(UNIT_TYPES, (u) => UNITS[u].name, unit)}</select></label>
+      <label>Terrain<select name="${prefix}-terrain">${options(TERRAIN_TYPES, (t) => TERRAINS[t].name, terrain)}</select></label>
       <label>PV avant<input type="number" name="${prefix}-avant" min="1" max="10" value="10" /></label>
       <label>PV après<input type="number" name="${prefix}-apres" min="0" max="10" value="${prefix === 'att' ? 10 : 4}" /></label>
     </fieldset>`;
@@ -78,8 +88,8 @@ export function startProtoBench(): void {
         <h1>Animation (proto)</h1>
         <p>Banc d'essai des combats dessinés. L'attaquant est à gauche. Clic ou Entrée sur la scène pour la passer.</p>
       </div>
-      ${side('att', 'Attaquant', 'carthage', 'fantassin')}
-      ${side('def', 'Défenseur', 'koush', 'archers')}
+      ${side('att', 'Attaquant', 'carthage', 'fantassin', 'foret')}
+      ${side('def', 'Défenseur', 'koush', 'archers', 'riviere')}
       <fieldset>
         <legend>Déroulé</legend>
         <label class="check"><input type="checkbox" name="riposte" /> Riposte du défenseur (PV après de l'attaquant)</label>
@@ -146,7 +156,7 @@ export function startProtoBench(): void {
         side: 'left',
         owner: attacker.owner,
         unitType: attacker.unitType,
-        terrain: 'plaine',
+        terrain: get('att-terrain') as TerrainType,
         role: 'attaquant',
         hpBefore: attacker.before,
         hpAfter: attackerAfter,
@@ -155,7 +165,7 @@ export function startProtoBench(): void {
         side: 'right',
         owner: defender.owner,
         unitType: defender.unitType,
-        terrain: 'plaine',
+        terrain: get('def-terrain') as TerrainType,
         role: 'defenseur',
         hpBefore: defender.before,
         hpAfter: defender.after,
