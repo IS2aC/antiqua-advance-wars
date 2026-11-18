@@ -712,8 +712,9 @@ export class DrawnCombatScene extends StagedScene {
     const frame = this.add.graphics();
     frame.fillStyle(darken(team), 1).fillRoundedRect(px, 13, PORTRAIT, PORTRAIT, 14);
     frame.lineStyle(4, 0xfff4c8, 1).strokeRoundedRect(px, 13, PORTRAIT, PORTRAIT, 14);
+    const face = portraitTexture(this, side.owner, 'neutral');
     const portrait = this.add
-      .image(px + PORTRAIT / 2, 13 + PORTRAIT, portraitTexture(this, side.owner, 'neutral'))
+      .image(px + PORTRAIT / 2, 13 + PORTRAIT, face.key, face.frame)
       .setOrigin(0.5, 1)
       .setDisplaySize(PORTRAIT - 8, PORTRAIT - 8)
       // Chaque portrait regarde vers le centre de l'écran.
@@ -829,9 +830,8 @@ export class DrawnCombatScene extends StagedScene {
   }
 
   private setExpression(view: SideView, expression: Expression): void {
-    view.portrait
-      .setTexture(portraitTexture(this, view.side.owner, expression))
-      .setDisplaySize(PORTRAIT - 8, PORTRAIT - 8);
+    const face = portraitTexture(this, view.side.owner, expression);
+    view.portrait.setTexture(face.key, face.frame).setDisplaySize(PORTRAIT - 8, PORTRAIT - 8);
   }
 
   private setPose(view: SideView, figure: Figure, pose: Pose): void {

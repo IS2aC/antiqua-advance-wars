@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { PlayerId, TerrainType, UnitType } from '@antiqua/engine';
+import { FACTIONS, type PlayerId, type TerrainType, type UnitType } from '@antiqua/engine';
 import { OUTLINE_COLOR, SPRITE_COLORS, TEAM_COLORS, TEAM_RAMPS, darken } from '../view/palette';
 import {
   DRAWN_H,
@@ -38,6 +38,12 @@ interface DrawnManifest {
 const figureKey = (people: string, unit: string, pose: string) => `d:fig:${people}:${unit}:${pose}`;
 const portraitKey = (people: string, expression: string) => `d:por:${people}:${expression}`;
 const decorKey = (name: string) => `d:decor:${name}`;
+/** Portrait du dirigeant de la page de garde (`pnpm assets:cover`), 480×560. */
+const leaderKey = (people: string) => `d:roi:${people}`;
+const LEADER = { width: 480, height: 560 } as const;
+/** Cadrage carré sur le visage et les épaules, dans le portrait du dirigeant. */
+const LEADER_FRAME = 'visage';
+const LEADER_CROP = { x: 40, y: 0, size: 400 } as const;
 const animFrameKey = (people: string, unit: string, anim: string, i: number) =>
   `d:anim:${people}:${unit}:${anim}:${i}`;
 const animKey = (people: string, unit: string, anim: string) => `d:${people}:${unit}:${anim}`;
@@ -115,6 +121,9 @@ export function drawnAnimation(
 /** Charge le manifeste puis, dans la même passe, les images qu'il annonce. */
 export function preloadDrawn(scene: Phaser.Scene): void {
   scene.load.json(MANIFEST, `${BASE}manifest.json`);
+  for (const people of Object.keys(FACTIONS)) {
+    scene.load.image(leaderKey(people), `assets/garde/peuples/${people}-roi.webp`);
+  }
   scene.load.once(`filecomplete-json-${MANIFEST}`, (_key: string, _type: string, data: unknown) => {
     const manifest = data as Partial<DrawnManifest> | undefined;
     for (const [people, units] of Object.entries(manifest?.figures ?? {})) {
@@ -194,13 +203,34 @@ export function portraitFacesLeft(scene: Phaser.Scene, people: PlayerId): boolea
   return scene.textures.exists(portraitKey(people, 'neutral')) && PORTRAITS_FACING_LEFT.has(people);
 }
 
+/** Texture d'un portrait et, s'il y a lieu, le cadre à afficher dans cette texture. */
+export interface PortraitTexture {
+  readonly key: string;
+  readonly frame?: string;
+}
+
+/**
+ * Portrait du bandeau : le portrait dessiné du combat (4 expressions) s'il existe, sinon le
+ * portrait du dirigeant de la page de garde (une seule expression), sinon un provisoire.
+ */
 export function portraitTexture(
   scene: Phaser.Scene,
   people: PlayerId,
   expression: Expression,
-): string {
+): PortraitTexture {
   const real = portraitKey(people, expression);
-  return scene.textures.exists(real) ? real : placeholderPortrait(scene, people, expression);
+  if (scene.textures.exists(real)) return { key: real };
+  const leader = leaderKey(people);
+  if (scene.textures.exists(leader)) {
+    const texture = scene.textures.get(leader);
+    const source = texture.getSourceImage();
+    if (!texture.has(LEADER_FRAME) && source.width === LEADER.width) {
+      const { x, y, size } = LEADER_CROP;
+      texture.add(LEADER_FRAME, 0, x, y, size, size);
+    }
+    return { key: leader, ...(texture.has(LEADER_FRAME) ? { frame: LEADER_FRAME } : {}) };
+  }
+  return { key: placeholderPortrait(scene, people, expression) };
 }
 
 export function decorTexture(scene: Phaser.Scene, terrain: TerrainType): string {
