@@ -224,7 +224,7 @@
       ],
       "sonne": [
         "Thrown off: the rider flying backward off the saddle, arms flailing, the horse startled.",
-        "Landing: the rider sitting on the ground in front of the horse, legs stretched forward, head wrap over one eye; the horse stands calmly behind him.",
+        "Landing: the rider sitting on the ground in front of the horse, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the horse stands calmly behind him.",
         "Dazed: rider still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the horse sniffs his head.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the horse barely moves."
       ]
@@ -236,6 +236,14 @@
         "peau": {
           "base": "#7A4420",
           "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "young Numidian light horseman in the service of Carthage, riding a horse bareback",
+        "design": "Rider: warm brown skin, a large mass of tight dark curly hair, no helmet, no beard. A short team-color cloak over the shoulders, a short cream tunic, brown leather bracers. A small round shield with a team-color face, a gold rim and the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms). Two light javelins with dark shafts and gold-bronze points, held in the right hand. Horse: small sturdy bay horse ridden bareback (no saddle), warm brown coat, dark brown mane and tail, black hooves, a simple gold rope bridle and a gold neck strap. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#8A5230",
+          "ombre": "#653A1E"
         }
       }
     }
