@@ -96,7 +96,7 @@ export function unitPrompt(
     colorBlock(specs, source, true, own?.peau),
     poses ? s.cadrePoses : s.cadreSequence,
     poses ? 'Poses, left to right:' : 'Frames, left to right:',
-    ...numbered(unit.planches[sheet]),
+    ...numbered(own?.planches?.[sheet] ?? unit.planches[sheet]),
     ...(sheet === 'sonne' ? [s.sonne] : []),
     s.style,
     s.fond,

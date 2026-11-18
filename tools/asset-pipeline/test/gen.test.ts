@@ -251,10 +251,34 @@ describe('planches propres à un peuple', () => {
     expect(jobs[0]?.prompt).toContain('#7A4420');
     expect(jobs[0]?.prompt).toContain('cowhide');
   });
+  it('prennent les cases propres au peuple quand il en a', () => {
+    const char = specs.unites.char!;
+    const own = {
+      sujet: 'royal palanquin',
+      design: 'two bearers',
+      planches: { poses: ['A', 'B', 'C', 'D'] as const },
+    };
+    const custom = {
+      ...specs,
+      unites: { ...specs.unites, char: { ...char, peuples: { ashanti: own } } },
+    };
+    const jobs = planJobs(
+      custom,
+      { ...ALL, units: ['char'], peoples: ['ashanti'], withPortraits: false, withDecors: false },
+      COMBAT_UNITS,
+      PEOPLES,
+      UNIT_SHEETS,
+    );
+    expect(jobs[0]?.prompt).toContain('1. A');
+    // Planche non surchargée : les cases de l'unité.
+    expect(jobs[1]?.prompt).toContain(char.planches.repos[0]);
+  });
   it('refusent un peuple sans fiche', () => {
+    const char = specs.unites.char!;
+    const without = { ...specs, unites: { ...specs.unites, char: { ...char, peuples: {} } } };
     expect(() =>
       planJobs(
-        specs,
+        without,
         { ...ALL, units: ['char'], peoples: ['carthage'], withPortraits: false, withDecors: false },
         COMBAT_UNITS,
         PEOPLES,

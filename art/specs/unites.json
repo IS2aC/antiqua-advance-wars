@@ -59,6 +59,22 @@
           "base": "#A86B3C",
           "ombre": "#7E4C26"
         }
+      },
+      "almoravides": {
+        "sujet": "young veiled Almoravid foot soldier, Saharan Amazigh",
+        "design": "Brown skin. A team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show). A long white wool tunic to the knees with team-color borders, a team-color belt. Brown leather sandals. A round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing). A spear with a dark wooden shaft and a steel leaf-shaped spearhead.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "young Asante (Ashanti) forest warrior of the Akan",
+        "design": "Very dark brown skin, short black hair with a black cloth headband tied at the back, two short tails. No helmet. Bare arms, a thin gold bead necklace, gold armlets. A team-color kente wrap tunic to the knees with black and gold kente stripes, tied at one shoulder. Brown leather sandals. A small round dark-brown wooden shield with a black geometric adinkra pattern and a thin team-color rim. A spear with a dark wooden shaft and a steel leaf-shaped spearhead.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
       }
     }
   },
@@ -120,6 +136,22 @@
         "peau": {
           "base": "#A86B3C",
           "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "heavy veiled Almoravid spearman, a front-rank veteran",
+        "design": "Brown skin. A team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show). A long white wool robe with team-color geometric borders, a brown leather vest with crossed straps and a brown belt over it. Brown leather sandals. A large round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing) and a thick team-color rim. A long heavy spear with a dark wooden shaft and a steel spearhead.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "heavy Asante (Ashanti) spearman, a veteran warrior of the Akan",
+        "design": "Very dark brown skin, short black hair under a team-color cloth cap, gold earrings. A brown cotton war shirt (batakari) covered with small square leather amulet pouches, a team-color kente skirt with black and gold stripes, a brown belt. Brown leather sandals. A large round dark-brown wooden shield with a gold four-pointed cross emblem, a gold boss and a team-color rim. A long heavy spear with a dark wooden shaft and a steel spearhead.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
         }
       }
     }
@@ -183,6 +215,22 @@
           "base": "#A86B3C",
           "ombre": "#7E4C26"
         }
+      },
+      "almoravides": {
+        "sujet": "veiled Almoravid archer, Saharan Amazigh",
+        "design": "Brown skin. A team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show). A white wool tunic to the knees, a team-color sash across the chest from the shoulder to the hip, a team-color belt. Brown leather sandals. A recurve bow in warm orange-brown wood with cream grip wraps. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "young Asante (Ashanti) forest archer of the Akan",
+        "design": "Very dark brown skin, short black hair with a black cloth headband tied at the back. Bare chest with a brown leather strap from the shoulder to the hip, a gold bead necklace, gold armbands. A team-color kente loincloth wrap with black and gold stripes, a small leather pouch at the belt. Brown leather sandals. A long wooden bow in warm brown wood. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
       }
     }
   },
@@ -244,6 +292,22 @@
         "peau": {
           "base": "#8A5230",
           "ombre": "#653A1E"
+        }
+      },
+      "almoravides": {
+        "sujet": "veiled Almoravid light horseman, riding a horse",
+        "design": "Rider: brown skin, a team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show), a white wool burnous with team-color borders, brown leather boots, a small round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing), a spear with a dark shaft and a steel spearhead. Horse: slender sandy dun horse, cream mane and tail, black hooves, a simple brown bridle, a team-color saddle cloth with a cream fringe. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) horseman of the Akan, riding a horse",
+        "design": "Rider: very dark brown skin, a team-color cloth cap, a gold bead necklace, a team-color kente robe with black and gold stripes, a spear with a dark shaft and a steel spearhead. Horse: dark bay horse, black mane and tail, black hooves, a gold bridle, a team-color kente saddle cloth with a gold hem. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
         }
       }
     }
@@ -307,6 +371,98 @@
           "base": "#A86B3C",
           "ombre": "#7E4C26"
         }
+      },
+      "almoravides": {
+        "sujet": "veiled Almoravid heavy cavalryman, riding a big armored horse",
+        "design": "Rider: brown skin, a team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show), a white wool robe with team-color borders, a brown leather lamellar vest, brown boots, a round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing), a long lance with a dark shaft and a steel spearhead. Horse: big dapple-grey horse, dark grey mane and tail, a gold bridle with gold plates, a long team-color caparison covering the body with a gold geometric hem and gold tassels. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        },
+        "planches": {
+          "poses": [
+            "Idle: horse standing calmly, rider upright, spear held up.",
+            "Attack: horse rearing slightly forward, rider thrusting the spear forward.",
+            "Hit: horse shying backward, rider leaning back, off balance.",
+            "Defeated: horse standing with its head low, rider slumped forward on its neck."
+          ],
+          "repos": [
+            "Horse standing, rider upright, spear held up.",
+            "The horse lowers its head a little, rider breathing in.",
+            "The horse shakes its mane, tail swishing.",
+            "Back almost to the first frame, tail swishing the other way. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Anticipation: horse gathering on its hind legs, rider pulling the spear back. The hind hooves stay at the same spot in all 4 frames.",
+            "Motion smear frame: horse lunging forward, spear stretched into a fast elongated shape with a few speed lines.",
+            "Full extension: rider thrusting the spear forward, shouting, horse's front legs reaching forward.",
+            "Follow-through: horse landing, rider settling, spear tip lowering."
+          ],
+          "charge": [
+            "Gallop: front legs reaching forward, hind legs pushing off, rider leaning forward with the spear forward.",
+            "Gallop: all four legs gathered under the body, the horse slightly higher.",
+            "Getting hit: horse shying, head thrown up, rider jolted backward, eyes squeezed.",
+            "Recoil: horse stepping backward, rider off balance, spear still in hand."
+          ],
+          "chute": [
+            "Defeat: horse stumbling, rider sliding to the side.",
+            "Down: horse standing with its head low, rider slumped forward on its neck, spear dropped on the ground.",
+            "Victory: horse rearing proudly, rider raising the spear high.",
+            "Victory shout: horse on four legs, rider shouting with the spear raised."
+          ],
+          "sonne": [
+            "Thrown off: the rider flying backward off the saddle, arms flailing, the horse startled.",
+            "Landing: the rider sitting on the ground in front of the horse, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the horse stands calmly behind him.",
+            "Dazed: rider still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the horse sniffs his head.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the horse barely moves."
+          ]
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) war chief carried in a royal palanquin by two bearers",
+        "design": "A gold-and-wood palanquin carried on two long poles by two bearers, one in front and one behind, the poles resting on their shoulders. Above it, a large team-color ceremonial umbrella with a gold fringe and a gold finial. The chief sits in the palanquin: very dark brown skin, a gold-and-black crown band, heavy gold necklaces, a team-color kente toga with black and gold stripes over one shoulder, holding a spear with a gold spearhead. The palanquin side has a gold adinkra emblem on a team-color panel. The bearers: very dark brown skin, a gold headband, a team-color loincloth, bare chest. Palanquin, chief and bearers are ONE drawing, moving to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the two bearers stand still with the poles on their shoulders, the chief seated upright in the palanquin under the umbrella, spear held up.",
+            "Attack: the bearers lunge forward, the chief leans out of the palanquin and thrusts the spear forward.",
+            "Hit: the bearers stagger backward, the palanquin tilting, the chief thrown back, off balance.",
+            "Defeated: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, head lowered."
+          ],
+          "repos": [
+            "The bearers stand still with the poles on their shoulders, the chief seated upright, spear held up.",
+            "The bearers shift their weight a little, the chief breathing in.",
+            "The umbrella fringe sways, the chief's toga moves slightly.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Anticipation: the chief pulls the spear back, the bearers brace. The bearers' back feet stay at the same spot in all 4 frames.",
+            "Motion smear frame: the chief lunges out of the palanquin, the spear stretched into a fast elongated shape with a few speed lines.",
+            "Full extension: spear thrust forward, the chief shouting, the bearers leaning forward.",
+            "Follow-through: the chief settling back into his seat, spear tip lowering."
+          ],
+          "charge": [
+            "Running: the two bearers run forward in step carrying the palanquin, the chief leaning forward with the spear forward.",
+            "Running: the bearers' feet passing under their bodies, the palanquin bouncing slightly.",
+            "Getting hit: the bearers jolted, the palanquin tilting back, the chief thrown back, eyes squeezed.",
+            "Recoil: the bearers stumbling one step backward, the chief off balance, spear still in hand."
+          ],
+          "chute": [
+            "Defeat: the bearers stumbling, the palanquin tilting, the chief losing grip.",
+            "Down: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, spear lying on the ground.",
+            "Victory: the chief standing up in the palanquin raising the spear high, the bearers cheering.",
+            "Victory shout: the chief shouting with the spear raised, the bearers raising a fist."
+          ],
+          "sonne": [
+            "Thrown out: the chief tumbling backward out of the palanquin, arms flailing, the bearers startled.",
+            "Landing: the chief sitting on the ground in front of the palanquin, legs stretched forward, his crown band tilted over one eye; the bearers stand still behind him holding the palanquin.",
+            "Dazed: the chief still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
       }
     }
   },
@@ -368,6 +524,22 @@
         "peau": {
           "base": "#A86B3C",
           "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "Almoravid wooden catapult on wheels, with its veiled crewman",
+        "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold Amazigh diamond pattern on its side, a team-color banner with a gold geometric diamond on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: brown skin, a team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show), a white wool tunic with team-color borders and a team-color belt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) wooden catapult on wheels, with its crewman",
+        "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold adinkra emblem on its side, a team-color banner with a gold adinkra emblem on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: very dark brown skin, short black hair with a team-color headband, bare chest, a gold bead necklace, a team-color kente loincloth with black and gold stripes, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
         }
       }
     }

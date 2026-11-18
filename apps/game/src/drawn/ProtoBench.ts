@@ -19,7 +19,7 @@ import { drawnStage } from './DrawnStage';
  * (ralenti compris), puis on rejoue le combat autant de fois que nécessaire.
  */
 
-const PEOPLES: readonly PlayerId[] = ['carthage', 'koush'];
+const PEOPLES: readonly PlayerId[] = ['carthage', 'koush', 'almoravides', 'ashanti'];
 
 const CSS = `
 .banc { position: fixed; inset: 0; display: grid; grid-template-columns: 300px 1fr; gap: 20px;

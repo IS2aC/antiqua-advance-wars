@@ -43,6 +43,11 @@ export interface PeopleUnitSpec {
   readonly design: string;
   /** Teint relevé sur ses sprites, à la place du teint commun. */
   readonly peau?: { readonly base: string; readonly ombre: string };
+  /**
+   * Cases propres à ce peuple, quand l'unité n'a pas la même forme (palanquin au lieu d'un
+   * char, cavalier lourd) ; les planches absentes reprennent celles de l'unité.
+   */
+  readonly planches?: Readonly<Partial<Record<UnitSheet, Four>>>;
 }
 
 export interface UnitSpec {
@@ -137,6 +142,13 @@ export function validateSpecs(
         errors.push(`unites.json : ${unit}.peuples.${people} : peuple inconnu`);
       if (!isText(own.sujet) || !isText(own.design)) {
         errors.push(`unites.json : ${unit}.peuples.${people} : sujet ou design manquant`);
+      }
+      for (const [sheet, cells] of Object.entries(own.planches ?? {})) {
+        if (!(UNIT_SHEETS as readonly string[]).includes(sheet) || !isFour(cells)) {
+          errors.push(
+            `unites.json : ${unit}.peuples.${people}.planches.${sheet} : 4 cases attendues`,
+          );
+        }
       }
     }
     for (const sheet of UNIT_SHEETS) {
