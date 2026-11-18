@@ -75,38 +75,38 @@
       },
       "char": {
         "idle": {
-          "w": 410,
+          "w": 407,
           "h": 420
         },
         "attack": {
-          "w": 439,
-          "h": 395
+          "w": 444,
+          "h": 380
         },
         "hit": {
-          "w": 448,
-          "h": 448
+          "w": 434,
+          "h": 440
         },
         "down": {
-          "w": 477,
-          "h": 310
+          "w": 448,
+          "h": 368
         }
       },
       "catapulte": {
         "idle": {
-          "w": 419,
+          "w": 437,
           "h": 420
         },
         "attack": {
-          "w": 553,
+          "w": 574,
           "h": 415
         },
         "hit": {
-          "w": 412,
-          "h": 427
+          "w": 520,
+          "h": 425
         },
         "down": {
-          "w": 387,
-          "h": 404
+          "w": 472,
+          "h": 424
         }
       }
     },
@@ -181,6 +181,42 @@
         "down": {
           "w": 349,
           "h": 407
+        }
+      },
+      "char": {
+        "idle": {
+          "w": 436,
+          "h": 420
+        },
+        "attack": {
+          "w": 473,
+          "h": 393
+        },
+        "hit": {
+          "w": 447,
+          "h": 463
+        },
+        "down": {
+          "w": 477,
+          "h": 311
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "w": 449,
+          "h": 420
+        },
+        "attack": {
+          "w": 509,
+          "h": 412
+        },
+        "hit": {
+          "w": 506,
+          "h": 421
+        },
+        "down": {
+          "w": 516,
+          "h": 412
         }
       }
     }
@@ -422,117 +458,117 @@
       "char": {
         "idle": {
           "frames": 4,
-          "w": 453,
-          "h": 413,
-          "originX": 0.5002,
-          "originY": 0.9971
+          "w": 416,
+          "h": 416,
+          "originX": 0.4577,
+          "originY": 1
         },
         "attack": {
           "frames": 4,
-          "w": 476,
-          "h": 346,
-          "originX": 0.2987,
-          "originY": 0.986
+          "w": 461,
+          "h": 415,
+          "originX": 0.4482,
+          "originY": 1
         },
         "run": {
           "frames": 2,
-          "w": 464,
-          "h": 353,
-          "originX": 0.2902,
-          "originY": 0.9725
+          "w": 449,
+          "h": 382,
+          "originX": 0.4033,
+          "originY": 1
         },
         "hit": {
           "frames": 2,
-          "w": 462,
-          "h": 432,
-          "originX": 0.3932,
-          "originY": 1
+          "w": 446,
+          "h": 442,
+          "originX": 0.4429,
+          "originY": 0.998
         },
         "fall": {
           "frames": 2,
-          "w": 489,
-          "h": 419,
-          "originX": 0.6993,
-          "originY": 0.9855
+          "w": 442,
+          "h": 436,
+          "originX": 0.3859,
+          "originY": 0.998
         },
         "victory": {
           "frames": 2,
-          "w": 444,
+          "w": 426,
           "h": 493,
-          "originX": 0.4028,
-          "originY": 0.9729
+          "originX": 0.3757,
+          "originY": 0.9964
         },
         "sit": {
           "frames": 2,
-          "w": 479,
-          "h": 541,
-          "originX": 0.7083,
+          "w": 424,
+          "h": 450,
+          "originX": 0.6213,
           "originY": 1
         },
         "dazed": {
           "frames": 2,
-          "w": 448,
-          "h": 453,
-          "originX": 0.788,
-          "originY": 0.9866
+          "w": 396,
+          "h": 347,
+          "originX": 0.6665,
+          "originY": 1
         }
       },
       "catapulte": {
         "idle": {
           "frames": 4,
-          "w": 448,
-          "h": 419,
-          "originX": 0.4308,
-          "originY": 0.9973
+          "w": 425,
+          "h": 397,
+          "originX": 0.5677,
+          "originY": 1
         },
         "attack": {
           "frames": 4,
-          "w": 468,
-          "h": 453,
-          "originX": 0.3601,
-          "originY": 0.969
+          "w": 539,
+          "h": 422,
+          "originX": 0.4926,
+          "originY": 1
         },
         "run": {
           "frames": 2,
-          "w": 450,
-          "h": 425,
-          "originX": 0.5405,
-          "originY": 1
+          "w": 463,
+          "h": 418,
+          "originX": 0.4745,
+          "originY": 0.9976
         },
         "hit": {
           "frames": 2,
-          "w": 447,
-          "h": 434,
-          "originX": 0.4931,
-          "originY": 0.9973
+          "w": 493,
+          "h": 420,
+          "originX": 0.4559,
+          "originY": 1
         },
         "fall": {
           "frames": 2,
           "w": 498,
-          "h": 421,
-          "originX": 0.4992,
-          "originY": 0.9972
+          "h": 435,
+          "originX": 0.5957,
+          "originY": 0.9977
         },
         "victory": {
           "frames": 2,
-          "w": 392,
-          "h": 504,
-          "originX": 0.3878,
-          "originY": 0.9884
+          "w": 517,
+          "h": 444,
+          "originX": 0.6776,
+          "originY": 1
         },
         "sit": {
           "frames": 2,
-          "w": 502,
-          "h": 483,
-          "originX": 0.3638,
-          "originY": 1
+          "w": 503,
+          "h": 433,
+          "originX": 0.4066,
+          "originY": 0.9886
         },
         "dazed": {
           "frames": 2,
-          "w": 447,
-          "h": 489,
-          "originX": 0.3091,
-          "originY": 0.988
+          "w": 491,
+          "h": 428,
+          "originX": 0.3923,
+          "originY": 1
         }
       }
     },
@@ -767,6 +803,122 @@
           "h": 322,
           "originX": 0.7075,
           "originY": 0.9977
+        }
+      },
+      "char": {
+        "idle": {
+          "frames": 4,
+          "w": 459,
+          "h": 419,
+          "originX": 0.227,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 498,
+          "h": 451,
+          "originX": 0.23,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 467,
+          "h": 386,
+          "originX": 0.2212,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 465,
+          "h": 450,
+          "originX": 0.4678,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 456,
+          "h": 414,
+          "originX": 0.6409,
+          "originY": 0.9977
+        },
+        "victory": {
+          "frames": 2,
+          "w": 456,
+          "h": 502,
+          "originX": 0.3885,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 433,
+          "h": 575,
+          "originX": 0.579,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 433,
+          "h": 369,
+          "originX": 0.579,
+          "originY": 1
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "frames": 4,
+          "w": 484,
+          "h": 418,
+          "originX": 0.5368,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 495,
+          "h": 420,
+          "originX": 0.5213,
+          "originY": 0.9977
+        },
+        "run": {
+          "frames": 2,
+          "w": 473,
+          "h": 416,
+          "originX": 0.5159,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 485,
+          "h": 421,
+          "originX": 0.5007,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 487,
+          "h": 435,
+          "originX": 0.5935,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 477,
+          "h": 432,
+          "originX": 0.4921,
+          "originY": 0.9978
+        },
+        "sit": {
+          "frames": 2,
+          "w": 506,
+          "h": 414,
+          "originX": 0.2312,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 483,
+          "h": 414,
+          "originX": 0.1934,
+          "originY": 1
         }
       }
     }

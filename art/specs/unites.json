@@ -286,7 +286,7 @@
       ],
       "sonne": [
         "Thrown off: the driver tumbling backward out of the chariot, arms flailing, the horse startled.",
-        "Landing: the driver sitting on the ground in front of the chariot, legs stretched forward, helmet tilted over one eye; the horse and chariot stand still behind him.",
+        "Landing: the driver sitting on the ground in front of the chariot, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the horse and chariot stand still behind him.",
         "Dazed: driver still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
@@ -298,6 +298,14 @@
         "peau": {
           "base": "#7A4420",
           "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "Carthaginian war chariot pulled by one horse, with its Punic driver",
+        "design": "A two-wheeled wooden war chariot: gold spoked wheels with gold rims, a team-color front and side panel with the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms) and gold trim. One bay horse pulling it (warm brown coat, dark mane and tail, gold bridle, team-color caparison with a gold hem). The driver stands in the chariot: light olive-tan skin, short dark beard, a gold-bronze Hellenistic helmet with cheek guards and a tall team-color horsehair crest, a gold-bronze cuirass, a team-color cape, holding the reins and a spear with a gold spearhead. Horse, chariot and driver are ONE drawing; the horse faces right, in front of the chariot.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
         }
       }
     }
@@ -340,7 +348,7 @@
       ],
       "sonne": [
         "Knocked back: crewman tumbling backward away from the catapult, arms flailing.",
-        "Landing: crewman sitting on the ground beside the catapult, legs stretched forward, headband slipped over one eye.",
+        "Landing: crewman sitting on the ground beside the catapult, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear).",
         "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
         "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
       ]
@@ -352,6 +360,14 @@
         "peau": {
           "base": "#7A4420",
           "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "Carthaginian wooden catapult on wheels, with its Punic crewman",
+        "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms) on its side, a team-color banner with the gold sign of Tanit on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: light olive-tan skin, a large mass of dark curly hair and a short dark beard, no helmet, a team-color short tunic and a short team-color cape, a brown leather belt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
         }
       }
     }
