@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { FACTIONS, GUE_DU_NIL, createGame } from '@antiqua/engine';
-import { AI_OPPONENT, battleFromUrl } from '../launch';
+import { aiPlayersOf, battleFromUrl } from '../launch';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH, TILE_SIZE } from '../config';
 import { createFigureAnimations, preloadCombatPacks } from '../combat/packs';
 import { loadGame } from '../persistence/save';
@@ -95,7 +95,7 @@ export class TitleScene extends Phaser.Scene {
       if (choice === 'continuer' && save) {
         this.scene.start('Battle', { state: save.state, aiPlayers: save.aiPlayers });
       } else if (choice === 'ia') {
-        this.scene.start('Battle', { aiPlayers: [AI_OPPONENT] });
+        this.scene.start('Battle', { aiPlayers: aiPlayersOf('gue-du-nil') });
       } else {
         this.scene.start('Battle', {});
       }

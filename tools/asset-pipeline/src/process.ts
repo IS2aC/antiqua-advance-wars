@@ -10,7 +10,7 @@ import {
 import { downscaleMajority, estimatePixelSize } from './downscale';
 import type { Box, IndexedImage } from './image';
 import type { Palette } from './palette';
-import { contentBox, detectBlobs, gridCells } from './slice';
+import { bandedGridCells, contentBox, detectBlobs, gridCells } from './slice';
 import {
   BASE_TILES,
   BUILDING_TILES,
@@ -61,7 +61,7 @@ export function processAnimatedSheet(
 ): ProcessedFrames & { readonly scale: number; readonly teamPixels: number } {
   const frames = new Map<string, IndexedImage>();
   const warnings: string[] = [];
-  const cells = gridCells(sheet.width, sheet.height, layout.cols, layout.rows.length);
+  const cells = bandedGridCells(sheet, layout.cols, layout.rows.length);
   const isDark = isDarkFactory(palette);
 
   const rows = layout.rows.map((row, r) => {

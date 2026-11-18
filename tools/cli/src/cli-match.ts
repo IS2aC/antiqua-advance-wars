@@ -33,8 +33,8 @@ const UNIT_LETTERS: Record<UnitType, string> = {
 const COLORS: Record<PlayerId, string> = {
   koush: '\x1b[34m',
   carthage: '\x1b[31m',
-  kemet: '\x1b[33m',
-  aksoum: '\x1b[32m',
+  ashanti: '\x1b[33m',
+  almoravides: '\x1b[32m',
 };
 const RESET = '\x1b[0m';
 const TERRAIN_LETTERS = new Map(

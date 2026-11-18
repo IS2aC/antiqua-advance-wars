@@ -1,0 +1,60 @@
+{
+  "_doc": "Sprites de carte propres à chaque peuple : une planche 4×4 par peuple et par unité, dessinée en rouge d'équipe (recolorée par le pipeline), d'après la planche du peuple (art/reference/peuples/) et au format de la planche rouge commune. Généré par `pnpm art:sprites` ; sortie dans art/raw/sprites-unités/peuples/<peuple>/.",
+  "unites": {
+    "fantassin": {
+      "format": "sprites-unités/fantassins-rouge.png",
+      "peuples": {
+        "koush": "UNIT: basic spearman of the Kingdom of Kush (Nubia). Very dark brown skin, short tightly curled black hair, a team-red headband with one white feather, white linen kilt with a team-red front panel and sash, gold armlets, a tall oval cowhide shield (cream with brown spots, team-red rim), a bronze-tipped spear held upright. Sandals.",
+        "carthage": "UNIT: basic Libyan-Punic spearman of Carthage. Warm olive-tan skin, short dark curly hair and a short dark beard, a small gold-bronze helmet with a team-red crest, a team-red tunic under a simple bronze breastplate, a round team-red shield with the gold sign of Tanit, a bronze-tipped spear held upright. Sandals.",
+        "almoravides": "UNIT: basic Almoravid infantryman (Saharan Amazigh). Brown skin. A clearly visible deep indigo-blue litham veil (#36427F with #1F2552 shadows) covering the mouth and nose: the veil must read as indigo blue cloth, never as a dark beard. A team-red turban, a long white wool tunic with a team-red border and team-red sash, a round white antelope-hide lamt shield with a team-red Amazigh geometric sign, a bronze-tipped javelin spear held upright. Leather sandals.",
+        "ashanti": "UNIT: basic Asante (Ashanti) forest warrior. Very dark brown skin, short black hair with a plain black cloth headband (no gold on the head). A team-red kente-style cloth wrapped around the waist and over one shoulder with a few small black woven squares, the team red must be the dominant color of the sprite. A small round dark-brown wooden shield with a team-red rim and a black sign. Only small gold touches: one armlet and a thin bead necklace. A bronze-tipped spear held upright. Barefoot."
+      }
+    },
+    "lancier": {
+      "format": "sprites-unités/lancier_lourd-rouge.png",
+      "peuples": {
+        "koush": "UNIT: heavy spearman of Kush, front-rank veteran. Very dark brown skin, short curled hair, a team-red headband with one white feather, a team-red padded linen corselet with a leather belt, white linen kilt, gold armlets, a very tall oval cowhide shield (cream with brown spots, team-red rim) covering most of the body, a long heavy bronze-tipped spear. Sandals.",
+        "carthage": "UNIT: heavy infantryman of the Sacred Band of Carthage. Warm olive-tan skin, short dark beard, a full gold-bronze helmet with cheek guards and a tall team-red crest, a bronze muscled cuirass over a team-red tunic, bronze greaves, a large round team-red shield with the gold sign of Tanit, a long heavy spear. Sandals.",
+        "almoravides": "UNIT: heavy Almoravid infantryman of the front rank. Brown skin, a clearly visible deep indigo-blue litham veil (#36427F) over mouth and nose, a team-red turban, brown leather armor over a long white wool tunic with a team-red border, a large round white antelope-hide lamt shield with a team-red Amazigh geometric sign, a long heavy lance. Leather boots.",
+        "ashanti": "UNIT: heavy Asante warrior. Very dark brown skin, a team-red cloth headwrap, a dark brown cotton batakari war smock covered with small square leather amulet pouches, a team-red cloth around the waist, a larger round dark wooden shield with a team-red rim, a long heavy spear. Few gold touches. Barefoot."
+      }
+    },
+    "archers": {
+      "format": "sprites-unités/archers-rouge.png",
+      "peuples": {
+        "koush": "UNIT: Nubian archer of Kush, the Land of the Bow. Very dark brown skin, short curled hair, a team-red headband with three white feathers standing up, a team-red sash across the chest, white linen kilt, gold armlets, a long wooden self bow and a leather quiver of arrows on the back. Sandals.",
+        "carthage": "UNIT: archer in the service of Carthage. Warm olive-tan skin, short dark curly hair and short beard, a soft team-red cap, a team-red tunic with a leather belt, a curved composite bow and a quiver on the back. Sandals.",
+        "almoravides": "UNIT: Almoravid archer of the Sahara. Brown skin, a clearly visible deep indigo-blue litham veil (#36427F) over mouth and nose, a team-red turban, a white wool tunic with a team-red sash, a wooden bow and a leather quiver on the back. Leather sandals.",
+        "ashanti": "UNIT: Asante scout archer of the forest. Very dark brown skin, a plain black headband, a team-red cloth around the waist and across one shoulder, a few small leather amulet pouches, a short wooden bow and a quiver on the back. Few gold touches. Barefoot. The archer keeps exactly the same height and size in all 15 cells: the walking frames are as tall as the idle frames, feet on the bottom row, head at the same height."
+      }
+    },
+    "cavalerie": {
+      "format": "sprites-unités/cavalier_legers-rouge.png",
+      "peuples": {
+        "koush": "UNIT: light horseman of Kush. Very dark brown rider with short curled hair and a team-red headband with one white feather, a team-red sash, riding a brown horse with a team-red saddle cloth and gold bridle ornaments, a light javelin.",
+        "carthage": "UNIT: Numidian light horseman allied to Carthage. Dark brown skin, curly hair, a short team-red cloak and tunic, riding bareback on a small fast brown horse with a simple rope bridle, a bundle of javelins and a small round team-red shield.",
+        "almoravides": "UNIT: Almoravid camel rider. Brown-skinned rider with a clearly visible deep indigo-blue litham veil (#36427F) and a team-red turban, white wool robe with a team-red border, riding a tan dromedary camel with a team-red saddle blanket, a long lance and a small round white lamt shield.",
+        "ashanti": "UNIT: horseman of the northern savanna vassals of the Asante. Very dark brown skin, a team-red quilted cloth tunic and team-red cap, riding a small brown savanna horse with a team-red saddle cloth, a spear, small gold touches."
+      }
+    },
+    "char": {
+      "format": "sprites-unités/cavaliers_lourds-rouge.png",
+      "peuples": {
+        "koush": "UNIT: war chariot of Kush. A light two-wheeled wooden chariot with team-red side panels and a gold ram-head ornament, pulled by a brown horse with a team-red blanket, driven by a very dark brown Nubian archer with a team-red headband and one white feather, holding a spear.",
+        "carthage": "UNIT: Punic war chariot of Carthage. A two-wheeled wooden chariot with team-red side panels and the gold sign of Tanit, pulled by a brown horse with a team-red blanket, driven by an olive-skinned warrior with a gold-bronze crested helmet (team-red crest) and a team-red cloak, holding a spear. No dust clouds, no puffs, no motion effects and nothing at all below the wheels.",
+        "almoravides": "UNIT: Almoravid heavy cavalryman. A veiled rider (clearly visible deep indigo-blue litham #36427F, team-red turban) in brown leather and scale armor over a white robe, on a big grey Barb horse with a long team-red caparison, holding a long lance and a round white lamt shield with a team-red sign.",
+        "ashanti": "UNIT: Asante war chief in a palanquin. A carved wooden palanquin carried on the shoulders of two very dark-skinned Asante bearers with team-red waist cloths; seated inside, a war chief with a black-and-gold headband and a team-red kente cloth, holding a spear, under a large team-red state umbrella with a small gold finial."
+      }
+    },
+    "catapulte": {
+      "format": "sprites-unités/catapulte-rouge.png",
+      "peuples": {
+        "koush": "UNIT: siege engine of Kush. A wooden throwing engine on four wheels with a stone in its arm, a team-red banner with a gold ram-head, a team-red panel on the frame, pushed by a very dark brown Nubian crewman with a team-red headband and white kilt.",
+        "carthage": "UNIT: Punic siege catapult of Carthage. A wooden torsion catapult on four wheels with a stone in its arm, a team-red banner with the gold sign of Tanit, a team-red panel on the frame, pushed by an olive-skinned Punic crewman with a team-red tunic and a short beard.",
+        "almoravides": "UNIT: Almoravid mangonel. A wooden beam-sling siege engine on four wheels with a stone in its sling, a team-red banner with an Amazigh geometric sign, pushed by a crewman with a clearly visible deep indigo-blue litham veil (#36427F), a team-red turban and a white robe.",
+        "ashanti": "UNIT: Asante war engine. A wooden throwing engine on four wheels with a stone in its arm, a team-red cloth banner with a black adinkra-like sign, team-red cloth wrapped on the frame, pushed by a very dark brown Asante crewman with a team-red waist cloth and a black headband."
+      }
+    }
+  },
+  "style": "Two reference images are attached. Image 1 is the FORMAT reference: an existing pixel-art sprite sheet of this game (4 columns x 4 rows on flat magenta). Copy exactly its format: the same grid, the same cell size, the same pixel size, the same chibi proportions, the same outline and shading style, the same poses and animation cycle in every cell, the same overall silhouette size. Image 2 is the LOOK reference: a character sheet of the people this unit belongs to; use it only for skin tone, face, hair, clothing, gear and emblem.\n\nSTYLE: true pixel art sprite for a top-down tactical turn-based strategy game in the spirit of early-2000s handheld consoles. Each sprite is exactly 32x32 pixels, drawn on a strict pixel grid, scaled up 8x with nearest-neighbor so every game pixel is a perfect 8x8 square block. No anti-aliasing, no blur, no gradients, no dithering noise, no shadows outside the sprite. Chunky chibi proportions (big head, about 2 heads tall), readable silhouette, 1-pixel dark brown outline (#2B1B17), light from the top-left. Limited palette, max 12 colors per sprite.\nTEAM COLOR: the parts marked team-red use ONLY these 4 reds: #4A1218, #8E1F24, #D13A2E, #F2735A, even if the look reference shows another color there (the game recolors this red into the people's color). Never use these reds anywhere else, not in the skin, not in the wood, not in the gold.\nBackground: flat solid magenta #FF00FF, no ground, no scenery. No text, no labels, no numbers.\n\nLAYOUT: one sprite sheet, 4 columns x 4 rows, each cell 32x32 game pixels with 2 game pixels of magenta padding, same character in every cell, identical size and proportions.\nRow 1 - IDLE facing right, 3 frames: neutral, breathing up 1 pixel, neutral with slight weapon sway. 4th cell empty.\nRow 2 - WALK facing right (side view), 4 frames: contact, passing, contact (other leg), passing.\nRow 3 - WALK facing up (back view), 4 frames, same cycle.\nRow 4 - WALK facing down (front view), 4 frames, same cycle.\nFeet always touch the bottom pixel row of the cell. Head may bob 1 pixel, never more. No horizontal drift inside the cell."
+}

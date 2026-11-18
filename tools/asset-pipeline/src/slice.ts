@@ -18,6 +18,42 @@ export function gridCells(width: number, height: number, cols: number, rows: num
   return cells;
 }
 
+/**
+ * Grille dont les limites entre lignes suivent les bandes vides de la planche : l'IA ne place
+ * pas toujours ses lignes pile sur les quarts de l'image, et une crête ou une lance qui
+ * dépasse dans la case du dessus y laisserait un éclat. Chaque limite est cherchée à ±15 %
+ * de la hauteur d'une case autour de sa place régulière : la ligne de pixels la plus vide,
+ * la plus proche de la place régulière à égalité.
+ */
+export function bandedGridCells(image: IndexedImage, cols: number, rows: number): Box[] {
+  const filled = (y: number) => opaqueCount(image, { x: 0, y: 0, w: image.width, h: 1 }, 'row', y);
+  const step = image.height / rows;
+  const reach = Math.round(step * 0.15);
+  const bounds = [0];
+  for (let row = 1; row < rows; row++) {
+    const nominal = Math.round(row * step);
+    let best = nominal;
+    let bestCount = filled(nominal);
+    for (let offset = 1; offset <= reach; offset++) {
+      for (const y of [nominal - offset, nominal + offset]) {
+        if (y <= 0 || y >= image.height) continue;
+        const count = filled(y);
+        if (count < bestCount) {
+          best = y;
+          bestCount = count;
+        }
+      }
+    }
+    bounds.push(best);
+  }
+  bounds.push(image.height);
+  return gridCells(image.width, image.height, cols, rows).map((cell, index) => {
+    const row = Math.floor(index / cols);
+    const top = bounds[row] ?? cell.y;
+    return { ...cell, y: top, h: (bounds[row + 1] ?? cell.y + cell.h) - top };
+  });
+}
+
 function opaqueCount(image: IndexedImage, region: Box, axis: 'row' | 'col', at: number): number {
   let count = 0;
   if (axis === 'row') {

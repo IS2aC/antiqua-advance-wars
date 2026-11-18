@@ -18,10 +18,10 @@ Même logique pour les prompts d'images : ils décrivent un style (pixel art 32 
 | --- | --- | --- |
 | Koush (bleu) | Royaume de Kerma / Napata, « pays de l'arc » | Archers +1 portée |
 | Carthage (rouge) | Puissance navale punique | Éléphants moins chers |
-| Kemet (jaune) | Égypte pharaonique | Chars de guerre plus rapides |
-| Aksoum (vert) | Royaume d'Aksoum | Infanterie capture plus vite |
+| Almoravides (vert) | Confédération saharienne amazighe (XIe–XIIe s.), Marrakech, chameliers voilés | Chameliers plus rapides dans le désert (à valider) |
+| Ashanti (jaune) | Empire ashanti (Akan, forêts du Ghana), Tabouret d'or | Infanterie capture plus vite (à valider) |
 
-**Stage 1 = Koush vs Carthage**, les unités partagent les mêmes sprites et ne changent que de couleur d'équipe (exactement comme le genre le fait). Les commandants, pouvoirs spéciaux, brouillard de guerre, unités navales et multijoueur arrivent après.
+**Stage 1 = Koush vs Carthage**, chaque peuple a ses propres sprites (teint, tenue, équipement d'après `docs/planches-peuples.md`), dessinés en rouge d'équipe puis recolorés. Les commandants, pouvoirs spéciaux, brouillard de guerre, unités navales et multijoueur arrivent après.
 
 ## Prompt de la pochette (site web)
 

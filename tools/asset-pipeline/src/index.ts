@@ -6,7 +6,7 @@
  */
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, rm, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isBackground, isTeamRed, rgbToHex, type Rgb } from './color';
 import { encodePng, loadImage, type IndexedImage, type RgbaImage } from './image';
@@ -149,6 +149,24 @@ async function main(): Promise<void> {
     await applyCleanOverrides(processed, palette, true);
     units.set(type, collect(processed));
   }
+  // Planches propres à un peuple (sprites-unités/peuples/<peuple>/, même nom de fichier que
+  // la planche commune) : elles remplacent la planche commune pour ce peuple seulement.
+  const peopleUnits = new Map<Faction, Map<UnitType, ProcessedFrames>>();
+  for (const faction of FACTIONS) {
+    const own = new Map<UnitType, ProcessedFrames>();
+    for (const type of unitTypes) {
+      const file = join('sprites-unités/peuples', faction, basename(UNIT_SHEETS[type]));
+      if (!existsSync(join(RAW, file))) continue;
+      const processed = processUnit(
+        type,
+        quantize(await load(file), palette, { team: true }),
+        palette,
+      );
+      own.set(type, collect(processed));
+      info.push(`${faction}/${type} : planche propre au peuple`);
+    }
+    peopleUnits.set(faction, own);
+  }
   const terrain = new Map<string, IndexedImage>();
   for (const processed of [
     processBaseTiles(quantize(baseSheet, palette, { team: false })),
@@ -215,7 +233,9 @@ async function main(): Promise<void> {
     const colors = factionColors(palette, faction);
     await writeAtlas(
       `units-${faction}`,
-      [...units.values()].flatMap((processed) => asAtlasFrames(processed.frames, colors)),
+      [...units].flatMap(([type, processed]) =>
+        asAtlasFrames((peopleUnits.get(faction)?.get(type) ?? processed).frames, colors),
+      ),
     );
   }
 
@@ -272,7 +292,7 @@ async function main(): Promise<void> {
   }
   const buildingImages: ReportImage[] = [];
   for (const frame of buildingFrames) {
-    if (frame.name.endsWith('/kemet') || frame.name.endsWith('/aksoum')) continue;
+    if (frame.name.endsWith('/ashanti') || frame.name.endsWith('/almoravides')) continue;
     buildingImages.push({ label: frame.name, png: await encodePng(frame.image) });
   }
 

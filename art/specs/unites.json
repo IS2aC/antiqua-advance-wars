@@ -1,0 +1,547 @@
+{
+  "_doc": "Une fiche par unité, d'après son sprite de carte (`sprite`, joint comme référence à la planche de poses). Chaque planche a 4 cases, de gauche à droite. Équipe = la couleur d'équipe (rouge à la génération, recolorée ensuite pour chaque peuple). Ordre et découpage des planches : tools/asset-pipeline/src/drawn.ts (SEQUENCE_SHEETS). `peuples.<peuple>` : version propre à un peuple, d'après son sprite (`art/raw/sprites-unités/peuples/<peuple>/`), générée avec `--peuple` dans `peuples/<peuple>/<unité>/`, en rouge aussi.",
+  "fantassin": {
+    "nom": "Fantassin",
+    "sprite": "art/raw/sprites-unités/fantassins-rouge.png",
+    "sujet": "young African foot soldier",
+    "design": "Short dark curly hair with a team-color cloth headband tied at the back, two loose tails flying behind. No helmet, no beard. Sleeveless warm-brown leather tunic, a thin gold necklace, gold bracers. Cream kilt with a team-color front panel. Brown leather sandals. Round wooden shield with a cream face, a team-color four-petal cross emblem and a gold central boss. Spear with a dark wooden shaft and a gold leaf-shaped spearhead.",
+    "planches": {
+      "poses": [
+        "Idle: ready stance, spear held upright, round shield in front.",
+        "Attack: lunging forward with a strong spear thrust, weight on the front leg.",
+        "Hit: recoiling backward, head turned away, shield raised, off balance.",
+        "Defeated: down on one knee, head lowered, spear on the ground."
+      ],
+      "repos": [
+        "Neutral ready stance, spear upright in the right hand, shield in front.",
+        "Inhale: chest slightly raised, shoulders up a little, head a touch higher.",
+        "Exhale: shoulders relaxed, the headband tails swing slightly backward.",
+        "The headband tails swing slightly forward. Subtle idle breathing loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Anticipation: weight on the back leg, spear pulled back at shoulder height, shield tucked, body coiled, determined face. The back foot stays planted at the same spot in all 4 frames.",
+        "Motion smear frame, like in classic hand-drawn animation: body lunging forward, the arm and spear stretched into a fast elongated shape with a few speed lines in the same ink style.",
+        "Full extension: deep lunge, front knee bent, spear fully thrust forward, shouting, headband tails flying behind.",
+        "Follow-through: still extended but settling, spear tip lowering slightly."
+      ],
+      "charge": [
+        "Running charge: left leg forward, right leg pushing off behind, body leaning forward, spear held forward at waist height, shield in front.",
+        "Running: legs passing under the body, one foot on the ground, body slightly higher.",
+        "Getting hit: head snapped back, eyes squeezed, shield knocked upward, body jolted, standing in place.",
+        "Recoil: stumbling one step backward, off balance, free arm out, spear still in hand."
+      ],
+      "chute": [
+        "Defeat: staggering, knees buckling, leaning backward, spear slipping from the hand, shield lowered.",
+        "Down: kneeling on the ground, head lowered, spear lying on the ground.",
+        "Victory: spear raised high above the head, shield held up, proud and confident.",
+        "Victory shout: mouth wide open, spear still raised, chest out."
+      ],
+      "sonne": [
+        "Losing balance: knocked backward, arms flailing, spear flying out of the hand.",
+        "Landing: sitting down hard on the ground, legs stretched forward, shield fallen flat beside him, spear lying on the ground, headband slipped over one eye.",
+        "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "young Nubian spearman of the Kingdom of Kush",
+        "design": "Very dark brown skin. Short tightly curled black hair with a team-color cloth headband tied at the back, two short loose tails flying behind, and one small white feather. No helmet, no beard. Bare chest and arms, a thin gold bead necklace, gold armlets and bracers. White linen kilt with a team-color front panel hanging down the middle. Brown leather sandals. Tall oval cowhide shield: cream hide with large dark-brown irregular spots and a thin team-color rim. Spear with a dark wooden shaft and a gold-bronze leaf-shaped spearhead.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "young Libyan-Punic spearman of Carthage",
+        "design": "Light olive-tan skin. Short dark curly hair and a short dark beard. Gold-bronze Hellenistic helmet with cheek guards and a tall team-color horsehair crest. Gold-bronze muscled cuirass over a team-color tunic, short pleated team-color skirt. Brown leather sandals. Round shield with a team-color face, a gold rim and the gold sign of Tanit in the middle (a triangle topped by a small disk, with short horizontal arms). Spear with a dark wooden shaft and a gold leaf-shaped spearhead.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "young veiled Almoravid foot soldier, Saharan Amazigh",
+        "design": "Brown skin. A team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show). A long white wool tunic to the knees with team-color borders, a team-color belt. Brown leather sandals. A round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing). A spear with a dark wooden shaft and a steel leaf-shaped spearhead.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "young Asante (Ashanti) forest warrior of the Akan",
+        "design": "Very dark brown skin, short black hair with a black cloth headband tied at the back, two short tails. No helmet. Bare arms, a thin gold bead necklace, gold armlets. A team-color kente wrap tunic to the knees with black and gold kente stripes, tied at one shoulder. Brown leather sandals. A small round dark-brown wooden shield with a black geometric adinkra pattern and a thin team-color rim. A spear with a dark wooden shaft and a steel leaf-shaped spearhead.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      }
+    }
+  },
+  "lancier": {
+    "nom": "Lancier",
+    "sprite": "art/raw/sprites-unités/lancier_lourd-rouge.png",
+    "sujet": "heavy African spearman",
+    "design": "Rounded gold helmet with cheek guards and a tall team-color brush crest running front to back. Gold scale armor on the chest, team-color short sleeves. Team-color kilt with a gold hem. Brown leather sandals. Tall curved rectangular shield painted in team color, with a gold rim, a gold four-pointed star emblem and a gold boss. Long spear with a dark wooden shaft and a gold spearhead.",
+    "planches": {
+      "poses": [
+        "Idle: solid guard stance behind the tall shield, spear upright.",
+        "Attack: powerful forward spear thrust over the top of the shield, weight on the front leg.",
+        "Hit: pushed backward behind the shield, head turned away, off balance.",
+        "Defeated: down on one knee, head lowered, shield leaning on the ground, spear dropped."
+      ],
+      "repos": [
+        "Guard stance behind the tall shield, spear upright.",
+        "Inhale: chest slightly raised, shoulders up a little.",
+        "Exhale: shoulders relaxed, the crest sways slightly backward.",
+        "The crest sways slightly forward. Subtle idle breathing loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Anticipation: spear pulled back over the shield, body coiled behind the shield, back foot planted at the same spot in all 4 frames.",
+        "Motion smear frame: body pushing forward, spear stretched into a fast elongated shape with a few speed lines.",
+        "Full extension: deep lunge, spear thrust forward over the shield, shouting.",
+        "Follow-through: settling back, spear tip lowering slightly."
+      ],
+      "charge": [
+        "Heavy run: shield in front, spear held forward, left leg forward, body leaning in.",
+        "Heavy run: legs passing under the body, one foot on the ground.",
+        "Getting hit: shield knocked back against the body, head snapped back, eyes squeezed.",
+        "Recoil: stumbling one step backward behind the shield, off balance."
+      ],
+      "chute": [
+        "Defeat: knees buckling, shield sagging, spear slipping.",
+        "Down on one knee, head lowered, shield leaning on the ground.",
+        "Victory: spear raised high, shield lifted, proud.",
+        "Victory shout: mouth wide open, spear raised, chest out."
+      ],
+      "sonne": [
+        "Losing balance: knocked backward, shield and spear flying out of the hands.",
+        "Landing: sitting down hard on the ground, legs stretched forward, shield fallen flat beside him, helmet tilted over one eye.",
+        "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "heavy Nubian spearman of the Kingdom of Kush, a front-rank veteran",
+        "design": "Very dark brown skin, short tightly curled black hair and a short black beard. A team-color cloth headband with one white feather standing up at the back. No helmet. A team-color padded linen corselet with small gold studs and a brown leather belt with a gold buckle, gold armlets and bracers. White linen kilt with a team-color front panel. Brown leather sandals. A very tall oval cowhide shield covering most of the body: cream hide with large dark-brown irregular spots, a thin team-color rim and a round gold boss in the middle. A long heavy spear with a dark wooden shaft and a gold-bronze leaf-shaped spearhead.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "heavy Punic spearman of Carthage, a front-rank veteran",
+        "design": "Light olive-tan skin, short dark curly hair and a short dark beard. Closed gold-bronze helmet with large cheek guards and a short team-color horsehair crest. Heavy gold-bronze muscled cuirass with gold shoulder plates, team-color short sleeves, a team-color pleated skirt with a gold hem, gold-bronze greaves on the shins. Brown leather sandals. A tall oval shield with a team-color face, a thick gold rim, and in gold the sign of Tanit (a triangle topped by a small disk, with short horizontal arms) above a small palm tree. A long heavy spear with a dark wooden shaft and a gold leaf-shaped spearhead.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "heavy veiled Almoravid spearman, a front-rank veteran",
+        "design": "Brown skin. A team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show). A long white wool robe with team-color geometric borders, a brown leather vest with crossed straps and a brown belt over it. Brown leather sandals. A large round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing) and a thick team-color rim. A long heavy spear with a dark wooden shaft and a steel spearhead.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "heavy Asante (Ashanti) spearman, a veteran warrior of the Akan",
+        "design": "Very dark brown skin, short black hair under a team-color cloth cap, gold earrings. A brown cotton war shirt (batakari) covered with small square leather amulet pouches, a team-color kente skirt with black and gold stripes, a brown belt. Brown leather sandals. A large round dark-brown wooden shield with a gold four-pointed cross emblem, a gold boss and a team-color rim. A long heavy spear with a dark wooden shaft and a steel spearhead.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      }
+    }
+  },
+  "archers": {
+    "nom": "Archers",
+    "sprite": "art/raw/sprites-unités/archers-rouge.png",
+    "sujet": "young African archer",
+    "design": "Short dark curly hair with a team-color headband, three team-color feathers standing up at the back of the head. A team-color sash across the chest from the shoulder to the hip. Warm-brown leather tunic, gold armbands and bracers. Cream kilt with a team-color front panel. Brown leather sandals. Recurve bow in warm orange-brown wood with cream grip wraps. Leather quiver on the back with a gold band, arrows with team-color fletching.",
+    "planches": {
+      "poses": [
+        "Idle: relaxed ready stance, bow held low, quiver on the back.",
+        "Attack: full draw aiming UPWARD at about 45 degrees for a long-range volley over the battlefield: bow arm stretched up and forward to the upper right, arrow nocked and pointing up-right, body leaning back slightly, head tilted up toward the sky.",
+        "Hit: recoiling backward, bow lowered, off balance.",
+        "Defeated: sitting on the ground, head lowered, bow dropped beside him."
+      ],
+      "repos": [
+        "Relaxed ready stance, bow held low in the left hand.",
+        "Inhale: chest slightly raised, shoulders up a little.",
+        "Exhale: shoulders relaxed, the bow swings slightly forward, the feathers sway.",
+        "The bow swings slightly back. Subtle idle breathing loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Reaching back over the shoulder to the quiver and pulling out an arrow, bow held low. The feet stay planted at the same spot in all 4 frames.",
+        "Nocking the arrow on the string, bow rising toward the upper right, starting to draw.",
+        "Full draw aiming UPWARD at about 45 degrees toward the upper right sky: bow fully bent, string pulled back to the cheek, body leaning back slightly, head tilted up, intense focus. The arrow points up-right, never straight ahead.",
+        "Release and follow-through, still aiming UPWARD at about 45 degrees: the string has snapped forward, the arrow is gone, the drawing hand flung back open, bow arm still extended up toward the upper right, a few short speed lines at the string."
+      ],
+      "charge": [
+        "Light jogging step forward, bow in the left hand, left foot forward, right foot pushing off.",
+        "Jogging: feet passing under the body, one foot on the ground.",
+        "Getting hit: head snapped back, eyes squeezed, bow knocked upward, body jolted, standing in place.",
+        "Recoil: stumbling one step backward, off balance, free arm out, bow still in hand."
+      ],
+      "chute": [
+        "Defeat: staggering backward, knees buckling, bow slipping from the hand.",
+        "Down on one knee, head lowered, bow lying on the ground.",
+        "Victory: bow raised high above the head in one hand, proud smile.",
+        "Victory cheer: mouth wide open, bow still raised, other fist pumped."
+      ],
+      "sonne": [
+        "Losing balance: knocked backward, arms flailing, bow flying out of the hand, a few arrows spilling from the quiver.",
+        "Landing: sitting down hard on the ground, legs stretched forward, bow on the ground beside him, arrows scattered, headband slipped over one eye.",
+        "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "young Nubian archer of the Kingdom of Kush, the Land of the Bow",
+        "design": "Very dark brown skin, short tightly curled black hair. A team-color cloth headband with two white feathers standing up at the back. No helmet. A team-color sash across the chest from the shoulder to the hip, a short warm-brown leather tunic, gold armlets and bracers. White linen kilt with a team-color front panel. Brown leather sandals. A long wooden bow in warm brown wood. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "Libyan-Punic archer of Carthage",
+        "design": "Light olive-tan skin, short dark curly hair and a short dark beard. A rounded team-color felt cap. No helmet, no armor. A team-color short-sleeved tunic to the knees, a brown leather strap across the chest from the shoulder to the hip, a brown leather belt with a gold buckle, brown leather bracers. Brown leather sandals. A recurve bow in warm orange-brown wood with cream grip wraps. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "veiled Almoravid archer, Saharan Amazigh",
+        "design": "Brown skin. A team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show). A white wool tunic to the knees, a team-color sash across the chest from the shoulder to the hip, a team-color belt. Brown leather sandals. A recurve bow in warm orange-brown wood with cream grip wraps. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "young Asante (Ashanti) forest archer of the Akan",
+        "design": "Very dark brown skin, short black hair with a black cloth headband tied at the back. Bare chest with a brown leather strap from the shoulder to the hip, a gold bead necklace, gold armbands. A team-color kente loincloth wrap with black and gold stripes, a small leather pouch at the belt. Brown leather sandals. A long wooden bow in warm brown wood. A leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      }
+    }
+  },
+  "cavalerie": {
+    "nom": "Cavalerie",
+    "sprite": "art/raw/sprites-unités/cavalier_legers-rouge.png",
+    "sujet": "young African light cavalryman riding a horse",
+    "design": "Rider: short dark curly hair under a team-color head wrap with two loose tails, cream tunic, brown leather bracers, short spear with a dark shaft and a gold spearhead. Horse: slender bay horse, warm brown coat, dark brown mane and tail, black hooves, gold bridle, team-color saddle cloth with a gold hem. Horse and rider are ONE drawing; the horse faces right.",
+    "planches": {
+      "poses": [
+        "Idle: horse standing calmly, rider upright, spear held up.",
+        "Attack: horse rearing slightly forward, rider thrusting the spear forward.",
+        "Hit: horse shying backward, rider leaning back, off balance.",
+        "Defeated: horse standing with its head low, rider slumped forward on its neck."
+      ],
+      "repos": [
+        "Horse standing, rider upright, spear held up.",
+        "The horse lowers its head a little, rider breathing in.",
+        "The horse shakes its mane, tail swishing.",
+        "Back almost to the first frame, tail swishing the other way. Subtle idle loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Anticipation: horse gathering on its hind legs, rider pulling the spear back. The hind hooves stay at the same spot in all 4 frames.",
+        "Motion smear frame: horse lunging forward, spear stretched into a fast elongated shape with a few speed lines.",
+        "Full extension: rider thrusting the spear forward, shouting, horse's front legs reaching forward.",
+        "Follow-through: horse landing, rider settling, spear tip lowering."
+      ],
+      "charge": [
+        "Gallop: front legs reaching forward, hind legs pushing off, rider leaning forward with the spear forward.",
+        "Gallop: all four legs gathered under the body, the horse slightly higher.",
+        "Getting hit: horse shying, head thrown up, rider jolted backward, eyes squeezed.",
+        "Recoil: horse stepping backward, rider off balance, spear still in hand."
+      ],
+      "chute": [
+        "Defeat: horse stumbling, rider sliding to the side.",
+        "Down: horse standing with its head low, rider slumped forward on its neck, spear dropped on the ground.",
+        "Victory: horse rearing proudly, rider raising the spear high.",
+        "Victory shout: horse on four legs, rider shouting with the spear raised."
+      ],
+      "sonne": [
+        "Thrown off: the rider flying backward off the saddle, arms flailing, the horse startled.",
+        "Landing: the rider sitting on the ground in front of the horse, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the horse stands calmly behind him.",
+        "Dazed: rider still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the horse sniffs his head.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the horse barely moves."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "young Nubian light horseman of the Kingdom of Kush riding a horse",
+        "design": "Rider: very dark brown skin, short curly black hair under a team-color cloth head wrap with two loose tails flying behind, no feather. Cream tunic with a team-color sash, gold armlets, brown leather bracers, a light javelin with a dark shaft and a gold spearhead. Horse: sturdy bay horse, warm brown coat, dark brown mane and tail, black hooves, gold bridle ornaments, team-color saddle cloth with a gold hem and a team-color chest strap. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "young Numidian light horseman in the service of Carthage, riding a horse bareback",
+        "design": "Rider: warm brown skin, a large mass of tight dark curly hair, no helmet, no beard. A short team-color cloak over the shoulders, a short cream tunic, brown leather bracers. A small round shield with a team-color face, a gold rim and the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms). Two light javelins with dark shafts and gold-bronze points, held in the right hand. Horse: small sturdy bay horse ridden bareback (no saddle), warm brown coat, dark brown mane and tail, black hooves, a simple gold rope bridle and a gold neck strap. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#8A5230",
+          "ombre": "#653A1E"
+        }
+      },
+      "almoravides": {
+        "sujet": "veiled Almoravid light horseman, riding a horse",
+        "design": "Rider: brown skin, a team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show), a white wool burnous with team-color borders, brown leather boots, a small round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing), a spear with a dark shaft and a steel spearhead. Horse: slender sandy dun horse, cream mane and tail, black hooves, a simple brown bridle, a team-color saddle cloth with a cream fringe. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) horseman of the Akan, riding a horse",
+        "design": "Rider: very dark brown skin, a team-color cloth cap, a gold bead necklace, a team-color kente robe with black and gold stripes, a spear with a dark shaft and a steel spearhead. Horse: dark bay horse, black mane and tail, black hooves, a gold bridle, a team-color kente saddle cloth with a gold hem. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      }
+    }
+  },
+  "char": {
+    "nom": "Char",
+    "sprite": "art/raw/sprites-unités/cavaliers_lourds-rouge.png",
+    "sujet": "African war chariot pulled by one horse, with its driver",
+    "design": "Two-wheeled wooden war chariot, gold-rimmed spoked wheels, a team-color front panel with a gold four-pointed star and gold trim. One bay horse pulling it (warm brown coat, dark mane and tail, gold bridle, team-color caparison with a gold pattern). The driver stands in the chariot: rounded gold helmet with a team-color crest, team-color cape, gold armor, holding the reins and a spear with a gold spearhead. Horse, chariot and driver are ONE drawing; the horse faces right, in front of the chariot.",
+    "planches": {
+      "poses": [
+        "Idle: chariot standing still, driver upright holding the reins and the spear.",
+        "Attack: horse charging forward, driver thrusting the spear forward.",
+        "Hit: horse rearing back, chariot tilting, driver thrown back, off balance.",
+        "Defeated: chariot tilted with one wheel on the ground, driver slumped over the front panel, horse head low."
+      ],
+      "repos": [
+        "Chariot standing still, driver upright, horse calm.",
+        "The horse lowers its head a little, driver breathing in.",
+        "The horse shakes its mane, the driver's cape sways back.",
+        "Back almost to the first frame, cape swaying forward. Subtle idle loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Anticipation: driver pulling the spear back, horse gathering. The chariot wheels stay at the same spot in all 4 frames.",
+        "Motion smear frame: driver lunging forward, spear stretched into a fast elongated shape with a few speed lines.",
+        "Full extension: spear thrust forward, driver shouting, horse lunging, cape flying.",
+        "Follow-through: settling back, spear tip lowering."
+      ],
+      "charge": [
+        "Charging: horse galloping, legs stretched, wheels spinning, driver leaning forward with the spear forward.",
+        "Charging: horse's legs gathered under the body, chariot bouncing slightly.",
+        "Getting hit: horse rearing, chariot jolted, driver thrown back, eyes squeezed.",
+        "Recoil: chariot rolling one step backward, driver off balance, horse unsettled."
+      ],
+      "chute": [
+        "Defeat: chariot tilting, one wheel lifting, driver losing grip.",
+        "Down: chariot resting tilted, driver slumped over the front panel, horse head low.",
+        "Victory: driver raising the spear high, horse rearing proudly.",
+        "Victory shout: driver shouting with the spear raised, horse on four legs."
+      ],
+      "sonne": [
+        "Thrown off: the driver tumbling backward out of the chariot, arms flailing, the horse startled.",
+        "Landing: the driver sitting on the ground in front of the chariot, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the horse and chariot stand still behind him.",
+        "Dazed: driver still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "Nubian war chariot of the Kingdom of Kush pulled by one horse, with its driver",
+        "design": "A light two-wheeled wooden war chariot: gold spoked wheels with gold rims, team-color side panel with a gold ram-head emblem (the ram of Amun) and gold trim. One bay horse pulling it (warm brown coat, dark mane and tail, gold bridle, team-color caparison with a gold pattern). The driver stands in the chariot: very dark brown skin, short curly black hair, a team-color headband with one white feather, no helmet, gold necklace and armlets, holding the reins and a spear with a gold spearhead. Horse, chariot and driver are ONE drawing; the horse faces right, in front of the chariot.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "Carthaginian war chariot pulled by one horse, with its Punic driver",
+        "design": "A two-wheeled wooden war chariot: gold spoked wheels with gold rims, a team-color front and side panel with the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms) and gold trim. One bay horse pulling it (warm brown coat, dark mane and tail, gold bridle, team-color caparison with a gold hem). The driver stands in the chariot: light olive-tan skin, short dark beard, a gold-bronze Hellenistic helmet with cheek guards and a tall team-color horsehair crest, a gold-bronze cuirass, a team-color cape, holding the reins and a spear with a gold spearhead. Horse, chariot and driver are ONE drawing; the horse faces right, in front of the chariot.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "veiled Almoravid heavy cavalryman, riding a big armored horse",
+        "design": "Rider: brown skin, a team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show), a white wool robe with team-color borders, a brown leather lamellar vest, brown boots, a round white lamt shield of antelope hide with a team-color Amazigh geometric pattern (diamonds and the yaz sign, no writing), a long lance with a dark shaft and a steel spearhead. Horse: big dapple-grey horse, dark grey mane and tail, a gold bridle with gold plates, a long team-color caparison covering the body with a gold geometric hem and gold tassels. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        },
+        "planches": {
+          "poses": [
+            "Idle: horse standing calmly, rider upright, spear held up.",
+            "Attack: horse rearing slightly forward, rider thrusting the spear forward.",
+            "Hit: horse shying backward, rider leaning back, off balance.",
+            "Defeated: horse standing with its head low, rider slumped forward on its neck."
+          ],
+          "repos": [
+            "Horse standing, rider upright, spear held up.",
+            "The horse lowers its head a little, rider breathing in.",
+            "The horse shakes its mane, tail swishing.",
+            "Back almost to the first frame, tail swishing the other way. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Anticipation: horse gathering on its hind legs, rider pulling the spear back. The hind hooves stay at the same spot in all 4 frames.",
+            "Motion smear frame: horse lunging forward, spear stretched into a fast elongated shape with a few speed lines.",
+            "Full extension: rider thrusting the spear forward, shouting, horse's front legs reaching forward.",
+            "Follow-through: horse landing, rider settling, spear tip lowering."
+          ],
+          "charge": [
+            "Gallop: front legs reaching forward, hind legs pushing off, rider leaning forward with the spear forward.",
+            "Gallop: all four legs gathered under the body, the horse slightly higher.",
+            "Getting hit: horse shying, head thrown up, rider jolted backward, eyes squeezed.",
+            "Recoil: horse stepping backward, rider off balance, spear still in hand."
+          ],
+          "chute": [
+            "Defeat: horse stumbling, rider sliding to the side.",
+            "Down: horse standing with its head low, rider slumped forward on its neck, spear dropped on the ground.",
+            "Victory: horse rearing proudly, rider raising the spear high.",
+            "Victory shout: horse on four legs, rider shouting with the spear raised."
+          ],
+          "sonne": [
+            "Thrown off: the rider flying backward off the saddle, arms flailing, the horse startled.",
+            "Landing: the rider sitting on the ground in front of the horse, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the horse stands calmly behind him.",
+            "Dazed: rider still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the horse sniffs his head.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the horse barely moves."
+          ]
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) war chief carried in a royal palanquin by two bearers",
+        "design": "A gold-and-wood palanquin carried on two long poles by two bearers, one in front and one behind, the poles resting on their shoulders. Above it, a large team-color ceremonial umbrella with a gold fringe and a gold finial. The chief sits in the palanquin: very dark brown skin, a gold-and-black crown band, heavy gold necklaces, a team-color kente toga with black and gold stripes over one shoulder, holding a spear with a gold spearhead. The palanquin side has a gold adinkra emblem on a team-color panel. The bearers: very dark brown skin, a gold headband, a team-color loincloth, bare chest. Palanquin, chief and bearers are ONE drawing, moving to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the two bearers stand still with the poles on their shoulders, the chief seated upright in the palanquin under the umbrella, spear held up.",
+            "Attack: the bearers lunge forward, the chief leans out of the palanquin and thrusts the spear forward.",
+            "Hit: the bearers stagger backward, the palanquin tilting, the chief thrown back, off balance.",
+            "Defeated: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, head lowered."
+          ],
+          "repos": [
+            "The bearers stand still with the poles on their shoulders, the chief seated upright, spear held up.",
+            "The bearers shift their weight a little, the chief breathing in.",
+            "The umbrella fringe sways, the chief's toga moves slightly.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Anticipation: the chief pulls the spear back, the bearers brace. The bearers' back feet stay at the same spot in all 4 frames.",
+            "Motion smear frame: the chief lunges out of the palanquin, the spear stretched into a fast elongated shape with a few speed lines.",
+            "Full extension: spear thrust forward, the chief shouting, the bearers leaning forward.",
+            "Follow-through: the chief settling back into his seat, spear tip lowering."
+          ],
+          "charge": [
+            "Running: the two bearers run forward in step carrying the palanquin, the chief leaning forward with the spear forward.",
+            "Running: the bearers' feet passing under their bodies, the palanquin bouncing slightly.",
+            "Getting hit: the bearers jolted, the palanquin tilting back, the chief thrown back, eyes squeezed.",
+            "Recoil: the bearers stumbling one step backward, the chief off balance, spear still in hand."
+          ],
+          "chute": [
+            "Defeat: the bearers stumbling, the palanquin tilting, the chief losing grip.",
+            "Down: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, spear lying on the ground.",
+            "Victory: the chief standing up in the palanquin raising the spear high, the bearers cheering.",
+            "Victory shout: the chief shouting with the spear raised, the bearers raising a fist."
+          ],
+          "sonne": [
+            "Thrown out: the chief tumbling backward out of the palanquin, arms flailing, the bearers startled.",
+            "Landing: the chief sitting on the ground in front of the palanquin, legs stretched forward, his crown band tilted over one eye; the bearers stand still behind him holding the palanquin.",
+            "Dazed: the chief still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      }
+    }
+  },
+  "catapulte": {
+    "nom": "Catapulte",
+    "sprite": "art/raw/sprites-unités/catapulte-rouge.png",
+    "sujet": "light wooden catapult on wheels with its African crewman",
+    "design": "Light wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold four-pointed star on its side, a small team-color pennant on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left: short dark curly hair, team-color headband with two tails, cream tunic with a team-color belt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+    "planches": {
+      "poses": [
+        "Idle: crewman standing beside the loaded catapult, hand on the frame.",
+        "Attack: the arm swung forward, the stone launched away to the right, crewman pulling the release rope.",
+        "Hit: catapult shaking, crewman ducking backward, arms up.",
+        "Defeated: catapult tilted with one wheel off, crewman sitting on the ground beside it, head lowered."
+      ],
+      "repos": [
+        "Crewman standing beside the loaded catapult, hand on the frame.",
+        "Crewman breathing in, shoulders up a little, the pennant flutters.",
+        "Crewman relaxed, pennant fluttering the other way.",
+        "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Loading: the arm pulled down, the stone in the cup, crewman holding the release rope. The catapult wheels stay at the same spot in all 4 frames.",
+        "Release: crewman pulling the rope, the arm starting to swing up with a few speed lines.",
+        "Throw: the arm fully up against the stop, the stone leaving the cup to the right, speed lines.",
+        "Follow-through: the arm bouncing back, empty cup, crewman watching the shot."
+      ],
+      "charge": [
+        "Moving: crewman pushing the catapult forward, leaning into it, left foot forward.",
+        "Moving: crewman's feet passing under the body, wheels turned a little.",
+        "Getting hit: catapult jolted, crewman ducking with eyes squeezed.",
+        "Recoil: catapult rolled one step backward, crewman off balance."
+      ],
+      "chute": [
+        "Defeat: one wheel cracking, catapult tilting, crewman losing grip.",
+        "Down: catapult resting tilted, crewman kneeling beside it, head lowered.",
+        "Victory: crewman raising both fists beside the catapult, proud.",
+        "Victory cheer: crewman shouting, waving the pennant pole."
+      ],
+      "sonne": [
+        "Knocked back: crewman tumbling backward away from the catapult, arms flailing.",
+        "Landing: crewman sitting on the ground beside the catapult, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear).",
+        "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "wooden siege engine of the Kingdom of Kush on wheels, with its Nubian crewman",
+        "design": "A wooden throwing engine on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold ram-head emblem on its side, a team-color banner with a gold ram-head on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: very dark brown skin, short curly black hair, a team-color headband with two tails, bare chest with a team-color sash, white linen kilt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        }
+      },
+      "carthage": {
+        "sujet": "Carthaginian wooden catapult on wheels, with its Punic crewman",
+        "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms) on its side, a team-color banner with the gold sign of Tanit on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: light olive-tan skin, a large mass of dark curly hair and a short dark beard, no helmet, a team-color short tunic and a short team-color cape, a brown leather belt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
+      },
+      "almoravides": {
+        "sujet": "Almoravid wooden catapult on wheels, with its veiled crewman",
+        "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold Amazigh diamond pattern on its side, a team-color banner with a gold geometric diamond on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: brown skin, a team-color turban with one loose tail, and a deep indigo litham veil covering the mouth and nose (only the eyes show), a white wool tunic with team-color borders and a team-color belt, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) wooden catapult on wheels, with its crewman",
+        "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold adinkra emblem on its side, a team-color banner with a gold adinkra emblem on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: very dark brown skin, short black hair with a team-color headband, bare chest, a gold bead necklace, a team-color kente loincloth with black and gold stripes, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      }
+    }
+  }
+}

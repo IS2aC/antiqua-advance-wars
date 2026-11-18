@@ -9,6 +9,6 @@ export interface FactionInfo {
 export const FACTIONS: Readonly<Record<PlayerId, FactionInfo>> = {
   koush: { name: 'Koush', color: 'bleu' },
   carthage: { name: 'Carthage', color: 'rouge' },
-  kemet: { name: 'Kemet', color: 'jaune' },
-  aksoum: { name: 'Aksoum', color: 'vert' },
+  ashanti: { name: 'Ashanti', color: 'jaune' },
+  almoravides: { name: 'Almoravides', color: 'vert' },
 };

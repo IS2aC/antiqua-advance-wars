@@ -61,3 +61,30 @@ export function parseAsciiMap(rows: readonly string[]): ParsedAsciiMap {
 export function rotateRows(rows: readonly string[]): string[] {
   return [...rows].reverse().map((row) => [...row].reverse().join(''));
 }
+
+/**
+ * Carte carrée symétrique par quart de tour, à partir de son quart en haut à gauche
+ * (`quarter` : n lignes de n cases) : on obtient 2n × 2n cases, chaque quart étant le
+ * précédent tourné de 90° dans le sens des aiguilles d'une montre.
+ */
+export function quarterTurnRows(quarter: readonly string[]): string[] {
+  const n = quarter.length;
+  const size = 2 * n;
+  const grid: string[][] = Array.from({ length: size }, () => Array<string>(size).fill('?'));
+  quarter.forEach((row, y) => {
+    if (row.length !== n) throw new Error(`Quart de carte : ligne ${y} de ${row.length} cases.`);
+    [...row].forEach((char, x) => {
+      // Haut gauche, haut droite, bas droite, bas gauche (sens des aiguilles d'une montre).
+      for (const [cx, cy] of [
+        [x, y],
+        [size - 1 - y, x],
+        [size - 1 - x, size - 1 - y],
+        [y, size - 1 - x],
+      ] as const) {
+        const line = grid[cy];
+        if (line) line[cx] = char;
+      }
+    });
+  });
+  return grid.map((line) => line.join(''));
+}

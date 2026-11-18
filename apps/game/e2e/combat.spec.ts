@@ -56,7 +56,10 @@ async function attack(page: Page): Promise<void> {
 test('une attaque joue la scène de combat, puis la partie reprend', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
+  // Scène en pixel art (les combats dessinés sont le réglage par défaut).
+  await page.addInitScript(() =>
+    localStorage.setItem('antiqua:options', '{"combatScenes":true,"combatStyle":"pixel"}'),
+  );
   const { defenderId } = await stageDuel(page);
   await countCombatScenes(page);
 
@@ -71,7 +74,10 @@ test('une attaque joue la scène de combat, puis la partie reprend', async ({ pa
 });
 
 test('Entrée passe la scène de combat', async ({ page }) => {
-  await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
+  // Scène en pixel art (les combats dessinés sont le réglage par défaut).
+  await page.addInitScript(() =>
+    localStorage.setItem('antiqua:options', '{"combatScenes":true,"combatStyle":"pixel"}'),
+  );
   await stageDuel(page);
   await attack(page);
   await waitForScene(page, 'Combat');

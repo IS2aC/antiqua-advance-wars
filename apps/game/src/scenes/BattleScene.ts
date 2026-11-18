@@ -1,11 +1,13 @@
 import Phaser from 'phaser';
-import { GUE_DU_NIL, createGame, type GameState, type PlayerId } from '@antiqua/engine';
+import { assignPeoples, createGame, type GameState, type PlayerId } from '@antiqua/engine';
+import { DEFAULT_MAP, MAPS, mapOfState, type MapId } from '../maps';
 import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
 import type { CaptureSceneData } from '../combat/CaptureScene';
 import type { CombatSceneData } from '../combat/CombatScene';
 import { createFigureAnimations } from '../combat/packs';
+import { drawnStage } from '../drawn/DrawnStage';
 import type { CombatPresenter } from '../animation/EventPlayer';
 import { loadOptions } from '../persistence/options';
 import { BattleController } from '../controller/BattleController';
@@ -27,8 +29,12 @@ import { UnitLayer } from '../view/UnitLayer';
 export interface BattleData {
   /** Partie sauvegardée à reprendre ; sinon, nouvelle partie. */
   readonly state?: GameState;
-  /** Camps joués par l'IA ; absent ou vide : partie à deux sur le même écran. */
+  /** Camps joués par l'IA ; absent ou vide : partie à plusieurs sur le même écran. */
   readonly aiPlayers?: readonly PlayerId[];
+  /** Carte d'une nouvelle partie (par défaut « Le Gué du Nil »). */
+  readonly map?: MapId;
+  /** Peuples de la nouvelle partie, dans l'ordre de jeu (absent : ceux de la carte). */
+  readonly peoples?: readonly PlayerId[];
 }
 
 /** Développement : accès à l'état courant pour la console et les tests de bout en bout. */
@@ -38,10 +44,12 @@ export interface DebugHook {
   mode(): string;
 }
 
-/** Partie sur « Le Gué du Nil » : contre l'IA, ou à deux sur le même écran. */
+/** Partie sur une des cartes de `maps.ts` : contre l'IA, ou à plusieurs sur le même écran. */
 export class BattleScene extends Phaser.Scene {
   private initial: GameState | null = null;
   private aiPlayers: readonly PlayerId[] = [];
+  private map: MapId = DEFAULT_MAP;
+  private peoples: readonly PlayerId[] | null = null;
 
   constructor() {
     super('Battle');
@@ -50,14 +58,18 @@ export class BattleScene extends Phaser.Scene {
   init(data: BattleData): void {
     this.initial = data.state ?? null;
     this.aiPlayers = data.aiPlayers ?? [];
+    this.map = data.state ? mapOfState(data.state) : (data.map ?? DEFAULT_MAP);
+    // « Rejouer » relance avec les mêmes peuples, même après une reprise de sauvegarde.
+    this.peoples = data.state?.players.map((player) => player.id) ?? data.peoples ?? null;
   }
 
   create(): void {
     createPanelTextures(this);
     createUnitAnimations(this);
     createFigureAnimations(this);
+    const definition = this.peoples ? assignPeoples(MAPS[this.map], this.peoples) : MAPS[this.map];
     const state =
-      this.initial ?? createGame(GUE_DU_NIL, { seed: Math.floor(Math.random() * 2 ** 31) });
+      this.initial ?? createGame(definition, { seed: Math.floor(Math.random() * 2 ** 31) });
 
     this.cameras.main.setBounds(0, 0, state.map.width * TILE_SIZE, state.map.height * TILE_SIZE);
 
@@ -85,8 +97,13 @@ export class BattleScene extends Phaser.Scene {
       state,
       { cursor, overlay, arrow, menu, hud, player, forecast, endScreen, pauseMenu },
       (choice) => {
-        if (choice === 'rejouer') this.scene.restart({ aiPlayers: this.aiPlayers });
-        else goToCover();
+        if (choice === 'rejouer') {
+          this.scene.restart({
+            aiPlayers: this.aiPlayers,
+            map: this.map,
+            ...(this.peoples ? { peoples: this.peoples } : {}),
+          });
+        } else goToCover();
       },
       this.aiPlayers,
     );
@@ -139,9 +156,19 @@ export class BattleScene extends Phaser.Scene {
           },
         });
       });
+    // Combats dessinés (prototype) : second canvas en haute définition, par-dessus la carte.
+    const drawn = async (setup: CombatSceneData['setup']) => {
+      this.input.enabled = false;
+      try {
+        await drawnStage.play(this.game.canvas, setup, this.tweens.timeScale);
+      } finally {
+        this.input.enabled = true;
+      }
+    };
     return {
       enabled: () => loadOptions().combatScenes,
-      play: (setup) => launch('Combat', setup),
+      play: (setup) =>
+        loadOptions().combatStyle === 'dessin' ? drawn(setup) : launch('Combat', setup),
       capture: (setup) => launch('Capture', setup),
     };
   }

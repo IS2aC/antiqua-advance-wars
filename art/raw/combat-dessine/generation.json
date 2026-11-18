@@ -1,0 +1,337 @@
+{
+  "totalUsd": 7.3547,
+  "images": {
+    "peuples/koush/fantassin/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1763,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:01:24.888Z"
+    },
+    "peuples/koush/fantassin/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [
+        "échelle corrigée automatiquement : ×0.92"
+      ],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:02:30.243Z"
+    },
+    "peuples/koush/fantassin/attaque": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1803,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:03:34.133Z"
+    },
+    "peuples/koush/fantassin/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:04:38.086Z"
+    },
+    "peuples/koush/fantassin/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:05:42.853Z"
+    },
+    "peuples/koush/fantassin/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1805,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:06:45.225Z"
+    },
+    "peuples/koush/lancier/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1764,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T19:08:12.108Z"
+    },
+    "peuples/koush/lancier/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [
+        "échelle corrigée automatiquement : ×0.9"
+      ],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:31:03.744Z"
+    },
+    "peuples/koush/lancier/attaque": {
+      "statut": "ok",
+      "essais": 3,
+      "coutUsd": 0.5408,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:34:18.205Z"
+    },
+    "peuples/koush/lancier/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:35:24.391Z"
+    },
+    "peuples/koush/lancier/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:36:32.336Z"
+    },
+    "peuples/koush/lancier/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1806,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:37:36.790Z"
+    },
+    "peuples/koush/archers/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1762,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:38:38.464Z"
+    },
+    "peuples/koush/archers/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.18,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:39:43.044Z"
+    },
+    "peuples/koush/archers/attaque": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:40:48.677Z"
+    },
+    "peuples/koush/archers/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:41:53.910Z"
+    },
+    "peuples/koush/archers/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.18,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:42:59.051Z"
+    },
+    "peuples/koush/archers/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1805,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:44:03.067Z"
+    },
+    "peuples/koush/cavalerie/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1763,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:45:04.293Z"
+    },
+    "peuples/koush/cavalerie/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.18,
+      "problemes": [],
+      "notes": [
+        "échelle corrigée automatiquement : ×0.95"
+      ],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:46:09.931Z"
+    },
+    "peuples/koush/cavalerie/attaque": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:47:16.297Z"
+    },
+    "peuples/koush/cavalerie/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:48:21.926Z"
+    },
+    "peuples/koush/cavalerie/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.18,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:49:26.155Z"
+    },
+    "peuples/koush/cavalerie/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1806,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:50:33.060Z"
+    },
+    "peuples/koush/char/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1765,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:51:38.766Z"
+    },
+    "peuples/koush/char/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:52:41.834Z"
+    },
+    "peuples/koush/char/attaque": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1803,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:53:46.256Z"
+    },
+    "peuples/koush/char/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:54:49.856Z"
+    },
+    "peuples/koush/char/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:55:54.693Z"
+    },
+    "peuples/koush/char/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1807,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:56:58.477Z"
+    },
+    "peuples/koush/catapulte/poses": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1764,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:58:00.359Z"
+    },
+    "peuples/koush/catapulte/repos": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [
+        "échelle corrigée automatiquement : ×0.95"
+      ],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T18:59:01.772Z"
+    },
+    "peuples/koush/catapulte/attaque": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1802,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T19:00:04.955Z"
+    },
+    "peuples/koush/catapulte/charge": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T19:01:09.310Z"
+    },
+    "peuples/koush/catapulte/chute": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1801,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T19:02:11.184Z"
+    },
+    "peuples/koush/catapulte/sonne": {
+      "statut": "ok",
+      "essais": 1,
+      "coutUsd": 0.1805,
+      "problemes": [],
+      "notes": [],
+      "generateur": "OpenRouter openai/gpt-image-2 (high)",
+      "date": "2026-11-15T19:03:15.716Z"
+    }
+  }
+}

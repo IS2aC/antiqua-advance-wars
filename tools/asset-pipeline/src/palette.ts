@@ -4,15 +4,15 @@ import { dirname } from 'node:path';
 import sharp from 'sharp';
 import { hexToRgb, rgbToHex, rgbToLab, type Lab, type Rgb } from './color';
 
-export type Faction = 'carthage' | 'koush' | 'kemet' | 'aksoum';
-export const FACTIONS: readonly Faction[] = ['carthage', 'koush', 'kemet', 'aksoum'];
+export type Faction = 'carthage' | 'koush' | 'ashanti' | 'almoravides';
+export const FACTIONS: readonly Faction[] = ['carthage', 'koush', 'ashanti', 'almoravides'];
 
 /** Rampes d'équipe (du plus sombre au plus clair), docs/art-bible.md. Carthage = source. */
 export const TEAM_RAMPS: Readonly<Record<Faction, readonly [string, string, string, string]>> = {
   carthage: ['#4A1218', '#8E1F24', '#D13A2E', '#F2735A'],
   koush: ['#16234A', '#24418E', '#3A73D1', '#73B4F2'],
-  kemet: ['#4A3512', '#8E6A1F', '#D1A72E', '#F2D65A'],
-  aksoum: ['#123A1E', '#1F6E34', '#2EAE4E', '#6FDE85'],
+  ashanti: ['#4A3512', '#8E6A1F', '#D1A72E', '#F2D65A'],
+  almoravides: ['#123A1E', '#1F6E34', '#2EAE4E', '#6FDE85'],
 };
 
 export const OUTLINE_HEX = '#2B1B17';
@@ -22,8 +22,9 @@ const TEAM_SIZE = 4;
 const GENERAL_SIZE = PALETTE_SIZE - TEAM_SIZE - 1;
 
 /**
- * Palette maître antiqua-32 : 27 couleurs générales tirées des planches, le contour,
- * puis les 4 rouges réservés (indices 28 à 31, utilisés nulle part ailleurs).
+ * Palette maître antiqua-32 : 27 couleurs générales tirées des planches (fichier figé), les
+ * couleurs ajoutées (`EXTRA_HEX`), le contour, puis les 4 rouges réservés (les derniers
+ * indices, utilisés nulle part ailleurs).
  */
 export interface Palette {
   readonly colors: readonly Rgb[];
@@ -32,13 +33,24 @@ export interface Palette {
   readonly teamStart: number;
 }
 
+/**
+ * Couleurs ajoutées à la main aux couleurs tirées des planches (absentes des premières
+ * planches) : indigo sombre et indigo du voile (litham) des Almoravides.
+ */
+export const EXTRA_HEX: readonly string[] = ['#1F2552', '#36427F'];
+
 function makePalette(general: readonly Rgb[]): Palette {
-  const colors = [...general, hexToRgb(OUTLINE_HEX), ...TEAM_RAMPS.carthage.map(hexToRgb)];
+  const colors = [
+    ...general,
+    ...EXTRA_HEX.map(hexToRgb),
+    hexToRgb(OUTLINE_HEX),
+    ...TEAM_RAMPS.carthage.map(hexToRgb),
+  ];
   return {
     colors,
     labs: colors.map(rgbToLab),
-    outlineIndex: general.length,
-    teamStart: general.length + 1,
+    outlineIndex: general.length + EXTRA_HEX.length,
+    teamStart: general.length + EXTRA_HEX.length + 1,
   };
 }
 
@@ -115,7 +127,9 @@ export async function loadOrCreatePalette(
   const palette = makePalette(general);
   await mkdir(dirname(pngPath), { recursive: true });
   const strip = Buffer.alloc(PALETTE_SIZE * 4);
-  palette.colors.forEach(([r, g, b], index) => strip.set([r, g, b, 255], index * 4));
+  [...general, hexToRgb(OUTLINE_HEX), ...TEAM_RAMPS.carthage.map(hexToRgb)].forEach(
+    ([r, g, b], index) => strip.set([r, g, b, 255], index * 4),
+  );
   await writeFile(
     pngPath,
     await sharp(strip, { raw: { width: PALETTE_SIZE, height: 1, channels: 4 } })

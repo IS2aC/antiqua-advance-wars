@@ -24,7 +24,7 @@ import {
 } from '@antiqua/engine';
 import { TILE_SIZE, VIEW_TILES_X, VIEW_TILES_Y } from '../config';
 import type { EventPlayer } from '../animation/EventPlayer';
-import { loadOptions, saveOptions } from '../persistence/options';
+import { combatSetting, loadOptions, saveOptions, withCombatSetting } from '../persistence/options';
 import { clearSave, saveGame } from '../persistence/save';
 import type { EndChoice, EndScreen } from '../view/EndScreen';
 import type { ForecastPanel } from '../view/ForecastPanel';
@@ -199,8 +199,8 @@ export class BattleController {
     if (this.mode !== 'idle' && this.mode !== 'inspecting') return;
     this.clearSelection();
     this.mode = 'paused';
-    const choice = await this.views.pauseMenu.open(loadOptions().combatScenes, (enabled) =>
-      saveOptions({ ...loadOptions(), combatScenes: enabled }),
+    const choice = await this.views.pauseMenu.open(combatSetting(loadOptions()), (setting) =>
+      saveOptions(withCombatSetting(loadOptions(), setting)),
     );
     if (choice === 'reprendre') {
       this.mode = 'idle';
@@ -600,7 +600,7 @@ export class BattleController {
     this.mode = 'busy';
     await this.views.player.play(result.events, result.state, before);
     this.views.hud.inspect(this.state, this.views.cursor.position);
-    if (this.state.status === 'finished') {
+    if (this.state.status === 'finished' || this.humansDefeated()) {
       clearSave();
       void this.showEnd();
       return true;
@@ -611,10 +611,21 @@ export class BattleController {
     return true;
   }
 
+  /**
+   * Contre l'IA, la partie s'arrête dès que tous les camps humains sont vaincus : à 4 peuples,
+   * les IA restantes ne jouent pas la fin entre elles.
+   */
+  private humansDefeated(): boolean {
+    if (this.aiPlayers.length === 0) return false;
+    const humans = this.state.players.filter((player) => !this.aiPlayers.includes(player.id));
+    return humans.length > 0 && humans.every((player) => player.defeated);
+  }
+
   private async showEnd(): Promise<void> {
     this.mode = 'over';
     this.clearSelection();
     this.views.hud.setVisible(false);
-    this.onFinished(await this.views.endScreen.show(this.state));
+    const defeat = this.state.status !== 'finished' ? 'Défaite' : null;
+    this.onFinished(await this.views.endScreen.show(this.state, defeat));
   }
 }

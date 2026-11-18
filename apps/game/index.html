@@ -6,7 +6,7 @@
     <title>Alkébulan — Rise of Kingdoms</title>
     <meta
       name="description"
-      content="Tactique au tour par tour dans l'Afrique antique : Koush contre Carthage sur la carte du Gué du Nil."
+      content="Tactique au tour par tour en Afrique : Koush, Carthage, Almoravides et Ashanti s'affrontent pour le Gué du Nil."
     />
     <meta name="theme-color" content="#fffefc" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,20 +40,11 @@
             />
           </h1>
           <p class="garde__pitch">
-            Koush contre Carthage sur la carte du Gué du Nil : capturez les villages, levez vos
-            armées, prenez le QG adverse.
+            Koush, Carthage, Almoravides, Ashanti : choisis ton peuple, capture les villages, lève
+            tes armées et prends le QG adverse.
           </p>
 
           <nav class="garde__menu" aria-label="Menu principal">
-            <a class="action action--primary" href="./jeu.html?mode=ia" data-mode="ia">
-              <span class="action__sheen" aria-hidden="true"></span>
-              <span class="action__play" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-              </span>
-              <span class="action__label">Nouvelle partie</span>
-              <span class="action__detail">contre l'IA</span>
-            </a>
-
             <a
               class="action"
               href="./jeu.html?mode=continuer"
@@ -71,15 +62,6 @@
               <span class="action__detail" id="continuer-detail"></span>
             </a>
 
-            <a class="action" href="./jeu.html?mode=deux" data-mode="deux">
-              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 18L18 6M6 6l12 12" />
-                <path d="M8 4l2 2m4 4l2 2m-8 4l2 2m4-12l2 2" />
-              </svg>
-              <span class="action__label">À deux joueurs</span>
-              <span class="action__detail">même écran</span>
-            </a>
-
             <button class="action" type="button" disabled>
               <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 19h16M5 16l2-9 5 5 5-5 2 9H5z" />
@@ -87,6 +69,45 @@
               <span class="action__label">Campagne</span>
               <span class="action__badge">Bientôt</span>
             </button>
+
+            <a
+              class="action action--primary"
+              href="./jeu.html?mode=ia"
+              data-mode="ia"
+              data-choix-carte="gue-du-nil"
+              data-duel
+            >
+              <span class="action__sheen" aria-hidden="true"></span>
+              <span class="action__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+              <span class="action__label">À deux joueurs</span>
+              <span class="action__detail">toi contre l'IA</span>
+            </a>
+
+            <a
+              class="action"
+              href="./jeu.html?mode=ia&amp;carte=carrefour"
+              data-mode="ia"
+              data-choix-carte="carrefour"
+            >
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v18M3 12h18" />
+                <path d="M5 5h4v4H5zM15 5h4v4h-4zM15 15h4v4h-4zM5 15h4v4H5z" />
+              </svg>
+              <span class="action__label">À quatre joueurs</span>
+              <span class="action__detail">toi contre 3 IA</span>
+            </a>
+
+            <!-- Provisoire : banc d'essai des combats dessinés, à retirer une fois validés. -->
+            <a class="action" href="./jeu.html?mode=proto" data-mode="proto">
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16v14H4z" />
+                <path d="M10 9l5 3-5 3z" />
+              </svg>
+              <span class="action__label">Animation (proto)</span>
+              <span class="action__detail">banc d'essai</span>
+            </a>
           </nav>
 
           <p class="garde__hint">
@@ -101,6 +122,23 @@
         </footer>
       </section>
     </main>
+
+    <dialog class="choix" id="choix-peuple" aria-labelledby="choix-titre">
+      <header class="choix__tete">
+        <div>
+          <button class="choix__retour" type="button" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+            Changer de peuple
+          </button>
+          <h2 id="choix-titre" class="choix__titre">Choisis ton peuple</h2>
+          <p class="choix__carte" id="choix-carte"></p>
+        </div>
+        <button class="choix__fermer" type="button" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="choix__grille" id="choix-grille"></div>
+    </dialog>
     <script type="module" src="/src/garde/garde.ts"></script>
   </body>
 </html>

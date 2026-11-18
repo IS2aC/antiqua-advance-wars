@@ -21,7 +21,7 @@ export const PEOPLES_DIR = 'peuples';
 export const DECORS_DIR = 'combat/decors';
 
 /** Peuples connus du jeu (chacun a sa rampe de couleurs dans palette.ts). */
-export const PEOPLES: readonly Faction[] = ['koush', 'carthage', 'kemet', 'aksoum'];
+export const PEOPLES: readonly Faction[] = ['koush', 'carthage', 'ashanti', 'almoravides'];
 
 export const COMBAT_UNITS: readonly UnitType[] = [
   'fantassin',

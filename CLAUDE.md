@@ -25,14 +25,15 @@ Monorepo pnpm :
 
 ### Client de jeu (`apps/game/src`)
 
-- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. La page de garde lance `jeu.html?mode=ia|deux|continuer` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
+- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. La page de garde lance `jeu.html?mode=ia|deux|continuer&carte=…` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
 
 - `controller/BattleController.ts` : seul endroit qui transforme les entrées en `Action`, appelle `applyAction` et remplace l'état courant. Annuler un déplacement = revenir à l'état d'avant le `MOVE` (le moteur n'a rien tiré au hasard).
 - `animation/EventPlayer.ts` : joue les `GameEvent` dans l'ordre, puis recale la vue sur l'état final (`sync`).
 - `combat/` : scènes de combat plein écran. `setup.ts` (pur) tire du résultat du moteur les deux camps, leurs PV avant/après et les coups ; `CombatScene.ts` les compose en direct (décor, un figurant par PV, bandeau). La scène illustre, elle ne calcule jamais. `CaptureScene.ts` : siège, prise de bâtiment et annexion du QG ; `stage.ts` (décor, figurants) et `StagedScene.ts` (vitesse, passage par clic ou Entrée) sont communs aux deux. Réglage « Scènes de combat » dans la pause (`persistence/options.ts`). Packs de culture (`combat/packs.ts`) : figurants 64×64 par peuple et décors par terrain, découverts par le pipeline dans `art/raw/peuples/<peuple>/combat/` et `art/raw/combat/decors/` (gabarits et prompts : `docs/art-combat.md`) ; ce qui manque retombe sur les sprites de carte ×2 et les décors en tuiles.
+- `drawn/` : combats dessinés (réglage par défaut « Scènes de combat : dessinées » dans la pause ; « oui » = pixel art). Second jeu Phaser en 1920×1152, sans pixel art, superposé au canvas de la carte le temps d'un combat (`DrawnStage.ts`) ; `DrawnCombatScene.ts` compose le déroulé en 6 temps à partir du même `CombatSetup`. Images : `art/raw/combat-dessine/` (un dossier par unité, `unites/<unité>/` : `poses`, `repos`, `attaque`, `charge`, `chute`, `sonne`, dessinés une fois en rouge comme les sprites puis recolorés par peuple ; `peuples/<peuple>/<unité>/` prioritaire, lui aussi dessiné en rouge et recoloré ; `A-FAIRE.md` généré liste ce qui manque) → `pnpm assets:dessin` (détourage, séparation des dessins, recoloration, séquences calées) → `public/assets/combat-hd/` ; ce qui manque est dessiné en provisoire. Génération : `pnpm art:generer` (fiches `art/specs/`, contrôles, budget, `validation.html`). Banc d'essai provisoire : `jeu.html?mode=proto` (entrée « Animation (proto) » de la page de garde, `ProtoBench.ts`). Prompts : `docs/proto-combat.md`.
 - IA adverse : `packages/engine/src/ai/greedy-ai.ts` (`chooseGreedyAction`, `planTurn`), gloutonne et déterministe. Le contrôleur joue le tour de l'IA action par action via l'`EventPlayer` (mode `ai`, bouton « Accélérer »). La sauvegarde garde les camps joués par l'IA (`aiPlayers`).
 - `view/` : objets d'affichage seulement (carte, unités, curseur, zones, flèche, menus, HUD, bandeau). Les éléments fixés à l'écran passent par `pinToScreen()` (contournement d'un bug de `Container.setScrollFactor` dans Phaser 4.2).
-- La carte vient du moteur (`GUE_DU_NIL`), pas d'un fichier Tiled : une seule source de vérité tant qu'on ne dessine pas les cartes dans Tiled.
+- Les cartes viennent du moteur (`GUE_DU_NIL` à 2 peuples, `CARREFOUR` à 4 peuples, symétrique par quart de tour), pas d'un fichier Tiled : une seule source de vérité tant qu'on ne dessine pas les cartes dans Tiled. Choix par l'URL (`jeu.html?mode=ia&carte=carrefour`, registre `apps/game/src/maps.ts`) ; contre l'IA, le joueur commande le peuple choisi sur la page de garde (écran « Choisis ton peuple », `src/garde/peuples.ts`, `peuple=` dans l'URL, Koush par défaut) et l'IA tous les autres. « À deux joueurs » = duel contre l'IA : on choisit aussi le peuple de l'IA (`adversaire=`), et le moteur réattribue les camps de la carte (`assignPeoples`) ; le mode `deux` (même écran) n'a plus d'entrée au menu. Portraits des dirigeants et écussons : découpés des planches `art/reference/peuples/` et `art/static/peuples/` par `pnpm assets:cover`.
 - En développement, le jeu est exposé sur `window.__ANTIQUA_GAME__` (tests de bout en bout, console).
 
 ### Rendu pixel art
@@ -63,6 +64,8 @@ pnpm typecheck        # tsc sur tous les packages
 pnpm build            # build de tous les packages
 pnpm assets:build     # pipeline d'assets : art/raw → apps/game/public/assets/atlas + report.html
 pnpm assets:cover     # images de la page de garde : art/static → apps/game/public/assets/garde (WebP)
+pnpm assets:dessin    # combats dessinés (proto) : art/raw/combat-dessine → apps/game/public/assets/combat-hd
+pnpm art:generer      # génère les dessins de combat via OpenRouter ou OpenAI (fiches art/specs/, --liste, --faux, --budget)
 pnpm match            # match aléatoire en ligne de commande (moteur seul)
 ```
 

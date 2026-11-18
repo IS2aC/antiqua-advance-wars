@@ -16,7 +16,10 @@
     "format": "prettier --write .",
     "assets:build": "pnpm --filter @antiqua/asset-pipeline build:assets",
     "assets:cover": "pnpm --filter @antiqua/asset-pipeline build:cover",
-    "match": "pnpm --filter @antiqua/cli match"
+    "assets:dessin": "pnpm --filter @antiqua/asset-pipeline build:drawn",
+    "art:generer": "pnpm --filter @antiqua/asset-pipeline generate",
+    "match": "pnpm --filter @antiqua/cli match",
+    "art:sprites": "pnpm --filter @antiqua/asset-pipeline sprites"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

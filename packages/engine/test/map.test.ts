@@ -126,9 +126,12 @@ describe('createGame — validation', () => {
     ['2 joueurs', { players: ['koush'] }],
     ['hors carte', { buildings: [{ type: 'qg', x: 5, y: 0, owner: 'koush' }] }],
     ['ne correspond pas', { buildings: [{ type: 'village', x: 0, y: 0, owner: 'koush' }] }],
-    ['joueur absent', { buildings: [{ type: 'qg', x: 0, y: 0, owner: 'kemet' }] }],
+    ['joueur absent', { buildings: [{ type: 'qg', x: 0, y: 0, owner: 'ashanti' }] }],
     ['unité hors carte', { units: [{ type: 'fantassin', owner: 'koush', x: 0, y: 3 }] }],
-    ["unité d'un joueur absent", { units: [{ type: 'fantassin', owner: 'aksoum', x: 0, y: 0 }] }],
+    [
+      "unité d'un joueur absent",
+      { units: [{ type: 'fantassin', owner: 'almoravides', x: 0, y: 0 }] },
+    ],
     [
       'deux unités',
       {

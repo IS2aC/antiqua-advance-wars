@@ -1,0 +1,9 @@
+{
+  "echelles": {
+    "koush/fantassin/repos": 0.92,
+    "koush/lancier/repos": 0.9,
+    "koush/cavalerie/repos": 0.95,
+    "koush/catapulte/repos": 0.95
+  },
+  "calages": {}
+}

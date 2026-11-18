@@ -1,0 +1,17 @@
+{
+  "_doc": "Couleurs relevées sur l'atlas des unités (apps/game/public/assets/atlas/units-*.png). Les 4 peuples partagent les mêmes sprites : seule la rampe d'équipe change. Les dessins de combat sont générés en rouge (rampe de Carthage), puis recolorés pour chaque peuple par `pnpm assets:dessin`, comme les sprites.",
+  "peau": { "base": "#C65922", "ombre": "#9F5021" },
+  "cheveux": "#4D1F0F",
+  "or": { "base": "#D69625", "clair": "#FAC777" },
+  "creme": "#EFD6A8",
+  "bois": "#9F5021",
+  "pierre": "#816A4C",
+  "contour": "#2B1B17",
+  "equipes": {
+    "carthage": { "nom": "crimson red", "rampe": ["#4A1218", "#8E1F24", "#D13A2E", "#F2735A"] },
+    "koush": { "nom": "royal blue", "rampe": ["#16234A", "#24418E", "#3A73D1", "#73B4F2"] },
+    "ashanti": { "nom": "saffron yellow", "rampe": ["#4A3512", "#8E6A1F", "#D1A72E", "#F2D65A"] },
+    "almoravides": { "nom": "emerald green", "rampe": ["#123A1E", "#1F6E34", "#2EAE4E", "#6FDE85"] }
+  },
+  "equipeSource": "carthage"
+}

@@ -39,7 +39,8 @@ export class EndScreen {
     this.menu.confirm();
   }
 
-  async show(state: GameState): Promise<EndChoice> {
+  /** `heading` remplace le titre (« Défaite » quand le joueur est éliminé avant la fin). */
+  async show(state: GameState, heading: string | null = null): Promise<EndChoice> {
     const scene = this.scene;
     const shade = scene.add.rectangle(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT, 0x000000, 0.55);
     shade.setOrigin(0);
@@ -52,11 +53,11 @@ export class EndScreen {
       scene,
       WIDTH / 2,
       GRID * 2,
-      winner ? `Victoire : ${FACTIONS[winner].name} !` : 'Égalité',
+      heading ?? (winner ? `Victoire : ${FACTIONS[winner].name} !` : 'Égalité'),
       'large',
       { outline: true },
     ).setOrigin(0.5, 0);
-    if (winner) title.setColor(`#${TEAM_COLORS[winner].toString(16).padStart(6, '0')}`);
+    if (winner && !heading) title.setColor(`#${TEAM_COLORS[winner].toString(16).padStart(6, '0')}`);
     const subtitle = uiText(scene, WIDTH / 2, GRID * 7, `Partie terminée au jour ${state.day}`)
       .setOrigin(0.5, 0)
       .setColor(DISABLED_TEXT_COLOR);

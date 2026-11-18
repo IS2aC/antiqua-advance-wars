@@ -1,0 +1,30 @@
+# Commande : carthage / cavalerie / chute
+
+- Référence à joindre : `art/raw/combat-dessine/peuples/carthage/cavalerie/poses.png`
+- Livrable : `art/codex/livraisons/peuples/carthage/cavalerie/chute.png`
+
+## Prompt
+
+```text
+Use the attached pose sheet as the exact reference for this character: same face, same equipment, same colors, same proportions and SAME SIZE as the first (idle) drawing.
+
+Character: young Numidian light horseman in the service of Carthage, riding a horse bareback. Design (team color = the team color below): Rider: warm brown skin, a large mass of tight dark curly hair, no helmet, no beard. A short team-color cloak over the shoulders, a short cream tunic, brown leather bracers. A small round shield with a team-color face, a gold rim and the gold sign of Tanit (a triangle topped by a small disk, with short horizontal arms). Two light javelins with dark shafts and gold-bronze points, held in the right hand. Horse: small sturdy bay horse ridden bareback (no saddle), warm brown coat, dark brown mane and tail, black hooves, a simple gold rope bridle and a gold neck strap. Horse and rider are ONE drawing; the horse faces right.
+
+Colors must match the in-game pixel-art sprites exactly. Skin: warm copper brown (#8A5230, shadow #653A1E) for every soldier. Hair: very dark brown (#4D1F0F), short and curly. Team color: crimson red (#D13A2E, shadow #8E1F24, light #F2735A), used ONLY on the team parts named in the design. Metal: gold (#D69625, light #FAC777). Cloth: cream (#EFD6A8). Wood: warm brown (#9F5021). No other red, crimson, pink or orange-red anywhere in the image (mouths and lips in dark brown), so the team color can be swapped automatically.
+
+Create 4 frames of a hand-drawn animation sequence, side by side in one wide image, 4 equal invisible columns, as if filmed by a locked camera: the character stays at the same place in each column, on the same ground baseline, facing RIGHT in a 3/4 side view, same size in every frame. Nothing touches the image edges or the neighbouring frame. Every weapon is drawn whole and stays inside its own column, never cut by the image edge, never crossing into the neighbouring column. The spear is always gripped by a visible hand and never passes behind or through the shield: keep its whole shaft and spearhead visible above, below or in front of the shield.
+
+Frames, left to right:
+
+1. Defeat: horse stumbling, rider sliding to the side.
+
+2. Down: horse standing with its head low, rider slumped forward on its neck, spear dropped on the ground.
+
+3. Victory: horse rearing proudly, rider raising the spear high.
+
+4. Victory shout: horse on four legs, rider shouting with the spear raised.
+
+Style: classic hand-drawn 2D feature animation, 1990s cel look. Simple, appealing shapes and a strong readable silhouette. Clean uniform ink outline in dark brown-black (#2B1B17), never pure black. Few interior lines, no muscle definition lines, no fabric wrinkles beyond one or two folds, no small ornaments. Flat color fills with ONE darker shadow tone, light coming from the top left, no gradients, no texture, no painterly rendering, no glow.
+
+Plain solid pure white background (#FFFFFF), no checkerboard, no ground shadow, no ground line, no text, no labels, no frame, no cell borders.
+```

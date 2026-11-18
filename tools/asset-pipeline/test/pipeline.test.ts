@@ -7,7 +7,7 @@ import { TRANSPARENT, createIndexed, getIndex, setIndex, type IndexedImage } fro
 import { packAtlas } from '../src/pack';
 import { TEAM_RAMPS, factionColors, medianCut, type Palette } from '../src/palette';
 import { quantize } from '../src/quantize';
-import { detectBlobs } from '../src/slice';
+import { bandedGridCells, detectBlobs } from '../src/slice';
 import { hexToRgb, rgbToLab } from '../src/color';
 
 function fill(
@@ -174,5 +174,24 @@ describe('atlas', () => {
     const frames = (json as { frames: Record<string, { frame: { w: number } }> }).frames;
     expect(Object.keys(frames)).toEqual(['unit/fantassin/idle/0', 'unit/fantassin/idle/1']);
     expect(frames['unit/fantassin/idle/0']?.frame.w).toBe(32);
+  });
+});
+
+describe('bandedGridCells', () => {
+  it('place la limite entre deux lignes dans la bande vide la plus proche', () => {
+    const image = createIndexed(10, 80);
+    // Ligne 1 : y 5 à 30 ; ligne 2 : y 37 à 75, sa crête dépasse au-dessus de y 40.
+    for (let y = 5; y <= 30; y++) setIndex(image, 4, y, 1);
+    for (let y = 37; y <= 75; y++) setIndex(image, 4, y, 2);
+    const cells = bandedGridCells(image, 1, 2);
+    expect(cells[0]).toEqual({ x: 0, y: 0, w: 10, h: 36 });
+    expect(cells[1]).toEqual({ x: 0, y: 36, w: 10, h: 44 });
+  });
+
+  it('garde la grille régulière quand rien ne déborde', () => {
+    const image = createIndexed(8, 40);
+    setIndex(image, 2, 5, 1);
+    setIndex(image, 2, 30, 1);
+    expect(bandedGridCells(image, 2, 2).map((cell) => cell.y)).toEqual([0, 0, 20, 20]);
   });
 });

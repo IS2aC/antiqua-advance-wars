@@ -109,4 +109,4 @@ STYLE: true pixel art battle backdrop for the side-view battle scenes of a turn-
 
 ## 8. Ajouter un peuple plus tard
 
-Un nouveau dossier `art/raw/peuples/<peuple>/combat/` suffit au pipeline et à la scène de combat. Aujourd'hui, les peuples reconnus sont ceux du moteur (`koush`, `carthage`, `kemet`, `aksoum`) : en ajouter un autre demande encore de le déclarer dans le moteur et sa rampe de couleurs dans `tools/asset-pipeline/src/palette.ts`. La phase D supprimera cette étape.
+Un nouveau dossier `art/raw/peuples/<peuple>/combat/` suffit au pipeline et à la scène de combat. Aujourd'hui, les peuples reconnus sont ceux du moteur (`koush`, `carthage`, `ashanti`, `almoravides`) : en ajouter un autre demande encore de le déclarer dans le moteur et sa rampe de couleurs dans `tools/asset-pipeline/src/palette.ts`. La phase D supprimera cette étape.

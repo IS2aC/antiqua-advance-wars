@@ -1,0 +1,31 @@
+{
+  "_doc": "Un portrait de chef par peuple : 4 expressions (neutre, cri, blessé, sourire). Générés directement dans la couleur du peuple (pas de recoloration). Chaque chef suit la planche de son peuple (art/reference/peuples/<peuple>.png, docs/planches-peuples.md) : teint, visage, coiffe, parures. `regard` : sens du visage (Koush regarde à gauche, comme le prévoit le jeu, apps/game/src/drawn/assets.ts).",
+  "expressions": [
+    "Neutral, calm and confident.",
+    "Shouting a battle cry, mouth wide open.",
+    "Hurt, wincing, eyes squeezed.",
+    "Proud smile, victorious."
+  ],
+  "peuples": {
+    "koush": {
+      "regard": "gauche",
+      "chef": "King Taharqa of Kush, a Nubian king and pharaoh, in his forties",
+      "design": "Very dark brown skin, short tightly curled black hair, short beard. Gold Kushite skullcap crown with two uraeus cobras on the brow and long ribbons at the back, gold broad collar with ram-head pendants, gold armlets, a team-color cloak with gold edging over one shoulder."
+    },
+    "carthage": {
+      "regard": "droite",
+      "chef": "Hannibal Barca, general of Carthage, in his thirties",
+      "design": "Warm olive-tan skin, short dark curly hair, short dark beard, sharp determined eyes. Gold-bronze Hellenistic helmet with cheek guards and a team-color crest, bronze cuirass, team-color cloak with a purple border fastened by a round gold brooch."
+    },
+    "almoravides": {
+      "regard": "droite",
+      "chef": "Yusuf ibn Tashfin, Almoravid emir, in his fifties",
+      "design": "Lean Saharan Amazigh face, brown skin weathered by the sun, short grey-streaked beard. Team-color turban, deep indigo-blue litham veil pulled down around the neck, white wool burnous with a team-color geometric border, a small gold clasp."
+    },
+    "ashanti": {
+      "regard": "droite",
+      "chef": "Osei Tutu, first Asantehene of the Asante Empire, in his forties",
+      "design": "Very dark brown skin, short black hair, clean-shaven, calm and majestic. Black headband with gold ornaments, heavy gold bead necklaces with a gold pendant, gold armlet, a kente cloth in team color, green and black worn toga-style over one shoulder."
+    }
+  }
+}

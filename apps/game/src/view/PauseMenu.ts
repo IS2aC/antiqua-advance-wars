@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../config';
 import { GRID } from '../ui/panels';
+import { nextCombatSetting, type CombatSetting } from '../persistence/options';
 import { ActionMenu } from './ActionMenu';
 import { pinToScreen, uiText } from './text';
 
@@ -16,6 +17,11 @@ export type PauseChoice = 'reprendre' | 'quitter' | 'abandonner';
 type MenuValue = PauseChoice | 'scenes';
 
 const MENU_TOP = GRID * 21;
+const SCENE_LABELS: Readonly<Record<CombatSetting, string>> = {
+  oui: 'oui',
+  non: 'non',
+  dessinees: 'dessinées (proto)',
+};
 /** Plus clair que le texte désactivé : il doit se lire sur le voile sombre. */
 const HINT_COLOR = '#d8c8a0';
 
@@ -60,11 +66,12 @@ export class PauseMenu {
 
   /**
    * Ouvre la pause et renvoie le choix du joueur (abandon confirmé à part).
-   * `combatScenes` / `onToggleScenes` : réglage des scènes de combat, modifiable sur place.
+   * `combatScenes` / `onChangeScenes` : réglage des scènes de combat (oui, non, dessinées),
+   * modifiable sur place.
    */
   async open(
-    combatScenes: boolean,
-    onToggleScenes: (enabled: boolean) => void,
+    combatScenes: CombatSetting,
+    onChangeScenes: (setting: CombatSetting) => void,
   ): Promise<PauseChoice> {
     let scenes = combatScenes;
     this.overlay.setVisible(true);
@@ -74,15 +81,15 @@ export class PauseMenu {
         const choice = await this.menu.open<MenuValue>(
           [
             { value: 'reprendre', label: 'Reprendre' },
-            { value: 'scenes', label: 'Scènes de combat', detail: scenes ? 'oui' : 'non' },
+            { value: 'scenes', label: 'Scènes de combat', detail: SCENE_LABELS[scenes] },
             { value: 'quitter', label: 'Sauvegarder et quitter' },
             { value: 'abandonner', label: 'Abandonner la partie' },
           ],
           { top: MENU_TOP },
         );
         if (choice === 'scenes') {
-          scenes = !scenes;
-          onToggleScenes(scenes);
+          scenes = nextCombatSetting(scenes);
+          onChangeScenes(scenes);
           continue;
         }
         if (choice !== 'abandonner') return choice ?? 'reprendre';

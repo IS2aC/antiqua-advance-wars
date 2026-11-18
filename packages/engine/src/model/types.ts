@@ -4,7 +4,7 @@
  */
 
 /** Factions jouables (Stage 1 : Koush contre Carthage). */
-export type PlayerId = 'koush' | 'carthage' | 'kemet' | 'aksoum';
+export type PlayerId = 'koush' | 'carthage' | 'ashanti' | 'almoravides';
 
 export type UnitType = 'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte';
 
