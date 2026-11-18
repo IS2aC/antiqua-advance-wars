@@ -14,7 +14,7 @@
  * `A-FAIRE.md` dans le dossier source (ce qui reste à dessiner).
  * Lancement : `pnpm assets:dessin`.
  */
-import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
@@ -218,8 +218,21 @@ async function framesFor(file: string, people: Faction): Promise<Sheet> {
   };
 }
 
+/**
+ * Retire les fichiers que cette construction n'a pas réécrits. On ne vide pas le dossier
+ * d'avance : le serveur de développement (Vite) perdrait la trace des fichiers publics
+ * recréés et renverrait la page HTML à leur place jusqu'à son redémarrage.
+ */
+async function removeStale(dir: string, since: number): Promise<void> {
+  for (const entry of await readdir(dir, { withFileTypes: true, recursive: true })) {
+    if (!entry.isFile()) continue;
+    const file = join(entry.parentPath, entry.name);
+    if ((await stat(file)).mtimeMs < since) await rm(file);
+  }
+}
+
 async function main(): Promise<void> {
-  await rm(OUT, { recursive: true, force: true });
+  const started = Date.now() - 1000;
   await mkdir(OUT, { recursive: true });
   const manifest: DrawnManifest = { figures: {}, anims: {}, portraits: [], decors: [] };
   const settings = await readSettings();
@@ -334,6 +347,7 @@ async function main(): Promise<void> {
   }
 
   await writeFile(join(OUT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+  await removeStale(OUT, started);
   await mkdir(SOURCE, { recursive: true });
   await writeFile(join(SOURCE, 'A-FAIRE.md'), todoReport(present, PEOPLES, COMBAT_UNITS));
   console.log(`[dessin] manifeste écrit, liste à jour : art/raw/combat-dessine/A-FAIRE.md`);

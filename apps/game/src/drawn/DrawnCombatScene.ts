@@ -317,7 +317,8 @@ export class DrawnCombatScene extends StagedScene {
       from.figures.map(async (figure) => {
         await this.wait(figure.delay);
         void this.act(from, figure, 'run');
-        figure.image.anims.setProgress(Math.random());
+        // Sans animation de course (dessin provisoire), rien à décaler.
+        if (figure.image.anims.currentAnim) figure.image.anims.setProgress(Math.random());
         this.puff(from, figure.image.x - from.dir * 40, figure.image.y);
         // Par à-coups, au rythme des pas, avec un petit rebond à chaque foulée.
         void this.tween({
