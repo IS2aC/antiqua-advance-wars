@@ -712,13 +712,8 @@ export class DrawnCombatScene extends StagedScene {
     const frame = this.add.graphics();
     frame.fillStyle(darken(team), 1).fillRoundedRect(px, 13, PORTRAIT, PORTRAIT, 14);
     frame.lineStyle(4, 0xfff4c8, 1).strokeRoundedRect(px, 13, PORTRAIT, PORTRAIT, 14);
-    const face = portraitTexture(this, side.owner, 'neutral');
-    const portrait = this.add
-      .image(px + PORTRAIT / 2, 13 + PORTRAIT, face.key, face.frame)
-      .setOrigin(0.5, 1)
-      .setDisplaySize(PORTRAIT - 8, PORTRAIT - 8)
-      // Chaque portrait regarde vers le centre de l'écran.
-      .setFlipX(left === portraitFacesLeft(this, side.owner));
+    const portrait = this.add.image(px + PORTRAIT / 2, 13 + PORTRAIT / 2, '__DEFAULT');
+    this.showPortrait(portrait, side, 'neutral');
 
     const textX = left ? px + PORTRAIT + 24 : 200;
     const title = this.add.text(
@@ -830,8 +825,27 @@ export class DrawnCombatScene extends StagedScene {
   }
 
   private setExpression(view: SideView, expression: Expression): void {
-    const face = portraitTexture(this, view.side.owner, expression);
-    view.portrait.setTexture(face.key, face.frame).setDisplaySize(PORTRAIT - 8, PORTRAIT - 8);
+    this.showPortrait(view.portrait, view.side, expression);
+  }
+
+  /**
+   * Image du cadre : un portrait remplit le cadre et regarde vers le centre de l'écran ;
+   * l'écusson du peuple y tient entier, à ses proportions, sans être retourné.
+   */
+  private showPortrait(
+    image: Phaser.GameObjects.Image,
+    side: CombatSide,
+    expression: Expression,
+  ): void {
+    const face = portraitTexture(this, side.owner, expression);
+    image.setTexture(face.key);
+    const box = PORTRAIT - (face.emblem ? 20 : 8);
+    const scale = face.emblem ? Math.min(box / image.width, box / image.height) : 1;
+    if (face.emblem) image.setScale(scale).setFlipX(false);
+    else
+      image
+        .setDisplaySize(box, box)
+        .setFlipX((side.side === 'left') === portraitFacesLeft(this, side.owner));
   }
 
   private setPose(view: SideView, figure: Figure, pose: Pose): void {
