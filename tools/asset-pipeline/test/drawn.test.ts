@@ -252,6 +252,22 @@ describe('séquences « caméra fixe »', () => {
   });
 });
 
+describe('morceaux détachés', () => {
+  it('garde un bout de lance qui déborde chez le voisin avec son dessin', () => {
+    // Case 1 (0..50) : un corps (10..30) et un bout de lance détaché (32..70) dont le centre
+    // tombe dans la case 2. Case 2 : un corps (80..95).
+    const sheet = image(100, 40, (x, y) => {
+      const body1 = x >= 10 && x < 30 && y >= 5 && y < 40;
+      const spear = x >= 32 && x < 70 && y >= 15 && y < 17;
+      const body2 = x >= 80 && x < 95 && y >= 5 && y < 40;
+      return body1 || spear || body2 ? INK : [0, 0, 0, 0];
+    });
+    const [a, b] = separateFrames(sheet, 2);
+    expect(a!.box).toEqual({ x: 10, y: 5, w: 60, h: 35 });
+    expect(b!.box).toEqual({ x: 80, y: 5, w: 15, h: 35 });
+  });
+});
+
 describe('pieds', () => {
   it('ignore la hampe de lance posée au sol', () => {
     // Hampe fine (x 2..4) et deux pieds larges (x 10..20 et 30..40), tout en bas.

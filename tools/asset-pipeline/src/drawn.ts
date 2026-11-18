@@ -637,13 +637,16 @@ export interface SeparatedFrame {
 /**
  * Sépare une planche en `count` dessins de gauche à droite, même quand ils se touchent ou
  * que leurs cadres se chevauchent (traits de vitesse, cape, lance qui dépasse) : chaque
- * morceau de dessin (pixels non transparents reliés entre eux) va à la case où tombe son
- * centre. Chaque dessin ne garde que ses propres pixels : pas de pied ni de cape du voisin.
+ * gros morceau de dessin (pixels non transparents reliés entre eux) va à la case où tombe
+ * son centre ; un petit morceau détaché (bout de lance coupé par le bouclier ou la main,
+ * lance lâchée) suit le gros morceau le plus proche, même s'il déborde chez le voisin.
+ * Chaque dessin ne garde que ses propres pixels : pas de pied ni de cape du voisin.
  */
 export function separateFrames(image: RgbaImage, count: number): SeparatedFrame[] {
   const { width, height, data } = image;
   const labels = new Int32Array(width * height).fill(-1);
   const owner: number[] = [];
+  const parts: { size: number; minX: number; maxX: number; minY: number; maxY: number }[] = [];
   const cellWidth = width / count;
   const stack: number[] = [];
   let next = 0;
@@ -654,12 +657,17 @@ export function separateFrames(image: RgbaImage, count: number): SeparatedFrame[
     stack.push(start);
     let sumX = 0;
     let pixels = 0;
+    const part = { size: 0, minX: width, maxX: -1, minY: height, maxY: -1 };
     while (stack.length > 0) {
       const i = stack.pop() as number;
       const x = i % width;
       const y = (i - x) / width;
       sumX += x;
       pixels++;
+      if (x < part.minX) part.minX = x;
+      if (x > part.maxX) part.maxX = x;
+      if (y < part.minY) part.minY = y;
+      if (y > part.maxY) part.maxY = y;
       for (const [nx, ny] of [
         [x + 1, y],
         [x - 1, y],
@@ -674,7 +682,31 @@ export function separateFrames(image: RgbaImage, count: number): SeparatedFrame[
       }
     }
     owner[label] = Math.min(count - 1, Math.max(0, Math.floor(sumX / pixels / cellWidth)));
+    part.size = pixels;
+    parts[label] = part;
   }
+
+  // Petits morceaux détachés : rattachés au gros morceau le plus proche (écart entre cadres).
+  const largest = Math.max(0, ...parts.map((p) => p.size));
+  const big = parts.flatMap((p, label) => (p.size >= largest * 0.2 ? [label] : []));
+  const gap = (a: (typeof parts)[number], b: (typeof parts)[number]) =>
+    Math.hypot(
+      Math.max(0, a.minX - b.maxX, b.minX - a.maxX),
+      Math.max(0, a.minY - b.maxY, b.minY - a.maxY),
+    );
+  parts.forEach((part, label) => {
+    if (part.size >= largest * 0.2) return;
+    let best = -1;
+    let bestGap = Infinity;
+    for (const other of big) {
+      const d = gap(part, parts[other] as (typeof parts)[number]);
+      if (d < bestGap) {
+        bestGap = d;
+        best = other;
+      }
+    }
+    if (best >= 0) owner[label] = owner[best] ?? owner[label] ?? 0;
+  });
 
   const boxes = Array.from({ length: count }, () => ({
     minX: Infinity,

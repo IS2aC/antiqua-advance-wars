@@ -51,6 +51,14 @@
           "base": "#7A4420",
           "ombre": "#5A2E14"
         }
+      },
+      "carthage": {
+        "sujet": "young Libyan-Punic spearman of Carthage",
+        "design": "Light olive-tan skin. Short dark curly hair and a short dark beard. Gold-bronze Hellenistic helmet with cheek guards and a tall team-color horsehair crest. Gold-bronze muscled cuirass over a team-color tunic, short pleated team-color skirt. Brown leather sandals. Round shield with a team-color face, a gold rim and the gold sign of Tanit in the middle (a triangle topped by a small disk, with short horizontal arms). Spear with a dark wooden shaft and a gold leaf-shaped spearhead.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        }
       }
     }
   },

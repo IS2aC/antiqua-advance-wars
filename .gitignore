@@ -13,3 +13,4 @@ playwright-report/
 # Génération des dessins de combat (pnpm art:generer)
 art/raw/combat-dessine/validation.html
 art/raw/combat-dessine/.essais/
+art/codex/journal/

@@ -11,7 +11,7 @@ Entre parenthèses : une planche propre à un peuple, sans version commune.
 
 | Unité | poses | repos | attaque | charge | chute | sonné |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Fantassin | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
+| Fantassin | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) | (Koush, Carthage) |
 | Lancier | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 | Archers | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
 | Cavalerie | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) | (Koush) |
@@ -23,11 +23,17 @@ Entre parenthèses : une planche propre à un peuple, sans version commune.
 Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et recolorées elles aussi.
 
 - `peuples/koush/fantassin/poses`
+- `peuples/carthage/fantassin/poses`
 - `peuples/koush/fantassin/repos`
+- `peuples/carthage/fantassin/repos`
 - `peuples/koush/fantassin/attaque`
+- `peuples/carthage/fantassin/attaque`
 - `peuples/koush/fantassin/charge`
+- `peuples/carthage/fantassin/charge`
 - `peuples/koush/fantassin/chute`
+- `peuples/carthage/fantassin/chute`
 - `peuples/koush/fantassin/sonne`
+- `peuples/carthage/fantassin/sonne`
 - `peuples/koush/lancier/poses`
 - `peuples/koush/lancier/repos`
 - `peuples/koush/lancier/attaque`
