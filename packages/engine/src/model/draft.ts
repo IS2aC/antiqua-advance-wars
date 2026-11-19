@@ -7,7 +7,7 @@ import type { GameState } from './types';
 export type DeepMutable<T> = T extends readonly (infer U)[]
   ? DeepMutable<U>[]
   : T extends object
-    ? { -readonly [K in keyof T]: K extends 'cargo' ? T[K] : DeepMutable<T[K]> }
+    ? { -readonly [K in keyof T]: K extends 'cargo' | 'siege' ? T[K] : DeepMutable<T[K]> }
     : T;
 
 /** Copie de travail de l'état, que les règles modifient avant d'être rendue figée. */

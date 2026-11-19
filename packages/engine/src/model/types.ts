@@ -84,6 +84,8 @@ export interface Player {
 export type GameStatus = 'playing' | 'finished';
 
 export interface GameState {
+  /** Partie en mode « défense de forteresse » (absent : combat classique). */
+  readonly siege?: SiegeMode;
   /** Solidité des remparts entamés, par case « x,y » (absent : intact). */
   readonly walls?: Readonly<Record<string, number>>;
   readonly map: GameMap;
@@ -120,6 +122,8 @@ export interface MapDefinition {
   }[];
   readonly players: readonly PlayerId[];
   readonly startingFunds: number;
+  /** Carte de siège : le camp défenseur et les cases d'entrée des renforts. */
+  readonly siege?: { readonly defender: PlayerId; readonly entries: readonly Position[] };
 }
 
 export type Action =
@@ -143,7 +147,18 @@ export type Action =
   | { readonly type: 'FIRE_WALL'; readonly unitId: number; readonly x: number; readonly y: number }
   | { readonly type: 'END_TURN' };
 
-export type DefeatReason = 'hq' | 'rout';
+/** `siege` : l'assaillant n'a pas pris la forteresse à temps. */
+export type DefeatReason = 'hq' | 'rout' | 'siege';
+
+/**
+ * Défense de forteresse : le défenseur doit tenir son QG jusqu'au jour `untilDay` inclus ;
+ * l'assaillant reçoit des renforts tous les 3 jours par les cases d'entrée.
+ */
+export interface SiegeMode {
+  readonly defender: PlayerId;
+  readonly untilDay: number;
+  readonly entries: readonly Position[];
+}
 
 /** Résultat d'une frappe : `attackerId` frappe `defenderId`. */
 interface StrikeEvent {
@@ -233,6 +248,13 @@ export type GameEvent =
       readonly player: PlayerId;
       readonly amount: number;
       readonly funds: number;
+    }
+  /** Vague de renforts de l'assaillant (défense de forteresse). */
+  | {
+      readonly type: 'reinforcements';
+      readonly player: PlayerId;
+      readonly wave: number;
+      readonly units: readonly Unit[];
     }
   | { readonly type: 'playerDefeated'; readonly player: PlayerId; readonly reason: DefeatReason }
   | { readonly type: 'gameOver'; readonly winner: PlayerId | null };
