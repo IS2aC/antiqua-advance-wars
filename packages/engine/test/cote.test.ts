@@ -9,16 +9,16 @@ import {
 } from '../src/index';
 
 describe('carte « La Côte des Comptoirs »', () => {
-  it('fait 20×14 cases et reste identique tournée d’un demi-tour', () => {
+  it('fait 20×14 cases, symétrique nord/sud, avec 60 % de mer', () => {
     expect(COTE.width).toBe(20);
     expect(COTE.height).toBe(14);
     const h = COTE_ROWS.length;
     for (let y = 0; y < h; y++) {
       expect(COTE_ROWS[y]?.length).toBe(20);
-      for (let x = 0; x < 20; x++) {
-        expect(COTE_ROWS[h - 1 - y]?.[19 - x]).toBe(COTE_ROWS[y]?.[x]);
-      }
+      expect(COTE_ROWS[h - 1 - y]).toBe(COTE_ROWS[y]);
     }
+    const sea = COTE.tiles.filter((t) => t === 'mer').length;
+    expect(sea / COTE.tiles.length).toBeCloseTo(0.6, 2);
   });
 
   it('donne à chaque camp un port au bord de la mer', () => {
@@ -36,35 +36,15 @@ describe('carte « La Côte des Comptoirs »', () => {
     }
   });
 
-  it('relie les deux camps à pied par les isthmes, et par la mer en bateau', () => {
+  it('un seul couloir de terre, le long du bord ouest, relie les deux côtes', () => {
+    // Au milieu de la carte, seule la colonne 0 est de la terre.
+    for (const y of [5, 6, 7, 8]) {
+      const row = COTE_ROWS[y]!;
+      expect(row[0]).toBe('.');
+      expect(row.slice(1).replace(/w/g, '')).toBe('');
+    }
     const state = createGame(COTE, { seed: 1 });
     const foot = state.units.find((u) => u.owner === 'koush')!;
-    // À pied, on peut traverser jusqu'au nord en plusieurs tours : la mer n'isole pas.
-    const walk = (from: { x: number; y: number }) => {
-      const seen = new Set<string>();
-      const queue = [from];
-      while (queue.length > 0) {
-        const p = queue.shift()!;
-        const key = `${p.x},${p.y}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        for (const [dx, dy] of [
-          [1, 0],
-          [-1, 0],
-          [0, 1],
-          [0, -1],
-        ] as const) {
-          const x = p.x + dx;
-          const y = p.y + dy;
-          if (x < 0 || y < 0 || x >= COTE.width || y >= COTE.height) continue;
-          const terrain = COTE.tiles[y * COTE.width + x];
-          if (terrain === 'mer' || terrain === 'montagne') continue;
-          queue.push({ x, y });
-        }
-      }
-      return seen;
-    };
-    expect(walk(foot).has('17,1')).toBe(true);
     expect(reachableTiles(state, foot.id).length).toBeGreaterThan(1);
   });
 

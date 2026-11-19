@@ -1,26 +1,27 @@
 import type { MapDefinition, PlayerId, UnitType } from '../model/types';
-import { parseAsciiMap, rotateRows } from './ascii';
+import { parseAsciiMap } from './ascii';
 
 /**
- * Carte côtière — « La Côte des Comptoirs » (20×14), symétrique par rotation de 180°.
- * Un bras de mer traverse le centre d'ouest en est ; on passe à pied par les deux isthmes
- * des bords, ou en bateau. Chaque camp a un port sur la mer (P) qui produit les bateaux.
- * On décrit la moitié nord (QG en haut à droite) ; la moitié sud s'en déduit.
+ * Carte côtière — « La Côte des Comptoirs » (20×14), symétrique en miroir nord/sud.
+ * La mer couvre 60 % de la carte : seules les deux côtes (nord et sud) sont habitées, et
+ * un unique couloir de terre longe le bord ouest. Les troupes à pied passent par ce
+ * couloir ; sinon, il faut prendre la mer depuis son port (P), qui produit les bateaux.
+ * On décrit la moitié nord (QG en haut à droite) ; la moitié sud est son reflet.
  *
  * Légende : voir ASCII_LEGEND. Q, C, V, P = bâtiments du camp ; v = village neutre ;
  * w = mer.
  */
 const NORTH_HALF = [
-  'F..h.F..F..MMV..F.hM',
-  '.F..s..h...Mh..C.Q.F',
-  '..F...=========.....',
-  'h..F..v.....F..d.C..',
-  '..Mh.F..s..F..V.F.h.',
-  '.F...vP...h.hdd...VF',
-  '....wwwwwwwwwwww.h..',
+  'F..h.F..V..MM..h.Q.F',
+  '.F...h.....M..C...F.',
+  '..V...hP..wwwwwwwwww',
+  '..wwwwwwwwwwwwwwwwww',
+  '.vwwwwwwwwwwwwwwwwww',
+  '.wwwwwwwwwwwwwwwwwww',
+  '.wwwwwwwwwwwwwwwwwww',
 ];
 
-export const COTE_ROWS: readonly string[] = [...NORTH_HALF, ...rotateRows(NORTH_HALF)];
+export const COTE_ROWS: readonly string[] = [...NORTH_HALF, ...[...NORTH_HALF].reverse()];
 
 const NORTH: PlayerId = 'carthage';
 const SOUTH: PlayerId = 'koush';
@@ -30,12 +31,10 @@ function buildDefinition(): MapDefinition {
   const half = NORTH_HALF.length;
   const northUnits: readonly { type: UnitType; x: number; y: number }[] = [
     { type: 'fantassin', x: 16, y: 1 },
-    { type: 'fantassin', x: 17, y: 2 },
+    { type: 'fantassin', x: 17, y: 1 },
   ];
-  const mirror = (x: number, y: number) => ({
-    x: parsed.width - 1 - x,
-    y: parsed.height - 1 - y,
-  });
+  // Reflet nord/sud : même colonne, ligne opposée.
+  const mirror = (x: number, y: number) => ({ x, y: parsed.height - 1 - y });
 
   return {
     name: 'La Côte des Comptoirs',
