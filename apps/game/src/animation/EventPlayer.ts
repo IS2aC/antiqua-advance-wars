@@ -152,6 +152,31 @@ export class EventPlayer {
       case 'unitWaited':
         units.get(event.unitId)?.setExhausted(true);
         return;
+      case 'unitsMerged': {
+        // L'unité arrivée se fond dans celle qu'elle rejoint, qui reprend des forces.
+        const mover = units.get(event.unitId);
+        const joined = units.get(event.targetId);
+        units.forget(event.unitId);
+        await mover?.vanish();
+        if (joined) {
+          const gained = displayHp(event.hp) - displayHp(joined.hpShown);
+          joined.setHp(event.hp);
+          joined.setExhausted(true);
+          this.popup(
+            joined.container.x,
+            joined.container.y - T / 2,
+            gained > 0 ? `+${gained} PV` : 'Fusion',
+            '#8fe388',
+          );
+          await joined.flash();
+        }
+        if (event.refund > 0 && joined) {
+          this.popup(joined.container.x, joined.container.y - T, `+${event.refund} or`, '#ffe066');
+        }
+        this.views.hud.sync(state);
+        await this.wait(250);
+        return;
+      }
       case 'captureProgress':
         this.popup(event.x * T + T / 2, event.y * T, `Capture ${event.capturePoints}`, '#ffe066');
         this.views.map.sync(state);

@@ -15,6 +15,7 @@ export type ActionErrorCode =
   | 'CANNOT_FIRE_AFTER_MOVING'
   | 'TARGET_OUT_OF_RANGE'
   | 'CANNOT_CAPTURE'
+  | 'CANNOT_MERGE'
   | 'NOT_A_BUILDING'
   | 'ALREADY_OWNED'
   | 'NOT_A_BARRACKS'

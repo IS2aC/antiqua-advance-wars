@@ -59,6 +59,8 @@ export class UnitSprite {
     this.playIdle();
   }
 
+  private currentHp = 100;
+
   placeAt(position: Position): void {
     this.container.setPosition(position.x * T + T / 2, position.y * T + T / 2);
   }
@@ -68,7 +70,13 @@ export class UnitSprite {
     this.setExhausted(unit.hasActed);
   }
 
+  /** PV internes affichés en ce moment (avant la synchronisation sur l'état final). */
+  get hpShown(): number {
+    return this.currentHp;
+  }
+
   setHp(hp: number): void {
+    this.currentHp = hp;
     const shown = displayHp(hp);
     this.hp.setText(shown < 10 && shown > 0 ? String(shown) : '');
   }

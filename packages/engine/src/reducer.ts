@@ -7,6 +7,7 @@ import { isInRange, resolveAttack } from './rules/combat';
 import { buildError, resolveBuild } from './rules/economy';
 import { buildingAt, findUnit, inBounds, samePosition, unitAt } from './rules/grid';
 import { findPath } from './rules/movement';
+import { mergeError, resolveMerge } from './rules/merge';
 import { endTurn } from './rules/turn';
 import { checkGameOver, checkRout } from './rules/victory';
 
@@ -120,6 +121,19 @@ function wait(state: GameState, unitId: number): ActionResult {
   return success(draft, [{ type: 'unitWaited', unitId: unit.id }]);
 }
 
+function merge(state: GameState, unitId: number, targetId: number): ActionResult {
+  const unit = commandableUnit(state, unitId);
+  if (isResult(unit)) return unit;
+  const error = mergeError(state, unit, targetId);
+  if (error) return { ok: false, error };
+  const target = findUnit(state, targetId);
+  if (!target) return failure('TARGET_NOT_FOUND', `Unité ${targetId} introuvable.`);
+  const draft = cloneState(state);
+  const events: GameEvent[] = [];
+  resolveMerge(draft, events, state, unit, target);
+  return success(draft, events);
+}
+
 function build(state: GameState, action: BuildAction): ActionResult {
   const error = buildError(state, action.x, action.y, action.unitType);
   if (error) return { ok: false, error };
@@ -154,6 +168,8 @@ export function applyAction(state: GameState, action: Action): ActionResult {
       return capture(state, action.unitId);
     case 'WAIT':
       return wait(state, action.unitId);
+    case 'MERGE':
+      return merge(state, action.unitId, action.targetId);
     case 'BUILD':
       return build(state, action);
     case 'END_TURN':

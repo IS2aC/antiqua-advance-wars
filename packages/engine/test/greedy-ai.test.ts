@@ -36,6 +36,29 @@ describe('IA gloutonne : choix d’une action', () => {
     expect(chooseGreedyAction(moved)).toEqual({ type: 'ATTACK', unitId: 1, targetId: 2 });
   });
 
+  it('fusionne une unité très affaiblie avec une alliée du même type', () => {
+    const state = setup(['........', '........'], {
+      units: [
+        { type: 'fantassin', owner: K, x: 0, y: 0, hp: 30 },
+        { type: 'fantassin', owner: K, x: 2, y: 0, hp: 60 },
+        { type: 'fantassin', owner: C, x: 7, y: 1 },
+      ],
+    });
+    expect(chooseGreedyAction(state)).toEqual({ type: 'MERGE', unitId: 1, targetId: 2 });
+    expect(planTurn(state)).toContainEqual({ type: 'MERGE', unitId: 1, targetId: 2 });
+  });
+
+  it('ne fusionne pas une unité encore solide', () => {
+    const state = setup(['........', '........'], {
+      units: [
+        { type: 'fantassin', owner: K, x: 0, y: 0, hp: 80 },
+        { type: 'fantassin', owner: K, x: 2, y: 0, hp: 60 },
+        { type: 'fantassin', owner: C, x: 7, y: 1 },
+      ],
+    });
+    expect(planTurn(state).some((action) => action.type === 'MERGE')).toBe(false);
+  });
+
   it('capture le bâtiment sur lequel elle se trouve', () => {
     const state = setup(['V....', '.....'], {
       units: [

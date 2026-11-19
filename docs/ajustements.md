@@ -110,7 +110,13 @@ et garder un rendu fluide.
   - sprites : chaque peuple ayant son look, il faudra des sprites de carte et des dessins de
     combat propres à chaque peuple, au lieu d'un seul modèle rouge recoloré.
 
-## 6. Fusion de deux unités du même type
+## 6. Fusion de deux unités du même type — fait
+
+> Fait : action `MERGE` (moteur, `rules/merge.ts`), choix « Fusionner » en visant une unité
+> alliée du même type et blessée, PV en trop remboursés en or (10 % du prix par PV),
+> l'unité fusionnée a fini son tour ; l'IA fusionne ses unités à 4 PV ou moins. Règle dans
+> `docs/game-design.md`.
+
 
 - Une unité blessée peut rejoindre une autre unité **du même type** de son camp (par
   exemple un fantassin à 3 PV et un fantassin à 7 PV donnent un fantassin à 10 PV).
