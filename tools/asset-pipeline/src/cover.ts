@@ -28,7 +28,7 @@ interface CoverImage {
 
 const IMAGES: readonly CoverImage[] = [
   { source: 'jacquette-illusté.png', output: 'jaquette.webp', width: 1086, quality: 80 },
-  { source: 'logo-alkebulan.png', output: 'logo.webp', width: 900, quality: 88 },
+  { source: 'logo-alkebulan.png', output: 'logo.webp', width: 768, quality: 85 },
 ];
 
 /** Cadre du portrait du dirigeant dans chaque planche de peuple (1536×864). */

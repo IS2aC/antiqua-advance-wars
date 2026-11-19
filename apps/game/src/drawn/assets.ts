@@ -26,6 +26,8 @@ interface AnimInfo {
 }
 
 interface DrawnManifest {
+  /** Empreinte des images, ajoutée à leurs adresses (cache long côté serveur). */
+  readonly version?: string;
   readonly figures: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
   /** Séquences (16 dessins) : peuple → unité → animation. */
   readonly anims?: Readonly<
@@ -114,7 +116,15 @@ export function drawnAnimation(
   };
 }
 
-/** Charge le manifeste puis, dans la même passe, les images qu'il annonce. */
+/** Adresse d'une image dessinée, avec l'empreinte du manifeste (cache long, jamais périmé). */
+function drawnUrl(manifest: Partial<DrawnManifest> | undefined, path: string): string {
+  return manifest?.version ? `${BASE}${path}?v=${manifest.version}` : `${BASE}${path}`;
+}
+
+/**
+ * Au démarrage : le manifeste, les écussons et les décors (communs à tous, environ 1 Mo).
+ * Les dessins des unités, lourds (environ 6 Mo par peuple), viennent avec `loadPeoples`.
+ */
 export function preloadDrawn(scene: Phaser.Scene): void {
   scene.load.json(MANIFEST, `${BASE}manifest.json`);
   for (const people of Object.keys(FACTIONS)) {
@@ -122,37 +132,68 @@ export function preloadDrawn(scene: Phaser.Scene): void {
   }
   scene.load.once(`filecomplete-json-${MANIFEST}`, (_key: string, _type: string, data: unknown) => {
     const manifest = data as Partial<DrawnManifest> | undefined;
-    for (const [people, units] of Object.entries(manifest?.figures ?? {})) {
-      for (const [unit, poses] of Object.entries(units)) {
+    for (const name of manifest?.decors ?? []) {
+      scene.load.image(decorKey(name), drawnUrl(manifest, `decor-${name}.webp`));
+    }
+  });
+}
+
+/** Peuples déjà chargés ou en cours (une seule fois chacun, même en parallèle). */
+const peopleLoads = new Map<string, Promise<void>>();
+
+/**
+ * Charge les dessins (poses, séquences, portraits) des peuples demandés, une seule fois.
+ * `scene` doit rester active (scène d'amorce du jeu dessiné).
+ */
+export function loadPeoples(scene: Phaser.Scene, peoples: readonly PlayerId[]): Promise<void> {
+  const manifest = scene.cache.json.get(MANIFEST) as Partial<DrawnManifest> | undefined;
+  const pending = peoples.map((people) => {
+    const known = peopleLoads.get(people);
+    if (known) return known;
+    const load = new Promise<void>((resolve) => {
+      let queued = 0;
+      const queue = (key: string, url: string) => {
+        if (scene.textures.exists(key)) return;
+        scene.load.image(key, url);
+        queued++;
+      };
+      for (const [unit, poses] of Object.entries(manifest?.figures?.[people] ?? {})) {
         for (const pose of Object.keys(poses as object)) {
-          scene.load.image(figureKey(people, unit, pose), `${BASE}${people}/${unit}/${pose}.webp`);
+          queue(
+            figureKey(people, unit, pose),
+            drawnUrl(manifest, `${people}/${unit}/${pose}.webp`),
+          );
         }
       }
-    }
-    for (const [people, units] of Object.entries(manifest?.anims ?? {})) {
-      for (const [unit, anims] of Object.entries(units)) {
+      for (const [unit, anims] of Object.entries(manifest?.anims?.[people] ?? {})) {
         for (const [anim, info] of Object.entries(anims)) {
           for (let i = 0; i < info.frames; i++) {
-            scene.load.image(
+            queue(
               animFrameKey(people, unit, anim, i),
-              `${BASE}${people}/${unit}/${anim}-${i}.webp`,
+              drawnUrl(manifest, `${people}/${unit}/${anim}-${i}.webp`),
             );
           }
         }
       }
-    }
-    for (const people of manifest?.portraits ?? []) {
-      for (const expression of ['neutral', 'shout', 'hurt', 'smile']) {
-        scene.load.image(
-          portraitKey(people, expression),
-          `${BASE}portraits/${people}/${expression}.webp`,
-        );
+      if (manifest?.portraits?.includes(people)) {
+        for (const expression of ['neutral', 'shout', 'hurt', 'smile']) {
+          queue(
+            portraitKey(people, expression),
+            drawnUrl(manifest, `portraits/${people}/${expression}.webp`),
+          );
+        }
       }
-    }
-    for (const name of manifest?.decors ?? []) {
-      scene.load.image(decorKey(name), `${BASE}decor-${name}.webp`);
-    }
+      if (queued === 0) {
+        resolve();
+        return;
+      }
+      scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+      scene.load.start();
+    });
+    peopleLoads.set(people, load);
+    return load;
   });
+  return Promise.all(pending).then(() => undefined);
 }
 
 /** Texture d'une pose, et l'inclinaison à lui donner (les poses provisoires s'inclinent). */

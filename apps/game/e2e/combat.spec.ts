@@ -91,6 +91,6 @@ test('scènes de combat désactivées dans la pause : animation courte sur la ca
 
   await attack(page);
   await waitForMode(page, 'idle');
-  // Le combat dessiné n'a jamais été monté.
-  expect(await page.locator('#combat-dessine').count()).toBe(0);
+  // Le combat dessiné (préparé dès l'ouverture de la partie) ne s'est pas affiché.
+  await expect(page.locator('#combat-dessine')).toBeHidden();
 });

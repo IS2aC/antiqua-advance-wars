@@ -133,6 +133,12 @@ export class BattleScene extends Phaser.Scene {
       (window as unknown as { __ANTIQUA__: DebugHook }).__ANTIQUA__ = hook;
     }
 
+    // Les dessins des combats se chargent pendant le premier tour, pour les seuls peuples
+    // de la partie : le premier combat n'attend pas.
+    if (loadOptions().combatScenes) {
+      void drawnStage.prepare(state.players.map((player) => player.id));
+    }
+
     void controller.start();
   }
 
