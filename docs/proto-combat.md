@@ -315,7 +315,7 @@ Remplace `[STYLE BLOCK]` par le bloc de style ci-dessus avant d'envoyer.
 
 ### Banc d'essai
 
-Entrée « Animation (proto) » de la page de garde (`jeu.html?mode=proto`) : on choisit
+Banc d’essai `jeu.html?mode=proto` (en développement seulement, absent du menu des joueurs) : on choisit
 l'attaquant, le défenseur, les PV avant et après, la riposte et la vitesse (dont un ralenti
 ×0,25 pour examiner chaque image), puis on rejoue le combat autant de fois que nécessaire.
 Provisoire : à retirer quand les combats dessinés seront validés (`src/drawn/ProtoBench.ts`

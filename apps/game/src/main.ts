@@ -10,8 +10,9 @@ import { loadFonts } from './ui/font';
 // de secours dans ses textures).
 await loadFonts();
 
-// Banc d'essai des combats dessinés (provisoire) : pas de carte, seulement la scène.
-if (new URLSearchParams(window.location.search).get('mode') === 'proto') {
+// Banc d'essai des combats dessinés (outil de test) : pas de carte, seulement la scène.
+// Réservé au développement : absent du menu, et ignoré dans le jeu publié.
+if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('mode') === 'proto') {
   startProtoBench();
 } else {
   startGame();
