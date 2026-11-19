@@ -1,12 +1,14 @@
-import { CARREFOUR, GUE_DU_NIL, type GameState, type MapDefinition } from '@antiqua/engine';
+import { CARREFOUR, COTE, GUE_DU_NIL, type GameState, type MapDefinition } from '@antiqua/engine';
 
 /**
  * Cartes jouables, par identifiant d'URL (`jeu.html?mode=ia&carte=carrefour`) :
- * « Le Gué du Nil » (Koush contre Carthage) et « Le Carrefour des Royaumes » (4 peuples).
+ * « Le Gué du Nil » (Koush contre Carthage), « Le Carrefour des Royaumes » (4 peuples) et
+ * « La Côte des Comptoirs » (duel avec un bras de mer, ports et bateaux).
  */
 export const MAPS = {
   'gue-du-nil': GUE_DU_NIL,
   carrefour: CARREFOUR,
+  cote: COTE,
 } as const satisfies Readonly<Record<string, MapDefinition>>;
 
 export type MapId = keyof typeof MAPS;

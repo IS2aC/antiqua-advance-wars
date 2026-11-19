@@ -177,15 +177,18 @@ function tileFrom(sheet: IndexedImage, box: Box, label: string, warnings: string
   return downscaleMajority(sheet, box, TILE, TILE);
 }
 
-export function processBaseTiles(sheet: IndexedImage): ProcessedFrames {
+export function processBaseTiles(
+  sheet: IndexedImage,
+  spec: { readonly rows: readonly string[]; readonly perRow: number } = BASE_TILES,
+): ProcessedFrames {
   const frames = new Map<string, IndexedImage>();
   const warnings: string[] = [];
   const blobs = detectBlobs(sheet);
-  expectCount('tuiles de base', blobs, BASE_TILES.rows.length * BASE_TILES.perRow, warnings);
+  expectCount('tuiles de base', blobs, spec.rows.length * spec.perRow, warnings);
   blobs.forEach((box, index) => {
-    const terrain = BASE_TILES.rows[Math.floor(index / BASE_TILES.perRow)];
+    const terrain = spec.rows[Math.floor(index / spec.perRow)];
     if (!terrain) return;
-    const name = `terrain/${terrain}/${index % BASE_TILES.perRow}`;
+    const name = `terrain/${terrain}/${index % spec.perRow}`;
     frames.set(name, tileFrom(sheet, box, name, warnings));
   });
   return { frames, warnings, info: [] };
@@ -239,14 +242,18 @@ export function processRiver(sheet: IndexedImage, palette: Palette): ProcessedFr
 }
 
 /** Bâtiments 32×64 : largeur ramenée à 30 px + contour, ancrés en bas. */
-export function processBuildings(sheet: IndexedImage, palette: Palette): ProcessedFrames {
+export function processBuildings(
+  sheet: IndexedImage,
+  palette: Palette,
+  spec: { readonly order: typeof BUILDING_TILES.order } = BUILDING_TILES,
+): ProcessedFrames {
   const frames = new Map<string, IndexedImage>();
   const warnings: string[] = [];
   const blobs = detectBlobs(sheet);
-  expectCount('bâtiments', blobs, BUILDING_TILES.order.length, warnings);
+  expectCount('bâtiments', blobs, spec.order.length, warnings);
   const isDark = isDarkFactory(palette);
   blobs.forEach((box, index) => {
-    const entry = BUILDING_TILES.order[index];
+    const entry = spec.order[index];
     if (!entry) return;
     const [type, version] = entry;
     const scale = box.w / (BUILDING_W - 2);

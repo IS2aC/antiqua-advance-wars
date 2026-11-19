@@ -52,6 +52,7 @@ const UNIT_TYPES: readonly UnitType[] = [
   'char',
   'catapulte',
   'convoi',
+  'bateau',
 ];
 
 /** Repos : boucle 1-2-3-2 à 150 ms (docs/art-bible.md) ; marche : 4 images par direction. */
@@ -121,7 +122,7 @@ export class TerrainFrames {
       case 'route':
         return this.autotile(
           'route',
-          this.mask(state, x, y, ['route', 'pont', 'village', 'caserne', 'qg'], false),
+          this.mask(state, x, y, ['route', 'pont', 'village', 'caserne', 'qg', 'port'], false),
           x,
           y,
         );
@@ -135,6 +136,7 @@ export class TerrainFrames {
       case 'village':
       case 'caserne':
       case 'qg':
+      case 'port':
         return this.pick('terrain/plaine', x, y);
       default:
         return this.pick(`terrain/${terrain}`, x, y);

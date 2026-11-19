@@ -135,9 +135,12 @@ et garder un rendu fluide.
 > Fait (étape 1) : le **convoi** (règles dans `docs/game-design.md`), embarquer et débarquer,
 > sprites de carte des 4 peuples via Codex, buffle ashanti à la place de leur char.
 > Reste : l'IA qui produit et utilise des convois ; les combats dessinés du convoi (le
-> palanquin ashanti est archivé dans `art/raw/combat-dessine/archives/`) ; puis le **bateau**
-> (étape 2) : quota 3, tous types d'unités, tir comme une catapulte, sur les grands fleuves
-> et la mer (nouveau terrain).
+> palanquin ashanti est archivé dans `art/raw/combat-dessine/archives/`).
+>
+> Fait (étape 2) : le **bateau** (quota 3, tous types, tir comme une catapulte), la **mer**,
+> le **port**, la carte « La Côte des Comptoirs » (« Duel sur la côte » sur la page de garde),
+> images via Codex. Reste : l'IA des transports (convoi et bateau), les combats dessinés
+> du convoi et du bateau (silhouettes provisoires), un décor de mer.
 
 
 Nouvelles unités de transport, avec **un quota** (nombre d'unités embarquées) pour chacune,

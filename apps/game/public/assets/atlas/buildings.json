@@ -100,7 +100,7 @@
     "h": 64
    }
   },
-  "building/qg/almoravides": {
+  "building/port/almoravides": {
    "frame": {
     "x": 172,
     "y": 2,
@@ -120,7 +120,7 @@
     "h": 64
    }
   },
-  "building/qg/ashanti": {
+  "building/port/ashanti": {
    "frame": {
     "x": 206,
     "y": 2,
@@ -140,7 +140,7 @@
     "h": 64
    }
   },
-  "building/qg/carthage": {
+  "building/port/carthage": {
    "frame": {
     "x": 240,
     "y": 2,
@@ -160,7 +160,7 @@
     "h": 64
    }
   },
-  "building/qg/koush": {
+  "building/port/koush": {
    "frame": {
     "x": 274,
     "y": 2,
@@ -180,7 +180,7 @@
     "h": 64
    }
   },
-  "building/qg/neutre": {
+  "building/port/neutre": {
    "frame": {
     "x": 308,
     "y": 2,
@@ -200,7 +200,7 @@
     "h": 64
    }
   },
-  "building/village/almoravides": {
+  "building/qg/almoravides": {
    "frame": {
     "x": 342,
     "y": 2,
@@ -220,7 +220,7 @@
     "h": 64
    }
   },
-  "building/village/ashanti": {
+  "building/qg/ashanti": {
    "frame": {
     "x": 376,
     "y": 2,
@@ -240,7 +240,7 @@
     "h": 64
    }
   },
-  "building/village/carthage": {
+  "building/qg/carthage": {
    "frame": {
     "x": 410,
     "y": 2,
@@ -260,7 +260,7 @@
     "h": 64
    }
   },
-  "building/village/koush": {
+  "building/qg/koush": {
    "frame": {
     "x": 444,
     "y": 2,
@@ -280,10 +280,110 @@
     "h": 64
    }
   },
-  "building/village/neutre": {
+  "building/qg/neutre": {
    "frame": {
     "x": 478,
     "y": 2,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/almoravides": {
+   "frame": {
+    "x": 2,
+    "y": 68,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/ashanti": {
+   "frame": {
+    "x": 36,
+    "y": 68,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/carthage": {
+   "frame": {
+    "x": 70,
+    "y": 68,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/koush": {
+   "frame": {
+    "x": 104,
+    "y": 68,
+    "w": 32,
+    "h": 64
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 32,
+    "h": 64
+   },
+   "sourceSize": {
+    "w": 32,
+    "h": 64
+   }
+  },
+  "building/village/neutre": {
+   "frame": {
+    "x": 138,
+    "y": 68,
     "w": 32,
     "h": 64
    },
@@ -307,7 +407,7 @@
   "format": "RGBA8888",
   "size": {
    "w": 512,
-   "h": 68
+   "h": 134
   },
   "scale": "1"
  }

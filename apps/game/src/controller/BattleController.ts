@@ -12,6 +12,7 @@ import {
   findUnit,
   forecast,
   inBounds,
+  producesUnit,
   mergePath,
   reachableTiles,
   targetsInRange,
@@ -334,7 +335,10 @@ export class BattleController {
       return;
     }
     const building = buildingAt(this.state, tile.x, tile.y);
-    if (building?.type === 'caserne' && building.owner === this.state.currentPlayer) {
+    if (
+      (building?.type === 'caserne' || building?.type === 'port') &&
+      building.owner === this.state.currentPlayer
+    ) {
       await this.buildMenu(building);
       return;
     }
@@ -561,7 +565,10 @@ export class BattleController {
     if (unitAt(this.state, building.x, building.y)) return;
     const funds =
       this.state.players.find((player) => player.id === this.state.currentPlayer)?.funds ?? 0;
-    const items: MenuItem<UnitType>[] = UNIT_TYPES.map((type) => ({
+    // La caserne produit les troupes, le port les bateaux.
+    const items: MenuItem<UnitType>[] = UNIT_TYPES.filter((type) =>
+      producesUnit(building.type, type),
+    ).map((type) => ({
       value: type,
       label: UNITS[type].name,
       detail: String(UNITS[type].cost),

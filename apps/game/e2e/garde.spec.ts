@@ -140,3 +140,24 @@ test('Échap revient au choix de son peuple, puis ferme sans lancer de partie', 
   await expect(choice).toBeHidden();
   await expect(page).toHaveURL(/\/$/);
 });
+
+test('duel sur la côte : carte avec mer et ports, peuples au choix', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
+  await page.reload();
+  await page.getByRole('link', { name: /Duel sur la côte/ }).click();
+  await page
+    .getByRole('dialog', { name: 'Choisis ton peuple' })
+    .getByRole('link', { name: /Carthage/ })
+    .click();
+  await page
+    .getByRole('dialog', { name: "Choisis le peuple de l'IA" })
+    .getByRole('link', { name: /Koush/ })
+    .click();
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  const current = await state(page);
+  expect(current.map.name).toBe('La Côte des Comptoirs');
+  expect(current.players.map((player) => player.id)).toEqual(['carthage', 'koush']);
+  expect(current.buildings.filter((b) => b.type === 'port')).toHaveLength(2);
+});

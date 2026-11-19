@@ -4,8 +4,8 @@
  */
 
 export type UnitType =
-  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi';
-export type BuildingType = 'village' | 'caserne' | 'qg';
+  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi' | 'bateau';
+export type BuildingType = 'village' | 'caserne' | 'qg' | 'port';
 
 export const UNIT_SHEETS: Readonly<Record<UnitType, string>> = {
   fantassin: 'sprites-unités/fantassins-rouge.png',
@@ -18,6 +18,8 @@ export const UNIT_SHEETS: Readonly<Record<UnitType, string>> = {
   // Transport terrestre : chaque peuple a sa planche (peuples/<peuple>/) ; la commune
   // reprend celle de Carthage.
   convoi: 'sprites-unités/convoi-rouge.png',
+  // Bateau : une planche par peuple ; la commune reprend celle de Carthage.
+  bateau: 'sprites-unités/bateau-rouge.png',
 };
 
 /** Gabarit des planches d'unités (docs/bible-de-production.md) : 4×4 cases, une ligne par animation. */
@@ -58,6 +60,25 @@ export const RIVER_TILES = {
     'riviere-etroite/ns',
   ],
 } as const;
+
+/** Mer : une ligne de 4 variantes, au format des tuiles de base (facultative). */
+export const SEA_TILES = {
+  file: 'sprites-terrains/mer.png',
+  rows: ['mer'],
+  perRow: 4,
+} as const;
+
+/** Port : version neutre puis rouge, au format des bâtiments (facultatif). */
+export const PORT_TILES: {
+  readonly file: string;
+  readonly order: readonly (readonly [BuildingType, 'neutre' | 'rouge'])[];
+} = {
+  file: 'sprites-terrains/port.png',
+  order: [
+    ['port', 'neutre'],
+    ['port', 'rouge'],
+  ],
+};
 
 /** Bâtiments : pour chaque type, la version neutre puis la version rouge (Carthage). */
 export const BUILDING_TILES: {
