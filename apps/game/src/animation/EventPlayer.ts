@@ -152,6 +152,21 @@ export class EventPlayer {
       case 'unitWaited':
         units.get(event.unitId)?.setExhausted(true);
         return;
+      case 'unitHealed': {
+        // Soin au village, au début du tour : « +2 PV » en vert au-dessus de l'unité.
+        const healed = units.get(event.unitId);
+        if (!healed) return;
+        const gained = displayHp(event.hp) - displayHp(healed.hpShown);
+        healed.setHp(event.hp);
+        this.popup(
+          healed.container.x,
+          healed.container.y - T / 2,
+          `+${Math.max(1, gained)} PV`,
+          '#8fe388',
+        );
+        await this.wait(260);
+        return;
+      }
       case 'unitsMerged': {
         // L'unité arrivée se fond dans celle qu'elle rejoint, qui reprend des forces.
         const mover = units.get(event.unitId);

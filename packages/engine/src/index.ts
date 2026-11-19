@@ -41,6 +41,7 @@ export {
 } from './rules/combat';
 export { CAPTURE_POINTS, canCapture } from './rules/capture';
 export { MAX_HP, canMerge, mergeOutcome, mergePath } from './rules/merge';
+export { VILLAGE_HEAL } from './rules/heal';
 export { buildError, incomeFor } from './rules/economy';
 export { INCOME_FROM_DAY } from './rules/turn';
 export { ROUT_FROM_DAY } from './rules/victory';

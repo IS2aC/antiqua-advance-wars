@@ -116,6 +116,9 @@ et garder un rendu fluide.
 > alliée du même type et blessée, PV en trop remboursés en or (10 % du prix par PV),
 > l'unité fusionnée a fini son tour ; l'IA fusionne ses unités à 4 PV ou moins. Règle dans
 > `docs/game-design.md`.
+>
+> Ajouté au passage : soins au village (+2 PV par tour sur un village à soi, gratuits) ;
+> l'IA y envoie ses unités blessées.
 
 
 - Une unité blessée peut rejoindre une autre unité **du même type** de son camp (par

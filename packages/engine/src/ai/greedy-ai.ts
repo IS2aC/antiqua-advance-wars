@@ -24,7 +24,7 @@ import {
   unitAt,
 } from '../rules/grid';
 import { CAPTURE_POINTS } from '../rules/capture';
-import { canMerge } from '../rules/merge';
+import { MAX_HP, canMerge } from '../rules/merge';
 import { reachableTiles } from '../rules/movement';
 
 /**
@@ -53,6 +53,12 @@ const WEIGHTS = {
   blockBarracks: 600,
   /** Bonus pour frapper une unité qui capture un de nos bâtiments. */
   stopCapture: 800,
+  /**
+   * Bonus pour une unité blessée qui finit sur un de ses villages (soin de 2 PV au tour
+   * suivant), par PV interne manquant et par point de coût : environ 200 à 5 PV pour un
+   * fantassin, soit cinq cases d'écart.
+   */
+  heal: 0.004,
 } as const;
 
 /** Valeur d'un bâtiment pris (ou dont la capture progresse). */
@@ -286,6 +292,10 @@ function bestCandidate(state: GameState, unit: Unit, threats: readonly Threat[])
       (remaining === Infinity ? 0 : remaining * WEIGHTS.distance * stats.cost);
     if (building?.type === 'caserne' && building.owner === unit.owner) {
       position -= WEIGHTS.blockBarracks;
+    }
+    // Une unité blessée gagne à finir sur un de ses villages : +2 PV au prochain tour.
+    if (building?.type === 'village' && building.owner === unit.owner && unit.hp < MAX_HP) {
+      position += WEIGHTS.heal * (MAX_HP - unit.hp) * stats.cost;
     }
 
     const options: { action: Action; value: number; spared: number | null }[] = [

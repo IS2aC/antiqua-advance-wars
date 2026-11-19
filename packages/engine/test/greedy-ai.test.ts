@@ -48,6 +48,17 @@ describe('IA gloutonne : choix d’une action', () => {
     expect(planTurn(state)).toContainEqual({ type: 'MERGE', unitId: 1, targetId: 2 });
   });
 
+  it('une unité blessée va se soigner sur un de ses villages proches', () => {
+    const state = setup(['........', '..V.....'], {
+      units: [
+        { type: 'lancier', owner: K, x: 1, y: 0, hp: 40 },
+        { type: 'fantassin', owner: C, x: 7, y: 0 },
+      ],
+      owners: { '2,1': K },
+    });
+    expect(chooseGreedyAction(state)).toEqual({ type: 'MOVE', unitId: 1, to: { x: 2, y: 1 } });
+  });
+
   it('ne fusionne pas une unité encore solide', () => {
     const state = setup(['........', '........'], {
       units: [

@@ -176,6 +176,14 @@ export type GameEvent =
       readonly owner: PlayerId;
       readonly previousOwner: PlayerId | null;
     }
+  | {
+      /** Début de tour : l'unité, sur un de ses villages, a regagné des PV (`hp` internes). */
+      readonly type: 'unitHealed';
+      readonly unitId: number;
+      readonly x: number;
+      readonly y: number;
+      readonly hp: number;
+    }
   | { readonly type: 'unitBuilt'; readonly unit: Unit; readonly cost: number }
   | { readonly type: 'turnEnded'; readonly player: PlayerId }
   | { readonly type: 'turnStarted'; readonly player: PlayerId; readonly day: number }
