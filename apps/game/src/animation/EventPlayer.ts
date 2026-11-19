@@ -7,6 +7,7 @@ import {
   type CaptureSetup,
   type CombatSetup,
 } from '../combat/setup';
+import { playCaptureOnBoard } from '../view/CaptureFx';
 import type { Hud } from '../view/Hud';
 import type { MapView } from '../view/MapView';
 import { TEAM_COLORS } from '../view/palette';
@@ -26,7 +27,7 @@ export interface CombatPresenter {
   /** Réglage du joueur : scènes complètes, ou animation courte sur la carte. */
   enabled(): boolean;
   play(setup: CombatSetup): Promise<void>;
-  /** Scène de siège, de prise de bâtiment ou d'annexion du QG. */
+  /** Scène plein écran de l'annexion du QG adverse (les autres captures : sur le plateau). */
   capture(setup: CaptureSetup): Promise<void>;
 }
 
@@ -55,14 +56,30 @@ export class EventPlayer {
       let combatShown = false;
       let captureShown = false;
       for (const event of events) {
-        if (event.type === 'captureProgress' && before && this.combat?.enabled()) {
+        if (event.type === 'captureProgress' && before) {
           const captured = events.find(
             (e): e is Extract<GameEvent, { type: 'buildingCaptured' }> =>
               e.type === 'buildingCaptured' && e.x === event.x && e.y === event.y,
           );
           const setup = buildCaptureSetup(before, event, captured);
-          if (setup) {
+          if (setup?.annexation && this.combat?.enabled()) {
+            // Prise du QG adverse : la fin de la partie mérite la scène plein écran.
             await this.combat.capture(setup);
+            captureShown = true;
+          } else if (setup) {
+            // Capture ordinaire : jouée sur le plateau, sans quitter la carte.
+            await playCaptureOnBoard(this.scene, {
+              x: event.x,
+              y: event.y,
+              building: setup.building,
+              owner: setup.owner,
+              pointsBefore: setup.pointsBefore,
+              pointsAfter: setup.pointsAfter,
+              captured: setup.captured,
+              unit: this.views.units.get(event.unitId)?.container ?? null,
+              buildingVisual: this.views.map.buildingVisual(event.x, event.y),
+              syncMap: () => this.views.map.sync(state),
+            });
             captureShown = true;
           }
         }
@@ -70,7 +87,7 @@ export class EventPlayer {
           captureShown &&
           (event.type === 'captureProgress' || event.type === 'buildingCaptured')
         ) {
-          // Déjà montré en plein écran : la carte prend seulement l'état final du bâtiment.
+          // Déjà montré (plateau ou plein écran) : la carte prend l'état final du bâtiment.
           this.views.map.sync(state);
           continue;
         }
