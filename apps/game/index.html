@@ -87,6 +87,34 @@
 
             <a
               class="action"
+              href="./jeu.html?mode=ia&amp;carte=cote"
+              data-mode="ia"
+              data-choix-carte="cote"
+              data-duel
+            >
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 15c2 0 2-1.5 4.5-1.5S9.5 15 12 15s2-1.5 4.5-1.5S18.5 15 21 15" />
+                <path d="M6 12l6-8 6 8zM12 4v8" />
+              </svg>
+              <span class="action__label">Duel sur la côte</span>
+              <span class="action__detail">ports et bateaux</span>
+            </a>
+            <a
+              class="action"
+              href="./jeu.html?mode=ia&amp;carte=forteresse"
+              data-mode="ia"
+              data-choix-carte="forteresse"
+              data-duel
+            >
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 21V9l2-1v-3h2v3h2V5h4v3h2V5h2v3l2 1v12z" />
+                <path d="M10 21v-5h4v5" />
+              </svg>
+              <span class="action__label">Défense de forteresse</span>
+              <span class="action__detail">tiens ton QG face aux vagues</span>
+            </a>
+            <a
+              class="action"
               href="./jeu.html?mode=ia&amp;carte=carrefour"
               data-mode="ia"
               data-choix-carte="carrefour"
@@ -99,7 +127,10 @@
               <span class="action__detail">toi contre 3 IA</span>
             </a>
 
-            <!-- Provisoire : banc d'essai des combats dessinés, à retirer une fois validés. -->
+            <!--
+              Banc d'essai des combats dessinés (outil de test, caché aux joueurs) : en
+              développement, il reste ouvert par jeu.html?mode=proto. Décommenter pour le
+              remettre au menu.
             <a class="action" href="./jeu.html?mode=proto" data-mode="proto">
               <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 5h16v14H4z" />
@@ -108,6 +139,7 @@
               <span class="action__label">Animation (proto)</span>
               <span class="action__detail">banc d'essai</span>
             </a>
+            -->
           </nav>
 
           <p class="garde__hint">
@@ -115,11 +147,6 @@
             annuler.
           </p>
         </div>
-
-        <footer class="garde__footer">
-          <span>Prototype — Le Gué du Nil</span>
-          <span>Police du jeu : m5x7, Daniel Linssen</span>
-        </footer>
       </section>
     </main>
 

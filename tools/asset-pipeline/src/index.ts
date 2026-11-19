@@ -31,6 +31,8 @@ import { renderReport, type ReportImage } from './report';
 import {
   BASE_TILES,
   BUILDING_TILES,
+  PORT_TILES,
+  EXTRA_TILES,
   RIVER_TILES,
   ROAD_TILES,
   UNIT_SHEETS,
@@ -177,9 +179,36 @@ async function main(): Promise<void> {
     collect(processed);
     for (const [name, frame] of processed.frames) terrain.set(name, frame);
   }
+  // Mer, rempart, brèche, tour : planches facultatives, au format des tuiles de base.
+  for (const extra of EXTRA_TILES) {
+    if (!existsSync(join(RAW, extra.file))) {
+      warnings.push(`${extra.file} absent : ${extra.rows.join(', ')} sans tuile`);
+      continue;
+    }
+    const tiles = processBaseTiles(
+      quantize(await load(extra.file), palette, { team: false }),
+      extra,
+    );
+    await applyCleanOverrides(tiles, palette, false);
+    collect(tiles);
+    for (const [name, frame] of tiles.frames) terrain.set(name, frame);
+  }
   const buildings = collect(
     processBuildings(quantize(buildingSheet, palette, { team: true }), palette),
   );
+  // Port : planche facultative, au format des bâtiments.
+  if (existsSync(join(RAW, PORT_TILES.file))) {
+    const port = collect(
+      processBuildings(
+        quantize(await load(PORT_TILES.file), palette, { team: true }),
+        palette,
+        PORT_TILES,
+      ),
+    );
+    for (const [name, frame] of port.frames) buildings.frames.set(name, frame);
+  } else {
+    warnings.push(`${PORT_TILES.file} absent : le port s'affiche sans image`);
+  }
   await applyCleanOverrides(buildings, palette, true);
 
   // Scènes de combat : figurants par peuple et décors, découverts dans art/raw.

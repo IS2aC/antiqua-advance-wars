@@ -152,6 +152,27 @@ export class EventPlayer {
       case 'unitWaited':
         units.get(event.unitId)?.setExhausted(true);
         return;
+      case 'unitLoaded': {
+        // L'unité, arrivée sur le transport, y monte : elle disparaît, le compteur monte.
+        const passenger = units.get(event.unitId);
+        units.forget(event.unitId);
+        await passenger?.vanish();
+        const carrier = state.units.find((u) => u.id === event.transportId);
+        if (carrier) units.get(carrier.id)?.setCargo(carrier.cargo?.length ?? 0);
+        return;
+      }
+      case 'unitUnloaded': {
+        // L'unité réapparaît sur le transport, puis descend sur la case voisine.
+        const passenger = state.units.find((u) => u.id === event.unitId);
+        if (!passenger) return;
+        const sprite = units.get(passenger.id) ?? units.add({ ...passenger, ...event.from });
+        sprite.placeAt(event.from);
+        await sprite.walk([event.from, event.to]);
+        sprite.setExhausted(true);
+        const carrier = state.units.find((u) => u.id === event.transportId);
+        units.get(event.transportId)?.setCargo(carrier?.cargo?.length ?? 0);
+        return;
+      }
       case 'unitHealed': {
         // Soin au village, au début du tour : « +2 PV » en vert au-dessus de l'unité.
         const healed = units.get(event.unitId);
@@ -222,9 +243,42 @@ export class EventPlayer {
         // L'écran de fin est affiché par le contrôleur, une fois tous les événements joués.
         this.sync(state);
         return;
+      case 'wallDamaged': {
+        // Tir sur le rempart : le tireur vise, la case tremble, la solidité restante s'affiche.
+        const shooter = units.get(event.unitId);
+        await shooter?.lungeAt(event.x * T + T / 2, event.y * T + T / 2);
+        this.scene.cameras.main.shake(140, 0.004);
+        this.popup(
+          event.x * T + T / 2,
+          event.y * T,
+          event.hp > 0 ? `Rempart ${Math.ceil(event.hp / 10)}` : 'Brèche !',
+          '#ffb27a',
+        );
+        await this.wait(320);
+        return;
+      }
+      case 'wallBreached':
+        this.views.map.refreshTile(state, event.x, event.y);
+        await this.wait(200);
+        return;
+      case 'reinforcements': {
+        // Défense de forteresse : bandeau, puis les renforts apparaissent aux bords.
+        await banner.show(`Renforts ennemis : vague ${event.wave}`, TEAM_COLORS[event.player]);
+        for (const unit of event.units) {
+          const sprite = units.get(unit.id) ?? units.add(unit);
+          void sprite.appear();
+        }
+        await this.wait(400);
+        return;
+      }
+      case 'playerDefeated':
+        // Le royaume vaincu quitte la carte : bandeau, puis ses unités disparaissent et ses
+        // bâtiments redeviennent neutres.
+        await banner.show(`${FACTIONS[event.player].name} est vaincu`, TEAM_COLORS[event.player]);
+        this.sync(state);
+        return;
       case 'captureReset':
       case 'fundsGained':
-      case 'playerDefeated':
         return;
     }
   }

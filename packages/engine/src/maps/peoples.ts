@@ -21,5 +21,6 @@ export function assignPeoples(map: MapDefinition, peoples: readonly PlayerId[]):
     })),
     units: map.units.map((unit) => ({ ...unit, owner: rename(unit.owner) })),
     players: map.players.map(rename),
+    ...(map.siege ? { siege: { ...map.siege, defender: rename(map.siege.defender) } } : {}),
   };
 }

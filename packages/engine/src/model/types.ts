@@ -6,11 +6,13 @@
 /** Factions jouables (Stage 1 : Koush contre Carthage). */
 export type PlayerId = 'koush' | 'carthage' | 'ashanti' | 'almoravides';
 
-export type UnitType = 'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte';
+export type UnitType =
+  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi' | 'bateau';
 
-export type MoveType = 'pied' | 'lourd' | 'monture' | 'roues';
+/** `naval` : bateaux, sur la mer, les rivières et les ports seulement. */
+export type MoveType = 'pied' | 'lourd' | 'monture' | 'roues' | 'naval';
 
-export type BuildingType = 'village' | 'caserne' | 'qg';
+export type BuildingType = 'village' | 'caserne' | 'qg' | 'port';
 
 export type TerrainType =
   | 'plaine'
@@ -22,6 +24,13 @@ export type TerrainType =
   | 'route'
   | 'riviere'
   | 'pont'
+  | 'mer'
+  // Siège : rempart (bloque tout, la catapulte y ouvre une brèche), brèche (éboulis
+  // praticable), tour (poste de tir sur le rempart), douves (fossé d'eau, passé par un pont).
+  | 'rempart'
+  | 'breche'
+  | 'tour'
+  | 'douves'
   | BuildingType;
 
 export interface Position {
@@ -47,6 +56,8 @@ export interface Unit {
   readonly hp: number;
   readonly hasMoved: boolean;
   readonly hasActed: boolean;
+  /** Unités transportées (convoi) : hors de la carte tant qu'elles sont à bord. */
+  readonly cargo?: readonly Unit[];
 }
 
 export interface Building {
@@ -73,6 +84,10 @@ export interface Player {
 export type GameStatus = 'playing' | 'finished';
 
 export interface GameState {
+  /** Partie en mode « défense de forteresse » (absent : combat classique). */
+  readonly siege?: SiegeMode;
+  /** Solidité des remparts entamés, par case « x,y » (absent : intact). */
+  readonly walls?: Readonly<Record<string, number>>;
   readonly map: GameMap;
   readonly units: readonly Unit[];
   readonly buildings: readonly Building[];
@@ -107,6 +122,8 @@ export interface MapDefinition {
   }[];
   readonly players: readonly PlayerId[];
   readonly startingFunds: number;
+  /** Carte de siège : le camp défenseur et les cases d'entrée des renforts. */
+  readonly siege?: { readonly defender: PlayerId; readonly entries: readonly Position[] };
 }
 
 export type Action =
@@ -116,10 +133,32 @@ export type Action =
   | { readonly type: 'WAIT'; readonly unitId: number }
   /** L'unité rejoint une unité alliée du même type (sur sa case) : fusion. */
   | { readonly type: 'MERGE'; readonly unitId: number; readonly targetId: number }
+  /** L'unité monte dans un transport allié (en allant sur sa case). */
+  | { readonly type: 'LOAD'; readonly unitId: number; readonly transportId: number }
+  /** Le transport dépose une unité à bord sur une case voisine. */
+  | {
+      readonly type: 'UNLOAD';
+      readonly transportId: number;
+      readonly unitId: number;
+      readonly to: Position;
+    }
   | { readonly type: 'BUILD'; readonly x: number; readonly y: number; readonly unitType: UnitType }
+  /** La catapulte tire sur un rempart (case x, y). */
+  | { readonly type: 'FIRE_WALL'; readonly unitId: number; readonly x: number; readonly y: number }
   | { readonly type: 'END_TURN' };
 
-export type DefeatReason = 'hq' | 'rout';
+/** `siege` : l'assaillant n'a pas pris la forteresse à temps. */
+export type DefeatReason = 'hq' | 'rout' | 'siege';
+
+/**
+ * Défense de forteresse : le défenseur doit tenir son QG jusqu'au jour `untilDay` inclus ;
+ * l'assaillant reçoit des renforts tous les 3 jours par les cases d'entrée.
+ */
+export interface SiegeMode {
+  readonly defender: PlayerId;
+  readonly untilDay: number;
+  readonly entries: readonly Position[];
+}
 
 /** Résultat d'une frappe : `attackerId` frappe `defenderId`. */
 interface StrikeEvent {
@@ -177,6 +216,23 @@ export type GameEvent =
       readonly previousOwner: PlayerId | null;
     }
   | {
+      readonly type: 'wallDamaged';
+      readonly unitId: number;
+      readonly x: number;
+      readonly y: number;
+      /** Solidité restante (0 : brèche). */
+      readonly hp: number;
+    }
+  | { readonly type: 'wallBreached'; readonly x: number; readonly y: number }
+  | { readonly type: 'unitLoaded'; readonly unitId: number; readonly transportId: number }
+  | {
+      readonly type: 'unitUnloaded';
+      readonly unitId: number;
+      readonly transportId: number;
+      readonly from: Position;
+      readonly to: Position;
+    }
+  | {
       /** Début de tour : l'unité, sur un de ses villages, a regagné des PV (`hp` internes). */
       readonly type: 'unitHealed';
       readonly unitId: number;
@@ -192,6 +248,13 @@ export type GameEvent =
       readonly player: PlayerId;
       readonly amount: number;
       readonly funds: number;
+    }
+  /** Vague de renforts de l'assaillant (défense de forteresse). */
+  | {
+      readonly type: 'reinforcements';
+      readonly player: PlayerId;
+      readonly wave: number;
+      readonly units: readonly Unit[];
     }
   | { readonly type: 'playerDefeated'; readonly player: PlayerId; readonly reason: DefeatReason }
   | { readonly type: 'gameOver'; readonly winner: PlayerId | null };

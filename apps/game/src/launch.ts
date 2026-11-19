@@ -1,4 +1,4 @@
-import { FACTIONS, type PlayerId } from '@antiqua/engine';
+import { FACTIONS, SIEGE_DAYS, type PlayerId, type SiegeDifficulty } from '@antiqua/engine';
 import { clearSave, loadGame } from './persistence/save';
 import { MAPS, mapFromParam, type MapId } from './maps';
 import type { BattleData } from './scenes/BattleScene';
@@ -43,11 +43,22 @@ export function duelPeoples(map: MapId, params: URLSearchParams): [PlayerId, Pla
   return human === rival ? null : [human, rival];
 }
 
+/** Défense de forteresse : jours à tenir d'après `difficulte=` (normal par défaut). */
+function siegeDaysOf(map: MapId, params: URLSearchParams): { siegeDays?: number } {
+  if (!MAPS[map].siege) return {};
+  const level = params.get('difficulte');
+  const days =
+    level !== null && Object.hasOwn(SIEGE_DAYS, level)
+      ? SIEGE_DAYS[level as SiegeDifficulty]
+      : SIEGE_DAYS.normal;
+  return { siegeDays: days };
+}
+
 function newGame(mode: string | null, params: URLSearchParams): BattleData | null {
   const map = mapFromParam(params.get('carte'));
   if (mode === 'ia') {
     const duel = duelPeoples(map, params);
-    if (duel) return { aiPlayers: [duel[1]], map, peoples: duel };
+    if (duel) return { aiPlayers: [duel[1]], map, peoples: duel, ...siegeDaysOf(map, params) };
     return { aiPlayers: aiPlayersOf(map, humanFromParam(params.get('peuple'), map)), map };
   }
   if (mode === 'deux') return { map };

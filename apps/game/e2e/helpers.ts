@@ -19,11 +19,14 @@ const LOGICAL_WIDTH = 640;
 
 export async function waitForScene(page: Page, key: 'Title' | 'Battle' | 'Capture'): Promise<void> {
   await expect
-    .poll(() =>
-      page.evaluate(
-        (k) => (window as DebugWindow).__ANTIQUA_GAME__?.scene.isActive(k) ?? false,
-        key,
-      ),
+    .poll(
+      () =>
+        page.evaluate(
+          (k) => (window as DebugWindow).__ANTIQUA_GAME__?.scene.isActive(k) ?? false,
+          key,
+        ),
+      // Chargement des atlas : long en WebGL logiciel sur une machine chargée.
+      { timeout: 30_000 },
     )
     .toBe(true);
 }

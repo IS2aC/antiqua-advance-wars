@@ -42,7 +42,7 @@ export class UnitSprite {
     // Carthage part du haut à droite : ses unités regardent vers la gauche au départ.
     this.facing = unit.owner === 'carthage' ? 'left' : 'right';
     const parts: Phaser.GameObjects.GameObject[] = [];
-    if (hasUnitArt(scene, unit.owner)) {
+    if (hasUnitArt(scene, unit.owner, unit.type)) {
       this.sprite = scene.add.sprite(0, 0, unitAtlas(unit.owner), `unit/${unit.type}/idle/0`);
       parts.push(this.sprite);
     } else {
@@ -53,13 +53,23 @@ export class UnitSprite {
       parts.push(this.body, this.label);
     }
     this.hp = tileText(scene, T / 2 - 1, T / 2 - 1, '', 9).setOrigin(1);
-    this.container = scene.add.container(0, 0, [...parts, this.hp]).setDepth(10);
+    // Passagers à bord d'un transport : petit compteur en haut à gauche.
+    this.cargo = tileText(scene, -T / 2 + 1, -T / 2 + 1, '', 9)
+      .setOrigin(0)
+      .setColor('#8fe388');
+    this.container = scene.add.container(0, 0, [...parts, this.hp, this.cargo]).setDepth(10);
     this.placeAt(unit);
     this.update(unit);
     this.playIdle();
   }
 
   private currentHp = 100;
+  private readonly cargo: Phaser.GameObjects.Text;
+
+  /** Nombre d'unités à bord (transport), affiché sur le sprite. */
+  setCargo(count: number): void {
+    this.cargo.setText(count > 0 ? `+${count}` : '');
+  }
 
   placeAt(position: Position): void {
     this.container.setPosition(position.x * T + T / 2, position.y * T + T / 2);
@@ -67,6 +77,7 @@ export class UnitSprite {
 
   update(unit: Unit): void {
     this.setHp(unit.hp);
+    this.setCargo(unit.cargo?.length ?? 0);
     this.setExhausted(unit.hasActed);
   }
 
@@ -122,8 +133,13 @@ export class UnitSprite {
 
   /** Petit élan vers la cible. */
   async lunge(target: UnitSprite): Promise<void> {
-    const dx = Math.sign(target.container.x - this.container.x) * 4;
-    const dy = Math.sign(target.container.y - this.container.y) * 4;
+    await this.lungeAt(target.container.x, target.container.y);
+  }
+
+  /** Petit élan vers un point de la carte (par exemple un rempart visé). */
+  async lungeAt(x: number, y: number): Promise<void> {
+    const dx = Math.sign(x - this.container.x) * 4;
+    const dy = Math.sign(y - this.container.y) * 4;
     if (dx !== 0) {
       this.facing = dx > 0 ? 'right' : 'left';
       this.playIdle();

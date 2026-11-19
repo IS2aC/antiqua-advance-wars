@@ -5,6 +5,8 @@ import type { GameState, MapDefinition } from './model/types';
 export interface GameOptions {
   /** Graine du PRNG : même graine + mêmes actions = même partie. */
   readonly seed: number;
+  /** Carte de siège : nombre de jours à tenir (mode « défense de forteresse »). */
+  readonly siegeDays?: number;
 }
 
 /**
@@ -79,5 +81,8 @@ export function createGame(definition: MapDefinition, options: GameOptions): Gam
     nextUnitId: definition.units.length + 1,
     status: 'playing',
     winner: null,
+    ...(definition.siege && options.siegeDays
+      ? { siege: { ...definition.siege, untilDay: options.siegeDays } }
+      : {}),
   };
 }

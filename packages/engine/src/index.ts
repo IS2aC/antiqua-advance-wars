@@ -11,7 +11,7 @@ export const ENGINE_VERSION = '0.1.0';
 export type * from './model/types';
 export type { ActionError, ActionErrorCode } from './model/errors';
 
-export { UNITS, UNIT_TYPES, isIndirect, type UnitStats } from './data/units';
+export { UNITS, UNIT_TYPES, canAttack, isIndirect, type UnitStats } from './data/units';
 export { TERRAINS, movementCost, type TerrainStats } from './data/terrains';
 export { BASE_DAMAGE } from './data/damage-table';
 export { FACTIONS, type FactionInfo } from './data/factions';
@@ -42,7 +42,8 @@ export {
 export { CAPTURE_POINTS, canCapture } from './rules/capture';
 export { MAX_HP, canMerge, mergeOutcome, mergePath } from './rules/merge';
 export { VILLAGE_HEAL } from './rules/heal';
-export { buildError, incomeFor } from './rules/economy';
+export { canLoad, freeSeats, loadPath, unloadTiles } from './rules/transport';
+export { buildError, incomeFor, producesUnit } from './rules/economy';
 export { INCOME_FROM_DAY } from './rules/turn';
 export { ROUT_FROM_DAY } from './rules/victory';
 
@@ -52,6 +53,10 @@ export { createGame, type GameOptions } from './setup';
 export { ASCII_LEGEND, parseAsciiMap, rotateRows, type ParsedAsciiMap } from './maps/ascii';
 export { GUE_DU_NIL, GUE_DU_NIL_ROWS } from './maps/gue-du-nil';
 export { CARREFOUR, CARREFOUR_ROWS } from './maps/carrefour';
+export { COTE, COTE_ROWS } from './maps/cote';
+export { FORTERESSE, FORTERESSE_ROWS } from './maps/forteresse';
+export { WALL_DAMAGE, WALL_HP, wallHp, wallsInRange } from './rules/siege';
+export { SIEGE_DAYS, WAVE_EVERY, waveUnits, type SiegeDifficulty } from './rules/siege-mode';
 export { assignPeoples } from './maps/peoples';
 
 export { chooseRandomAction, type AgentDecision } from './ai/random-ai';

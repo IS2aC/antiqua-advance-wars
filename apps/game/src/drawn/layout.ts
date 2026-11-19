@@ -19,7 +19,7 @@ export type Pose = (typeof POSES)[number];
 export const EXPRESSIONS = ['neutral', 'shout', 'hurt', 'smile'] as const;
 export type Expression = (typeof EXPRESSIONS)[number];
 
-const LARGE_UNITS: ReadonlySet<UnitType> = new Set(['cavalerie', 'char', 'catapulte']);
+const LARGE_UNITS: ReadonlySet<UnitType> = new Set(['cavalerie', 'char', 'catapulte', 'convoi']);
 
 /**
  * Figurants dessinés : un pour 2 PV (5 au plus) ; montures et engins, un pour 4 PV
@@ -57,7 +57,10 @@ export function decorCandidates(terrain: TerrainType): string[] {
     terrain === 'caserne' ||
     terrain === 'qg'
       ? 'plaine'
-      : terrain;
+      : // Mer et port : en attendant leur propre décor, celui du fleuve.
+        terrain === 'mer' || terrain === 'port'
+        ? 'riviere'
+        : terrain;
   return [name, 'savane'];
 }
 

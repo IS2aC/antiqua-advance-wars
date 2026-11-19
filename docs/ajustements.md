@@ -130,7 +130,18 @@ et garder un rendu fluide.
   de test), un choix « Fusionner » dans le menu d'action quand on arrive sur une unité alliée
   du même type (`BattleController`, `ActionMenu`), et l'IA (`greedy-ai.ts`).
 
-## 7. Moyens de transport, propres à chaque peuple
+## 7. Moyens de transport, propres à chaque peuple — transport terrestre fait
+
+> Fait (étape 1) : le **convoi** (règles dans `docs/game-design.md`), embarquer et débarquer,
+> sprites de carte des 4 peuples via Codex, buffle ashanti à la place de leur char.
+> Reste : l'IA qui produit et utilise des convois ; les combats dessinés du convoi (le
+> palanquin ashanti est archivé dans `art/raw/combat-dessine/archives/`).
+>
+> Fait (étape 2) : le **bateau** (quota 3, tous types, tir comme une catapulte), la **mer**,
+> le **port**, la carte « La Côte des Comptoirs » (« Duel sur la côte » sur la page de garde),
+> images via Codex. Reste : l'IA des transports (convoi et bateau), les combats dessinés
+> du convoi et du bateau (silhouettes provisoires), un décor de mer.
+
 
 Nouvelles unités de transport, avec **un quota** (nombre d'unités embarquées) pour chacune,
 à fixer ensemble. Sprites de carte et animations (combats dessinés compris) d'après
@@ -172,3 +183,31 @@ l'histoire de chaque peuple, comme pour les autres unités.
   - moteur : `BuildingType` (aujourd'hui village, caserne, QG) et leurs règles ;
   - rendu : sprites de bâtiment et animation de capture sur le plateau ;
   - cartes : placement des nouveaux bâtiments.
+
+## 9. Deux modes de jeu : combat classique et défense de forteresse — fait
+
+- **Combat classique** : le mode actuel (prendre le QG adverse ou détruire toutes ses unités).
+- **Défense de la forteresse** : le joueur doit **tenir son QG pendant un nombre de jours**
+  (minuteur) face à des adversaires (IA) **beaucoup mieux équipés**. Il gagne s'il tient
+  jusqu'au bout, perd si son QG tombe.
+- Décidé (brainstorming du 19/11/2026) :
+  - **durée selon la difficulté**, choisie sur la page de garde : facile 10 jours,
+    normal 15, difficile 20 ;
+  - **vagues de renforts** : une armée de départ, puis des renforts tous les 3 jours qui
+    entrent par les bords de la carte, de plus en plus forts (catapultes, chars) ; un
+    bandeau annonce chaque vague ;
+  - **aucune aide au défenseur** (ni garnison, ni soins, ni revenus en plus) ;
+  - **carte dédiée, 1 adversaire** : « La Forteresse », le QG du joueur au centre d'une
+    citadelle, l'ennemi arrivant de plusieurs côtés ; le joueur choisit son peuple et
+    celui de l'assaillant.
+  - **Terrains de siège faits** : rempart (la catapulte y ouvre une brèche), tour (+1 de
+    portée aux tireurs), douves (passées par un pont) ; images via Codex. Pas de case
+    « porte » : les ouvertures du rempart sont des cases normales, ouvertes à tous.
+  - **Mode fait** : carte « La Forteresse », minuteur selon la difficulté, vagues tous les
+    3 jours, victoire en tenant ; « Défense de forteresse » sur la page de garde (peuple,
+    assaillant, difficulté). Reste éventuellement : apprendre à l'IA à abattre les remparts
+    (aujourd'hui elle passe par les portes).
+- Code : un mode de partie dans l'état (`mode: 'classique' | 'forteresse'`, jour limite),
+  une condition de victoire de plus dans `rules/victory.ts`, l'IA adverse inchangée (elle
+  attaque déjà le QG), une entrée sur la page de garde.
+

@@ -66,6 +66,7 @@ const CAPTURE_VALUE: Readonly<Record<BuildingType, number>> = {
   village: 1200,
   caserne: 1800,
   qg: 3000,
+  port: 1200,
 };
 
 /** Prendre le QG adverse gagne la partie. */
@@ -90,6 +91,9 @@ const CATEGORY_OF: Readonly<Record<UnitType, Category>> = {
   char: 'mobile',
   archers: 'indirect',
   catapulte: 'indirect',
+  // Le convoi ne combat pas : il n'entre pas dans la composition visée.
+  convoi: 'mobile',
+  bateau: 'indirect',
 };
 
 const NEIGHBOURS: readonly Position[] = [
@@ -377,7 +381,11 @@ function chooseUnitType(state: GameState, funds: number): UnitType | null {
     const choice = preferences[category].find(affordable);
     if (choice) return choice;
   }
-  return UNIT_TYPES.filter(affordable).sort((a, b) => UNITS[a].cost - UNITS[b].cost)[0] ?? null;
+  return (
+    UNIT_TYPES.filter((type) => affordable(type) && !UNITS[type].transport).sort(
+      (a, b) => UNITS[a].cost - UNITS[b].cost,
+    )[0] ?? null
+  );
 }
 
 function chooseBuild(state: GameState): Action | null {
