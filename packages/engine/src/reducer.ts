@@ -8,6 +8,7 @@ import { buildError, resolveBuild } from './rules/economy';
 import { buildingAt, findUnit, inBounds, samePosition, unitAt } from './rules/grid';
 import { findPath } from './rules/movement';
 import { mergeError, resolveMerge } from './rules/merge';
+import { loadError, resolveLoad, resolveUnload, unloadError } from './rules/transport';
 import { endTurn } from './rules/turn';
 import { checkGameOver, checkRout } from './rules/victory';
 
@@ -18,6 +19,7 @@ export type ActionResult =
 type MoveAction = Extract<Action, { type: 'MOVE' }>;
 type AttackAction = Extract<Action, { type: 'ATTACK' }>;
 type BuildAction = Extract<Action, { type: 'BUILD' }>;
+type UnloadAction = Extract<Action, { type: 'UNLOAD' }>;
 
 function failure(code: ActionErrorCode, message: string): ActionResult {
   return { ok: false, error: actionError(code, message) };
@@ -134,6 +136,30 @@ function merge(state: GameState, unitId: number, targetId: number): ActionResult
   return success(draft, events);
 }
 
+function load(state: GameState, unitId: number, transportId: number): ActionResult {
+  const unit = commandableUnit(state, unitId);
+  if (isResult(unit)) return unit;
+  const error = loadError(state, unit, transportId);
+  if (error) return { ok: false, error };
+  const transport = findUnit(state, transportId);
+  if (!transport) return failure('TARGET_NOT_FOUND', `Unité ${transportId} introuvable.`);
+  const draft = cloneState(state);
+  const events: GameEvent[] = [];
+  resolveLoad(draft, events, state, unit, transport);
+  return success(draft, events);
+}
+
+function unload(state: GameState, action: UnloadAction): ActionResult {
+  const transport = commandableUnit(state, action.transportId);
+  if (isResult(transport)) return transport;
+  const error = unloadError(state, transport, action.unitId, action.to);
+  if (error) return { ok: false, error };
+  const draft = cloneState(state);
+  const events: GameEvent[] = [];
+  resolveUnload(draft, events, transport, action.unitId, action.to);
+  return success(draft, events);
+}
+
 function build(state: GameState, action: BuildAction): ActionResult {
   const error = buildError(state, action.x, action.y, action.unitType);
   if (error) return { ok: false, error };
@@ -170,6 +196,10 @@ export function applyAction(state: GameState, action: Action): ActionResult {
       return wait(state, action.unitId);
     case 'MERGE':
       return merge(state, action.unitId, action.targetId);
+    case 'LOAD':
+      return load(state, action.unitId, action.transportId);
+    case 'UNLOAD':
+      return unload(state, action);
     case 'BUILD':
       return build(state, action);
     case 'END_TURN':

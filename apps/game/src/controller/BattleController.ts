@@ -6,6 +6,7 @@ import {
   buildingAt,
   chooseGreedyAction,
   canCapture,
+  canLoad,
   canMerge,
   findPath,
   findUnit,
@@ -16,6 +17,7 @@ import {
   targetsInRange,
   threatTiles,
   unitAt,
+  unloadTiles,
   type Action,
   type Building,
   type GameState,
@@ -53,7 +55,14 @@ const T = TILE_SIZE;
 type Mode =
   'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'paused' | 'over';
 
-type Command = 'attack' | 'capture' | 'wait' | 'merge';
+type Command = 'attack' | 'capture' | 'wait' | 'merge' | 'load' | 'unload';
+
+const DIRECTION_NAMES: Readonly<Record<string, string>> = {
+  '0,-1': 'Nord',
+  '1,0': 'Est',
+  '0,1': 'Sud',
+  '-1,0': 'Ouest',
+};
 
 export interface ControllerViews {
   readonly cursor: Cursor;
@@ -85,6 +94,8 @@ export class BattleController {
   private reachable: Position[] = [];
   /** Unités alliées que l'unité sélectionnée peut rejoindre (fusion). */
   private mergeTargets: Unit[] = [];
+  /** Transports alliés où l'unité sélectionnée peut monter. */
+  private loadTargets: Unit[] = [];
   private targets: Unit[] = [];
   private targetIndex = 0;
   private resolveTarget: ((target: Unit | null) => void) | null = null;
@@ -334,8 +345,9 @@ export class BattleController {
     this.selectedId = unit.id;
     this.reachable = unit.hasMoved ? [unit] : reachableTiles(this.state, unit.id);
     this.mergeTargets = this.state.units.filter((other) => canMerge(this.state, unit.id, other.id));
+    this.loadTargets = this.state.units.filter((other) => canLoad(this.state, unit.id, other.id));
     this.views.overlay.show(
-      [...this.reachable, ...this.mergeTargets],
+      [...this.reachable, ...this.mergeTargets, ...this.loadTargets],
       threatTiles(this.state, unit.id),
     );
     this.mode = 'selected';
@@ -352,6 +364,7 @@ export class BattleController {
     this.selectedId = null;
     this.reachable = [];
     this.mergeTargets = [];
+    this.loadTargets = [];
     this.views.overlay.clear();
     this.views.arrow.clear();
     if (this.mode !== 'over') this.mode = 'idle';
@@ -359,7 +372,9 @@ export class BattleController {
 
   private updateArrow(tile: Position): void {
     const unit = this.selectedId === null ? undefined : findUnit(this.state, this.selectedId);
-    const ally = this.mergeTargets.find((candidate) => same(candidate, tile));
+    const ally = [...this.mergeTargets, ...this.loadTargets].find((candidate) =>
+      same(candidate, tile),
+    );
     const path = !unit
       ? null
       : ally
@@ -378,7 +393,9 @@ export class BattleController {
     if (!unit) return this.clearSelection();
     if (same(unit, tile)) return this.commandMenu(unit.id, null);
     const ally = this.mergeTargets.find((candidate) => same(candidate, tile));
-    if (ally) return this.mergeMenu(unit, ally);
+    if (ally) return this.joinMenu(unit, ally, 'merge');
+    const transport = this.loadTargets.find((candidate) => same(candidate, tile));
+    if (transport) return this.joinMenu(unit, transport, 'load');
     if (!this.reachable.some((candidate) => same(candidate, tile))) return this.clearSelection();
 
     const before = this.state;
@@ -395,21 +412,70 @@ export class BattleController {
    * Destination sur une unité alliée du même type, blessée : menu « Fusionner ». Échap
    * revient au choix de la destination (rien n'a bougé).
    */
-  private async mergeMenu(unit: Unit, ally: Unit): Promise<void> {
+  private async joinMenu(unit: Unit, ally: Unit, kind: 'merge' | 'load'): Promise<void> {
     this.views.overlay.clear();
     this.mode = 'menu';
     const choice = await this.views.menu.open<Command>(
-      [{ value: 'merge', label: 'Fusionner' }],
+      [{ value: kind, label: kind === 'merge' ? 'Fusionner' : 'Embarquer' }],
       this.screenPosition(ally),
     );
     this.views.arrow.clear();
-    if (choice !== 'merge') {
+    if (choice !== kind) {
       const restored = findUnit(this.state, unit.id);
       if (restored) this.select(restored);
       else this.clearSelection();
       return;
     }
-    await this.execute({ type: 'MERGE', unitId: unit.id, targetId: ally.id });
+    await this.execute(
+      kind === 'merge'
+        ? { type: 'MERGE', unitId: unit.id, targetId: ally.id }
+        : { type: 'LOAD', unitId: unit.id, transportId: ally.id },
+    );
+    this.clearSelection();
+  }
+
+  /**
+   * Débarquer : choix de l'unité à bord (s'il y en a plusieurs), puis de la case voisine.
+   * Échap revient au menu du transport. Le transport peut ensuite débarquer encore ou
+   * attendre ; il ne peut plus bouger.
+   */
+  private async unloadMenu(transport: Unit, beforeMove: GameState | null): Promise<void> {
+    const aboard = (transport.cargo ?? []).filter(
+      (passenger) => unloadTiles(this.state, transport.id, passenger.id).length > 0,
+    );
+    const anchor = this.screenPosition(transport);
+    let passenger = aboard[0];
+    if (aboard.length > 1) {
+      const id = await this.views.menu.open(
+        aboard.map((u) => ({
+          value: String(u.id),
+          label: `${UNITS[u.type].name} (${Math.ceil(u.hp / 10)} PV)`,
+        })),
+        anchor,
+      );
+      passenger = aboard.find((u) => String(u.id) === id);
+    }
+    if (!passenger) return this.commandMenu(transport.id, beforeMove);
+    const tiles = unloadTiles(this.state, transport.id, passenger.id);
+    this.views.overlay.show(tiles, []);
+    const key = await this.views.menu.open(
+      tiles.map((t) => {
+        const k = `${t.x - transport.x},${t.y - transport.y}`;
+        return { value: k, label: `Débarquer : ${DIRECTION_NAMES[k] ?? k}` };
+      }),
+      anchor,
+    );
+    this.views.overlay.clear();
+    const tile = tiles.find((t) => `${t.x - transport.x},${t.y - transport.y}` === key);
+    if (!tile) return this.commandMenu(transport.id, beforeMove);
+    await this.execute({
+      type: 'UNLOAD',
+      transportId: transport.id,
+      unitId: passenger.id,
+      to: tile,
+    });
+    const after = findUnit(this.state, transport.id);
+    if (after && !after.hasActed && this.mode !== 'over') return this.commandMenu(after.id, null);
     this.clearSelection();
   }
 
@@ -424,6 +490,9 @@ export class BattleController {
     const items: MenuItem<Command>[] = [];
     if (targets.length > 0) items.push({ value: 'attack', label: 'Attaquer' });
     if (canCapture(this.state, unitId)) items.push({ value: 'capture', label: 'Capturer' });
+    if ((unit.cargo ?? []).some((p) => unloadTiles(this.state, unitId, p.id).length > 0)) {
+      items.push({ value: 'unload', label: 'Débarquer' });
+    }
     items.push({ value: 'wait', label: 'Attendre' });
 
     this.mode = 'menu';
@@ -440,6 +509,7 @@ export class BattleController {
       return;
     }
 
+    if (choice === 'unload') return this.unloadMenu(unit, beforeMove);
     let action: Action;
     if (choice === 'attack') {
       const target = await this.pickTarget(targets);
@@ -588,9 +658,17 @@ export class BattleController {
         this.views.overlay.clear();
         return;
       }
+      case 'UNLOAD':
+        this.pointAt(action.to, 3);
+        await this.pause(AI_PREVIEW / 2);
+        return;
+      case 'LOAD':
       case 'MERGE': {
         const unit = findUnit(this.state, action.unitId);
-        const ally = findUnit(this.state, action.targetId);
+        const ally = findUnit(
+          this.state,
+          action.type === 'MERGE' ? action.targetId : action.transportId,
+        );
         const path = unit && ally ? mergePath(this.state, unit.id, ally) : null;
         if (!unit || !path) return;
         this.pointAt(unit, 3);

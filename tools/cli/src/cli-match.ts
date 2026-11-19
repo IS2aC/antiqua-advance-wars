@@ -29,6 +29,7 @@ const UNIT_LETTERS: Record<UnitType, string> = {
   cavalerie: 'c',
   char: 'r',
   catapulte: 't',
+  convoi: 'v',
 };
 const COLORS: Record<PlayerId, string> = {
   koush: '\x1b[34m',

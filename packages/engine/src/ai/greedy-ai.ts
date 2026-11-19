@@ -90,6 +90,8 @@ const CATEGORY_OF: Readonly<Record<UnitType, Category>> = {
   char: 'mobile',
   archers: 'indirect',
   catapulte: 'indirect',
+  // Le convoi ne combat pas : il n'entre pas dans la composition visée.
+  convoi: 'mobile',
 };
 
 const NEIGHBOURS: readonly Position[] = [
@@ -377,7 +379,11 @@ function chooseUnitType(state: GameState, funds: number): UnitType | null {
     const choice = preferences[category].find(affordable);
     if (choice) return choice;
   }
-  return UNIT_TYPES.filter(affordable).sort((a, b) => UNITS[a].cost - UNITS[b].cost)[0] ?? null;
+  return (
+    UNIT_TYPES.filter((type) => affordable(type) && !UNITS[type].transport).sort(
+      (a, b) => UNITS[a].cost - UNITS[b].cost,
+    )[0] ?? null
+  );
 }
 
 function chooseBuild(state: GameState): Action | null {

@@ -1,6 +1,6 @@
 import { BASE_DAMAGE } from '../data/damage-table';
 import { TERRAINS } from '../data/terrains';
-import { UNITS, isIndirect } from '../data/units';
+import { UNITS, canAttack, isIndirect } from '../data/units';
 import { draftPlayer, type Draft, type DraftUnit } from '../model/draft';
 import type { GameEvent, GameState, Position, TerrainType, Unit, UnitType } from '../model/types';
 import { randomInt } from '../rng';
@@ -38,7 +38,13 @@ export function isInRange(type: UnitType, from: Position, target: Position): boo
 
 /** Riposte : seulement entre unités directes, adjacentes ; le défenseur doit survivre. */
 export function canCounter(attacker: UnitType, defender: UnitType, gap: number): boolean {
-  return !isIndirect(attacker) && !isIndirect(defender) && gap === 1;
+  return (
+    !isIndirect(attacker) &&
+    !isIndirect(defender) &&
+    canAttack(defender) &&
+    canAttack(attacker) &&
+    gap === 1
+  );
 }
 
 /**
@@ -154,7 +160,8 @@ function rollLuck(draft: Draft): number {
 
 export function destroyUnit(draft: Draft, events: GameEvent[], unit: DraftUnit): void {
   draft.units = draft.units.filter((candidate) => candidate.id !== unit.id);
-  draftPlayer(draft, unit.owner).stats.unitsLost += 1;
+  // Les unités à bord d'un transport détruit sont perdues avec lui.
+  draftPlayer(draft, unit.owner).stats.unitsLost += 1 + (unit.cargo?.length ?? 0);
   events.push({ type: 'unitDestroyed', unitId: unit.id, owner: unit.owner, x: unit.x, y: unit.y });
   resetCaptureAt(draft, events, unit.x, unit.y);
 }

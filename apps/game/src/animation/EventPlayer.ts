@@ -152,6 +152,27 @@ export class EventPlayer {
       case 'unitWaited':
         units.get(event.unitId)?.setExhausted(true);
         return;
+      case 'unitLoaded': {
+        // L'unité, arrivée sur le transport, y monte : elle disparaît, le compteur monte.
+        const passenger = units.get(event.unitId);
+        units.forget(event.unitId);
+        await passenger?.vanish();
+        const carrier = state.units.find((u) => u.id === event.transportId);
+        if (carrier) units.get(carrier.id)?.setCargo(carrier.cargo?.length ?? 0);
+        return;
+      }
+      case 'unitUnloaded': {
+        // L'unité réapparaît sur le transport, puis descend sur la case voisine.
+        const passenger = state.units.find((u) => u.id === event.unitId);
+        if (!passenger) return;
+        const sprite = units.get(passenger.id) ?? units.add({ ...passenger, ...event.from });
+        sprite.placeAt(event.from);
+        await sprite.walk([event.from, event.to]);
+        sprite.setExhausted(true);
+        const carrier = state.units.find((u) => u.id === event.transportId);
+        units.get(event.transportId)?.setCargo(carrier?.cargo?.length ?? 0);
+        return;
+      }
       case 'unitHealed': {
         // Soin au village, au début du tour : « +2 PV » en vert au-dessus de l'unité.
         const healed = units.get(event.unitId);

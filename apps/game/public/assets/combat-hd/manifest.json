@@ -1,5 +1,5 @@
 {
-  "version": "3bd7fefa45",
+  "version": "7c60308cef",
   "figures": {
     "koush": {
       "fantassin": {
@@ -296,20 +296,20 @@
       },
       "char": {
         "idle": {
-          "w": 302,
+          "w": 358,
           "h": 420
         },
         "attack": {
-          "w": 404,
-          "h": 419
+          "w": 440,
+          "h": 400
         },
         "hit": {
-          "w": 335,
-          "h": 420
+          "w": 344,
+          "h": 467
         },
         "down": {
-          "w": 385,
-          "h": 392
+          "w": 365,
+          "h": 352
         }
       },
       "catapulte": {
@@ -1379,59 +1379,59 @@
       "char": {
         "idle": {
           "frames": 4,
-          "w": 318,
-          "h": 419,
-          "originX": 0.4885,
+          "w": 382,
+          "h": 415,
+          "originX": 0.4643,
           "originY": 1
         },
         "attack": {
           "frames": 4,
-          "w": 392,
-          "h": 420,
-          "originX": 0.4124,
-          "originY": 1
+          "w": 449,
+          "h": 467,
+          "originX": 0.28,
+          "originY": 0.9952
         },
         "run": {
           "frames": 2,
-          "w": 367,
-          "h": 419,
-          "originX": 0.5011,
+          "w": 397,
+          "h": 397,
+          "originX": 0.0729,
           "originY": 1
         },
         "hit": {
           "frames": 2,
-          "w": 368,
-          "h": 420,
-          "originX": 0.5303,
-          "originY": 0.9913
+          "w": 376,
+          "h": 467,
+          "originX": 0.3482,
+          "originY": 0.9968
         },
         "fall": {
           "frames": 2,
-          "w": 378,
-          "h": 428,
-          "originX": 0.5039,
-          "originY": 0.9812
+          "w": 371,
+          "h": 439,
+          "originX": 0.472,
+          "originY": 0.9571
         },
         "victory": {
           "frames": 2,
-          "w": 342,
-          "h": 417,
-          "originX": 0.5131,
+          "w": 353,
+          "h": 486,
+          "originX": 0.3722,
           "originY": 1
         },
         "sit": {
           "frames": 2,
-          "w": 351,
-          "h": 427,
-          "originX": 0.7726,
+          "w": 369,
+          "h": 520,
+          "originX": 0.6429,
           "originY": 1
         },
         "dazed": {
           "frames": 2,
-          "w": 376,
-          "h": 427,
-          "originX": 0.809,
-          "originY": 1
+          "w": 361,
+          "h": 312,
+          "originX": 0.6417,
+          "originY": 0.9976
         }
       },
       "catapulte": {

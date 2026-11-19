@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BASE_DAMAGE, FACTIONS, TERRAINS, UNITS, UNIT_TYPES, isIndirect } from '../src/index';
 
 describe('données (conformes à docs/game-design.md)', () => {
-  it('définit les 6 unités du Stage 1 avec leurs coûts et déplacements', () => {
-    expect(UNIT_TYPES).toHaveLength(6);
+  it('définit les 6 unités du Stage 1 et le convoi, avec leurs coûts et déplacements', () => {
+    expect(UNIT_TYPES).toHaveLength(7);
     expect(UNIT_TYPES.map((type) => [UNITS[type].cost, UNITS[type].move])).toEqual([
       [1000, 3],
       [2500, 2],
@@ -11,7 +11,12 @@ describe('données (conformes à docs/game-design.md)', () => {
       [4000, 7],
       [7000, 6],
       [6000, 4],
+      [1500, 6],
     ]);
+    expect(UNITS.convoi.transport).toEqual({
+      capacity: 2,
+      carries: ['fantassin', 'lancier', 'archers'],
+    });
   });
 
   it('seuls fantassin et lancier capturent', () => {
@@ -35,7 +40,8 @@ describe('données (conformes à docs/game-design.md)', () => {
   });
 
   it('la table de dégâts est complète et reprend les valeurs du document', () => {
-    for (const attacker of UNIT_TYPES) {
+    // Le convoi n'attaque pas : sa ligne est à zéro.
+    for (const attacker of UNIT_TYPES.filter((type) => type !== 'convoi')) {
       for (const defender of UNIT_TYPES) {
         expect(BASE_DAMAGE[attacker][defender]).toBeGreaterThan(0);
       }

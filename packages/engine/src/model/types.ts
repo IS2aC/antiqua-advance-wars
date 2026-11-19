@@ -6,7 +6,8 @@
 /** Factions jouables (Stage 1 : Koush contre Carthage). */
 export type PlayerId = 'koush' | 'carthage' | 'ashanti' | 'almoravides';
 
-export type UnitType = 'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte';
+export type UnitType =
+  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi';
 
 export type MoveType = 'pied' | 'lourd' | 'monture' | 'roues';
 
@@ -47,6 +48,8 @@ export interface Unit {
   readonly hp: number;
   readonly hasMoved: boolean;
   readonly hasActed: boolean;
+  /** Unités transportées (convoi) : hors de la carte tant qu'elles sont à bord. */
+  readonly cargo?: readonly Unit[];
 }
 
 export interface Building {
@@ -116,6 +119,15 @@ export type Action =
   | { readonly type: 'WAIT'; readonly unitId: number }
   /** L'unité rejoint une unité alliée du même type (sur sa case) : fusion. */
   | { readonly type: 'MERGE'; readonly unitId: number; readonly targetId: number }
+  /** L'unité monte dans un transport allié (en allant sur sa case). */
+  | { readonly type: 'LOAD'; readonly unitId: number; readonly transportId: number }
+  /** Le transport dépose une unité à bord sur une case voisine. */
+  | {
+      readonly type: 'UNLOAD';
+      readonly transportId: number;
+      readonly unitId: number;
+      readonly to: Position;
+    }
   | { readonly type: 'BUILD'; readonly x: number; readonly y: number; readonly unitType: UnitType }
   | { readonly type: 'END_TURN' };
 
@@ -175,6 +187,14 @@ export type GameEvent =
       readonly building: BuildingType;
       readonly owner: PlayerId;
       readonly previousOwner: PlayerId | null;
+    }
+  | { readonly type: 'unitLoaded'; readonly unitId: number; readonly transportId: number }
+  | {
+      readonly type: 'unitUnloaded';
+      readonly unitId: number;
+      readonly transportId: number;
+      readonly from: Position;
+      readonly to: Position;
     }
   | {
       /** Début de tour : l'unité, sur un de ses villages, a regagné des PV (`hp` internes). */

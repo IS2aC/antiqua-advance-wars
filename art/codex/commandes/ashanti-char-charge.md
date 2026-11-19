@@ -8,7 +8,7 @@
 ```text
 Use the attached pose sheet as the exact reference for this character: same face, same equipment, same colors, same proportions and SAME SIZE as the first (idle) drawing.
 
-Character: Asante (Ashanti) war chief carried in a royal palanquin by two bearers. Design (team color = the team color below): A gold-and-wood palanquin carried on two long poles by two bearers, one in front and one behind, the poles resting on their shoulders. Above it, a large team-color ceremonial umbrella with a gold fringe and a gold finial. The chief sits in the palanquin: very dark brown skin, a gold-and-black crown band, heavy gold necklaces, a team-color kente toga with black and gold stripes over one shoulder, holding a spear with a gold spearhead. The palanquin side has a gold adinkra emblem on a team-color panel. The bearers: very dark brown skin, a gold headband, a team-color loincloth, bare chest. Palanquin, chief and bearers are ONE drawing, moving to the right.
+Character: Asante buffalo rider, heavy shock cavalry of the Akan, riding a massive black buffalo. Design (team color = the team color below): Rider: very dark brown skin, a gold headband, heavy gold bead necklaces and gold armlets, a team-color kente cloth with black and gold stripes worn over one shoulder, holding a spear with a dark shaft and a steel point. Mount: a massive black African forest buffalo with thick curved horns, robust and powerful, adorned with gold plates on its forehead, gold rings on the horns, and a team-color kente saddle cloth with a gold hem. Buffalo and rider are ONE drawing; the buffalo faces right.
 
 Colors must match the in-game pixel-art sprites exactly. Skin: warm copper brown (#6A3A1C, shadow #4A2711) for every soldier. Hair: very dark brown (#4D1F0F), short and curly. Team color: crimson red (#D13A2E, shadow #8E1F24, light #F2735A), used ONLY on the team parts named in the design. Metal: gold (#D69625, light #FAC777). Cloth: cream (#EFD6A8). Wood: warm brown (#9F5021). No other red, crimson, pink or orange-red anywhere in the image (mouths and lips in dark brown), so the team color can be swapped automatically.
 
@@ -16,13 +16,13 @@ Create 4 frames of a hand-drawn animation sequence, side by side in one wide ima
 
 Frames, left to right:
 
-1. Running: the two bearers run forward in step carrying the palanquin, the chief leaning forward with the spear forward.
+1. Gallop: front legs reaching forward, hind legs pushing off, rider leaning forward with the spear forward.
 
-2. Running: the bearers' feet passing under their bodies, the palanquin bouncing slightly.
+2. Gallop: all four legs gathered under the body, the buffalo slightly higher.
 
-3. Getting hit: the bearers jolted, the palanquin tilting back, the chief thrown back, eyes squeezed.
+3. Getting hit: buffalo shying, head thrown up, rider jolted backward, eyes squeezed.
 
-4. Recoil: the bearers stumbling one step backward, the chief off balance, spear still in hand.
+4. Recoil: buffalo stepping backward, rider off balance, spear still in hand.
 
 Style: classic hand-drawn 2D feature animation, 1990s cel look. Simple, appealing shapes and a strong readable silhouette. Clean uniform ink outline in dark brown-black (#2B1B17), never pure black. Few interior lines, no muscle definition lines, no fabric wrinkles beyond one or two folds, no small ornaments. Flat color fills with ONE darker shadow tone, light coming from the top left, no gradients, no texture, no painterly rendering, no glow.
 

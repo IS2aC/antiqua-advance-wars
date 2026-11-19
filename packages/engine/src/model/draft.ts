@@ -1,10 +1,13 @@
 import type { GameState } from './types';
 
-/** Version modifiable d'un type en lecture seule (usage interne au reducer). */
+/**
+ * Version modifiable d'un type en lecture seule (usage interne au reducer). La cargaison
+ * d'un transport reste figée : on la remplace en entier.
+ */
 export type DeepMutable<T> = T extends readonly (infer U)[]
   ? DeepMutable<U>[]
   : T extends object
-    ? { -readonly [K in keyof T]: DeepMutable<T[K]> }
+    ? { -readonly [K in keyof T]: K extends 'cargo' ? T[K] : DeepMutable<T[K]> }
     : T;
 
 /** Copie de travail de l'état, que les règles modifient avant d'être rendue figée. */

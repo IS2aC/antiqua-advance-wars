@@ -3,7 +3,8 @@
  * quel ordre. C'est le seul fichier à modifier quand une planche est régénérée ou renommée.
  */
 
-export type UnitType = 'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte';
+export type UnitType =
+  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi';
 export type BuildingType = 'village' | 'caserne' | 'qg';
 
 export const UNIT_SHEETS: Readonly<Record<UnitType, string>> = {
@@ -14,6 +15,9 @@ export const UNIT_SHEETS: Readonly<Record<UnitType, string>> = {
   // La planche nommée « cavaliers lourds » contient le char de guerre.
   char: 'sprites-unités/cavaliers_lourds-rouge.png',
   catapulte: 'sprites-unités/catapulte-rouge.png',
+  // Transport terrestre : chaque peuple a sa planche (peuples/<peuple>/) ; la commune
+  // reprend celle de Carthage.
+  convoi: 'sprites-unités/convoi-rouge.png',
 };
 
 /** Gabarit des planches d'unités (docs/bible-de-production.md) : 4×4 cases, une ligne par animation. */

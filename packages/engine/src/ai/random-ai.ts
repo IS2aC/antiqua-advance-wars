@@ -85,7 +85,10 @@ function chooseBuild(state: GameState, random: Random): Action | null {
       !unitAt(state, building.x, building.y),
   );
   for (const building of barracks) {
-    const affordable = UNIT_TYPES.filter((type) => UNITS[type].cost <= funds);
+    // Pas de transports : l'IA au hasard ne sait pas les remplir.
+    const affordable = UNIT_TYPES.filter(
+      (type) => UNITS[type].cost <= funds && !UNITS[type].transport,
+    );
     const unitType = random.pick(affordable);
     if (unitType && random.next() < 0.85) {
       return { type: 'BUILD', x: building.x, y: building.y, unitType };

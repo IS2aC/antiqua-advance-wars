@@ -9,6 +9,8 @@ export interface UnitStats {
   readonly minRange: number;
   readonly maxRange: number;
   readonly canCapture: boolean;
+  /** Transport : nombre de places et types d'unités acceptés à bord. */
+  readonly transport?: { readonly capacity: number; readonly carries: readonly UnitType[] };
 }
 
 export const UNIT_TYPES: readonly UnitType[] = [
@@ -18,6 +20,7 @@ export const UNIT_TYPES: readonly UnitType[] = [
   'cavalerie',
   'char',
   'catapulte',
+  'convoi',
 ];
 
 export const UNITS: Readonly<Record<UnitType, UnitStats>> = {
@@ -75,7 +78,23 @@ export const UNITS: Readonly<Record<UnitType, UnitStats>> = {
     maxRange: 3,
     canCapture: false,
   },
+  // Transport terrestre : n'attaque pas (portée 0), porte 2 unités à pied.
+  convoi: {
+    name: 'Convoi',
+    cost: 1500,
+    move: 6,
+    moveType: 'monture',
+    minRange: 0,
+    maxRange: 0,
+    canCapture: false,
+    transport: { capacity: 2, carries: ['fantassin', 'lancier', 'archers'] },
+  },
 };
+
+/** Une unité qui peut attaquer (le convoi, lui, ne combat pas). */
+export function canAttack(type: UnitType): boolean {
+  return UNITS[type].maxRange > 0;
+}
 
 /** Une unité à tir indirect ne tire pas après avoir bougé et ne riposte jamais. */
 export function isIndirect(type: UnitType): boolean {

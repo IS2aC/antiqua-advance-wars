@@ -72,6 +72,7 @@ export const UNIT_LABELS: Readonly<Record<UnitType, string>> = {
   cavalerie: 'Cv',
   char: 'Ch',
   catapulte: 'Ca',
+  convoi: 'Co',
 };
 
 export const BUILDING_LABELS = { village: 'V', caserne: 'C', qg: 'QG' } as const;

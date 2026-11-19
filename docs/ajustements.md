@@ -130,7 +130,15 @@ et garder un rendu fluide.
   de test), un choix « Fusionner » dans le menu d'action quand on arrive sur une unité alliée
   du même type (`BattleController`, `ActionMenu`), et l'IA (`greedy-ai.ts`).
 
-## 7. Moyens de transport, propres à chaque peuple
+## 7. Moyens de transport, propres à chaque peuple — transport terrestre fait
+
+> Fait (étape 1) : le **convoi** (règles dans `docs/game-design.md`), embarquer et débarquer,
+> sprites de carte des 4 peuples via Codex, buffle ashanti à la place de leur char.
+> Reste : l'IA qui produit et utilise des convois ; les combats dessinés du convoi (le
+> palanquin ashanti est archivé dans `art/raw/combat-dessine/archives/`) ; puis le **bateau**
+> (étape 2) : quota 3, tous types d'unités, tir comme une catapulte, sur les grands fleuves
+> et la mer (nouveau terrain).
+
 
 Nouvelles unités de transport, avec **un quota** (nombre d'unités embarquées) pour chacune,
 à fixer ensemble. Sprites de carte et animations (combats dessinés compris) d'après

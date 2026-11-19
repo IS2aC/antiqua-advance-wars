@@ -30,8 +30,10 @@ export function hasArt(scene: Phaser.Scene): boolean {
   return scene.textures.exists(TERRAIN_ATLAS) && scene.textures.exists(BUILDING_ATLAS);
 }
 
-export function hasUnitArt(scene: Phaser.Scene, owner: PlayerId): boolean {
-  return scene.textures.exists(unitAtlas(owner));
+export function hasUnitArt(scene: Phaser.Scene, owner: PlayerId, type?: UnitType): boolean {
+  if (!scene.textures.exists(unitAtlas(owner))) return false;
+  // Unité pas encore dessinée (nouveau type) : on retombe sur le bloc de couleur.
+  return type === undefined || scene.textures.get(unitAtlas(owner)).has(`unit/${type}/idle/0`);
 }
 
 // ——— Animations d'unités ———
@@ -49,6 +51,7 @@ const UNIT_TYPES: readonly UnitType[] = [
   'cavalerie',
   'char',
   'catapulte',
+  'convoi',
 ];
 
 /** Repos : boucle 1-2-3-2 à 150 ms (docs/art-bible.md) ; marche : 4 images par direction. */
@@ -57,6 +60,7 @@ export function createUnitAnimations(scene: Phaser.Scene): void {
     const key = unitAtlas(owner);
     if (!scene.textures.exists(key)) continue;
     for (const type of UNIT_TYPES) {
+      if (!hasUnitArt(scene, owner, type)) continue;
       if (!scene.anims.exists(idleAnimation(owner, type))) {
         scene.anims.create({
           key: idleAnimation(owner, type),

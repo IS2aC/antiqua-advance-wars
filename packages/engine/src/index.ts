@@ -11,7 +11,7 @@ export const ENGINE_VERSION = '0.1.0';
 export type * from './model/types';
 export type { ActionError, ActionErrorCode } from './model/errors';
 
-export { UNITS, UNIT_TYPES, isIndirect, type UnitStats } from './data/units';
+export { UNITS, UNIT_TYPES, canAttack, isIndirect, type UnitStats } from './data/units';
 export { TERRAINS, movementCost, type TerrainStats } from './data/terrains';
 export { BASE_DAMAGE } from './data/damage-table';
 export { FACTIONS, type FactionInfo } from './data/factions';
@@ -42,6 +42,7 @@ export {
 export { CAPTURE_POINTS, canCapture } from './rules/capture';
 export { MAX_HP, canMerge, mergeOutcome, mergePath } from './rules/merge';
 export { VILLAGE_HEAL } from './rules/heal';
+export { canLoad, freeSeats, unloadTiles } from './rules/transport';
 export { buildError, incomeFor } from './rules/economy';
 export { INCOME_FROM_DAY } from './rules/turn';
 export { ROUT_FROM_DAY } from './rules/victory';

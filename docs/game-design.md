@@ -88,6 +88,8 @@ B = dégâts de base (table ci-dessous), L = chance 0–9 tirée par le PRNG, E 
 - **Unité produite** : ne peut ni bouger ni agir le tour de sa production.
 - **Victoire** : capture du QG adverse, ou l'adversaire n'a plus aucune unité à partir du jour 2.
 - **Soins au village** : au début de son tour, chaque unité posée sur un **village qui lui appartient** regagne **2 PV** (plafond 10), gratuitement. Caserne et QG ne soignent pas.
+- **Convoi (transport terrestre)** : 1 500 d'or, 6 cases de déplacement (comme une monture), **porte 2 unités à pied** (fantassin, lancier lourd, archers). N'attaque pas, ne riposte pas, ne capture pas. **Embarquer** : une unité qui n'a pas encore bougé va sur la case du convoi (elle a fini son tour). **Débarquer** : le convoi, s'il n'a pas encore agi, dépose une unité à bord sur une case voisine libre et praticable pour elle ; l'unité déposée a fini son tour, le convoi ne peut plus bouger mais peut encore débarquer ou attendre. Détruit, il emporte ses passagers. Apparence par peuple : éléphant à nacelle (Koush), calèche (Carthage), dromadaire à cabine (Almoravides), palanquin porté (Ashanti).
+- **Char ashanti** : remplacé par un cavalier sur buffle noir paré d'or (mêmes caractéristiques que le char de guerre).
 - **Fusion** : une unité qui n'a pas encore bougé peut rejoindre, sur sa case, une unité alliée **du même type** et **blessée** (action MERGE ; le chemin suit les règles de déplacement). Les PV s'additionnent, plafonnés à 10 ; chaque PV affiché en trop rend **10 % du prix** de l'unité (6 + 7 PV : 3 PV en trop, 30 % du prix). L'unité qui reste a **fini son tour**. Une capture entamée par l'unité qui part est remise à zéro.
 
 Décisions prises à l'implémentation du moteur (étape 2), à revoir en équilibrage :

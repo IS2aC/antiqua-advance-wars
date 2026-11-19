@@ -25,6 +25,9 @@ export function mergeError(state: GameState, unit: Unit, targetId: number): Acti
   if (target.type !== unit.type) {
     return actionError('CANNOT_MERGE', 'On ne fusionne que deux unités du même type.');
   }
+  if (unit.cargo?.length || target.cargo?.length) {
+    return actionError('CANNOT_MERGE', 'Un transport chargé ne fusionne pas.');
+  }
   if (target.hp >= MAX_HP) {
     return actionError('CANNOT_MERGE', 'L’unité rejointe a déjà tous ses PV.');
   }

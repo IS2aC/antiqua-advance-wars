@@ -419,48 +419,48 @@
         }
       },
       "ashanti": {
-        "sujet": "Asante (Ashanti) war chief carried in a royal palanquin by two bearers",
-        "design": "A gold-and-wood palanquin carried on two long poles by two bearers, one in front and one behind, the poles resting on their shoulders. Above it, a large team-color ceremonial umbrella with a gold fringe and a gold finial. The chief sits in the palanquin: very dark brown skin, a gold-and-black crown band, heavy gold necklaces, a team-color kente toga with black and gold stripes over one shoulder, holding a spear with a gold spearhead. The palanquin side has a gold adinkra emblem on a team-color panel. The bearers: very dark brown skin, a gold headband, a team-color loincloth, bare chest. Palanquin, chief and bearers are ONE drawing, moving to the right.",
+        "sujet": "Asante buffalo rider, heavy shock cavalry of the Akan, riding a massive black buffalo",
+        "design": "Rider: very dark brown skin, a gold headband, heavy gold bead necklaces and gold armlets, a team-color kente cloth with black and gold stripes worn over one shoulder, holding a spear with a dark shaft and a steel point. Mount: a massive black African forest buffalo with thick curved horns, robust and powerful, adorned with gold plates on its forehead, gold rings on the horns, and a team-color kente saddle cloth with a gold hem. Buffalo and rider are ONE drawing; the buffalo faces right.",
         "peau": {
           "base": "#6A3A1C",
           "ombre": "#4A2711"
         },
         "planches": {
           "poses": [
-            "Idle: the two bearers stand still with the poles on their shoulders, the chief seated upright in the palanquin under the umbrella, spear held up.",
-            "Attack: the bearers lunge forward, the chief leans out of the palanquin and thrusts the spear forward.",
-            "Hit: the bearers stagger backward, the palanquin tilting, the chief thrown back, off balance.",
-            "Defeated: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, head lowered."
+            "Idle: buffalo standing calmly, rider upright, spear held up.",
+            "Attack: buffalo rearing slightly forward, rider thrusting the spear forward.",
+            "Hit: buffalo shying backward, rider leaning back, off balance.",
+            "Defeated: buffalo standing with its head low, rider slumped forward on its neck."
           ],
           "repos": [
-            "The bearers stand still with the poles on their shoulders, the chief seated upright, spear held up.",
-            "The bearers shift their weight a little, the chief breathing in.",
-            "The umbrella fringe sways, the chief's toga moves slightly.",
-            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+            "Buffalo standing, rider upright, spear held up.",
+            "The buffalo lowers its head a little, rider breathing in.",
+            "The buffalo shakes its mane, tail swishing.",
+            "Back almost to the first frame, tail swishing the other way. Subtle idle loop: the changes between the 4 frames are small."
           ],
           "attaque": [
-            "Anticipation: the chief pulls the spear back, the bearers brace. The bearers' back feet stay at the same spot in all 4 frames.",
-            "Motion smear frame: the chief lunges out of the palanquin, the spear stretched into a fast elongated shape with a few speed lines.",
-            "Full extension: spear thrust forward, the chief shouting, the bearers leaning forward.",
-            "Follow-through: the chief settling back into his seat, spear tip lowering."
+            "Anticipation: buffalo gathering on its hind legs, rider pulling the spear back. The hind hooves stay at the same spot in all 4 frames.",
+            "Motion smear frame: buffalo lunging forward, spear stretched into a fast elongated shape with a few speed lines.",
+            "Full extension: rider thrusting the spear forward, shouting, buffalo's front legs reaching forward.",
+            "Follow-through: buffalo landing, rider settling, spear tip lowering."
           ],
           "charge": [
-            "Running: the two bearers run forward in step carrying the palanquin, the chief leaning forward with the spear forward.",
-            "Running: the bearers' feet passing under their bodies, the palanquin bouncing slightly.",
-            "Getting hit: the bearers jolted, the palanquin tilting back, the chief thrown back, eyes squeezed.",
-            "Recoil: the bearers stumbling one step backward, the chief off balance, spear still in hand."
+            "Gallop: front legs reaching forward, hind legs pushing off, rider leaning forward with the spear forward.",
+            "Gallop: all four legs gathered under the body, the buffalo slightly higher.",
+            "Getting hit: buffalo shying, head thrown up, rider jolted backward, eyes squeezed.",
+            "Recoil: buffalo stepping backward, rider off balance, spear still in hand."
           ],
           "chute": [
-            "Defeat: the bearers stumbling, the palanquin tilting, the chief losing grip.",
-            "Down: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, spear lying on the ground.",
-            "Victory: the chief standing up in the palanquin raising the spear high, the bearers cheering.",
-            "Victory shout: the chief shouting with the spear raised, the bearers raising a fist."
+            "Defeat: buffalo stumbling, rider sliding to the side.",
+            "Down: buffalo standing with its head low, rider slumped forward on its neck, spear dropped on the ground.",
+            "Victory: buffalo rearing proudly, rider raising the spear high.",
+            "Victory shout: buffalo on four legs, rider shouting with the spear raised."
           ],
           "sonne": [
-            "Thrown out: the chief tumbling backward out of the palanquin, arms flailing, the bearers startled.",
-            "Landing: the chief sitting on the ground in front of the palanquin, legs stretched forward, his crown band tilted over one eye; the bearers stand still behind him holding the palanquin.",
-            "Dazed: the chief still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
-            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+            "Thrown off: the rider flying backward off the saddle, arms flailing, the buffalo startled.",
+            "Landing: the rider sitting on the ground in front of the buffalo, legs stretched forward, his own headgear or hair messed up over one eye (do not add any headgear he does not wear); the buffalo stands calmly behind him.",
+            "Dazed: rider still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the buffalo sniffs his head.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the buffalo barely moves."
           ]
         }
       }
@@ -541,6 +541,54 @@
           "base": "#6A3A1C",
           "ombre": "#4A2711"
         }
+      }
+    }
+  },
+  "_archives": {
+    "ashanti-palanquin": {
+      "sujet": "Asante (Ashanti) war chief carried in a royal palanquin by two bearers",
+      "design": "A gold-and-wood palanquin carried on two long poles by two bearers, one in front and one behind, the poles resting on their shoulders. Above it, a large team-color ceremonial umbrella with a gold fringe and a gold finial. The chief sits in the palanquin: very dark brown skin, a gold-and-black crown band, heavy gold necklaces, a team-color kente toga with black and gold stripes over one shoulder, holding a spear with a gold spearhead. The palanquin side has a gold adinkra emblem on a team-color panel. The bearers: very dark brown skin, a gold headband, a team-color loincloth, bare chest. Palanquin, chief and bearers are ONE drawing, moving to the right.",
+      "peau": {
+        "base": "#6A3A1C",
+        "ombre": "#4A2711"
+      },
+      "planches": {
+        "poses": [
+          "Idle: the two bearers stand still with the poles on their shoulders, the chief seated upright in the palanquin under the umbrella, spear held up.",
+          "Attack: the bearers lunge forward, the chief leans out of the palanquin and thrusts the spear forward.",
+          "Hit: the bearers stagger backward, the palanquin tilting, the chief thrown back, off balance.",
+          "Defeated: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, head lowered."
+        ],
+        "repos": [
+          "The bearers stand still with the poles on their shoulders, the chief seated upright, spear held up.",
+          "The bearers shift their weight a little, the chief breathing in.",
+          "The umbrella fringe sways, the chief's toga moves slightly.",
+          "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+        ],
+        "attaque": [
+          "Anticipation: the chief pulls the spear back, the bearers brace. The bearers' back feet stay at the same spot in all 4 frames.",
+          "Motion smear frame: the chief lunges out of the palanquin, the spear stretched into a fast elongated shape with a few speed lines.",
+          "Full extension: spear thrust forward, the chief shouting, the bearers leaning forward.",
+          "Follow-through: the chief settling back into his seat, spear tip lowering."
+        ],
+        "charge": [
+          "Running: the two bearers run forward in step carrying the palanquin, the chief leaning forward with the spear forward.",
+          "Running: the bearers' feet passing under their bodies, the palanquin bouncing slightly.",
+          "Getting hit: the bearers jolted, the palanquin tilting back, the chief thrown back, eyes squeezed.",
+          "Recoil: the bearers stumbling one step backward, the chief off balance, spear still in hand."
+        ],
+        "chute": [
+          "Defeat: the bearers stumbling, the palanquin tilting, the chief losing grip.",
+          "Down: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, spear lying on the ground.",
+          "Victory: the chief standing up in the palanquin raising the spear high, the bearers cheering.",
+          "Victory shout: the chief shouting with the spear raised, the bearers raising a fist."
+        ],
+        "sonne": [
+          "Thrown out: the chief tumbling backward out of the palanquin, arms flailing, the bearers startled.",
+          "Landing: the chief sitting on the ground in front of the palanquin, legs stretched forward, his crown band tilted over one eye; the bearers stand still behind him holding the palanquin.",
+          "Dazed: the chief still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+          "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+        ]
       }
     }
   }

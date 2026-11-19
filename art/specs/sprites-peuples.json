@@ -43,7 +43,7 @@
         "koush": "UNIT: war chariot of Kush. A light two-wheeled wooden chariot with team-red side panels and a gold ram-head ornament, pulled by a brown horse with a team-red blanket, driven by a very dark brown Nubian archer with a team-red headband and one white feather, holding a spear.",
         "carthage": "UNIT: Punic war chariot of Carthage. A two-wheeled wooden chariot with team-red side panels and the gold sign of Tanit, pulled by a brown horse with a team-red blanket, driven by an olive-skinned warrior with a gold-bronze crested helmet (team-red crest) and a team-red cloak, holding a spear. No dust clouds, no puffs, no motion effects and nothing at all below the wheels.",
         "almoravides": "UNIT: Almoravid heavy cavalryman. A veiled rider (clearly visible deep indigo-blue litham #36427F, team-red turban) in brown leather and scale armor over a white robe, on a big grey Barb horse with a long team-red caparison, holding a long lance and a round white lamt shield with a team-red sign.",
-        "ashanti": "UNIT: Asante war chief in a palanquin. A carved wooden palanquin carried on the shoulders of two very dark-skinned Asante bearers with team-red waist cloths; seated inside, a war chief with a black-and-gold headband and a team-red kente cloth, holding a spear, under a large team-red state umbrella with a small gold finial."
+        "ashanti": "UNIT: Asante buffalo rider, heavy shock cavalry. A massive black African forest buffalo with thick curved horns, adorned with gold plates, gold rings on the horns and a team-red kente saddle cloth, ridden by a very dark brown Asante warrior with a gold headband and a team-red kente cloth, holding a spear."
       }
     },
     "catapulte": {
@@ -53,6 +53,15 @@
         "carthage": "UNIT: Punic siege catapult of Carthage. A wooden torsion catapult on four wheels with a stone in its arm, a team-red banner with the gold sign of Tanit, a team-red panel on the frame, pushed by an olive-skinned Punic crewman with a team-red tunic and a short beard.",
         "almoravides": "UNIT: Almoravid mangonel. A wooden beam-sling siege engine on four wheels with a stone in its sling, a team-red banner with an Amazigh geometric sign, pushed by a crewman with a clearly visible deep indigo-blue litham veil (#36427F), a team-red turban and a white robe.",
         "ashanti": "UNIT: Asante war engine. A wooden throwing engine on four wheels with a stone in its arm, a team-red cloth banner with a black adinkra-like sign, team-red cloth wrapped on the frame, pushed by a very dark brown Asante crewman with a team-red waist cloth and a black headband."
+      }
+    },
+    "convoi": {
+      "format": "sprites-unités/cavaliers_lourds-rouge.png",
+      "peuples": {
+        "koush": "UNIT: Kushite transport elephant. A grey African elephant carrying on its back a wooden howdah cabin with a team-red canopy and gold trim, a Nubian mahout with a team-red headband and one white feather on its neck.",
+        "carthage": "UNIT: Carthaginian covered carriage. A four-wheeled wooden carriage with an enclosed cabin (team-red roof and curtains, gold sign of Tanit), pulled by a brown mule, driven by an olive-skinned driver in a team-red tunic.",
+        "almoravides": "UNIT: Almoravid camel transport. A tan dromedary carrying a covered cabin saddle of team-red cloth with a white fringe, led by a veiled rider (indigo litham, team-red turban).",
+        "ashanti": "UNIT: Asante royal palanquin used as transport. A carved wooden palanquin carried on the shoulders of two Asante bearers with team-red waist cloths, under a large team-red state umbrella."
       }
     }
   },
