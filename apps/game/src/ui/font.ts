@@ -1,5 +1,5 @@
 /**
- * Police d'interface. Cible : m5x7 de Daniel Linssen (gratuite avec crédit), posée dans
+ * Police d’interface. Cible : m5x7 de Daniel Linssen (licence CC0, crédit apprécié), posée dans
  * `apps/game/public/fonts/m5x7.ttf` et déclarée dans index.html. Elle se lit à 16 px
  * (ou 32 px) pour garder des pixels nets. Si le fichier manque, on retombe sur une
  * monospace système à des tailles plus petites.

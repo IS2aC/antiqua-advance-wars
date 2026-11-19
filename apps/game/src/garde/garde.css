@@ -355,21 +355,6 @@ body {
   color: var(--muted);
 }
 
-/* ——— Pied de page ——— */
-
-.garde__footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 0 -2.5rem;
-  padding: 0.5rem 2.5rem;
-  border-top: 1px solid rgba(237, 228, 217, 0.8);
-  background: rgba(255, 255, 255, 0.75);
-  font-size: 0.6875rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
 /* ——— Écrans étroits et portrait : l'illustration passe au-dessus ——— */
 
 @media (max-width: 860px), (orientation: portrait) {
@@ -409,14 +394,6 @@ body {
 
   .garde__hint {
     display: none;
-  }
-
-  .garde__footer {
-    margin: 0 -1rem;
-    padding: 0.5rem 1rem;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
   }
 }
 
