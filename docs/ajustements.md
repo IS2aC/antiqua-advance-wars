@@ -37,7 +37,7 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 
 > **Décision** : pas de vidéos ni d'API serveur. La scène est composée en direct dans le
 > navigateur, par couches (décor du terrain, figurants, bandeau), à partir des événements du
-> moteur. Code : `apps/game/src/combat/` (`setup.ts` pur, `CombatScene.ts` pour le rendu).
+> moteur. Code : `apps/game/src/combat/` (`setup.ts` pur, `drawn/` pour le rendu).
 >
 > **Phase A (faite)** : écran partagé, un figurant par PV (un pour 2 PV pour cavalerie, char,
 > catapulte), charge ou volée, impact, chutes, PV qui descendent, riposte. Figurants = sprites

@@ -17,10 +17,7 @@ export const SAVE_KEY = 'antiqua:sauvegarde';
 const TILE = 32;
 const LOGICAL_WIDTH = 640;
 
-export async function waitForScene(
-  page: Page,
-  key: 'Title' | 'Battle' | 'Combat' | 'Capture',
-): Promise<void> {
+export async function waitForScene(page: Page, key: 'Title' | 'Battle' | 'Capture'): Promise<void> {
   await expect
     .poll(() =>
       page.evaluate(
@@ -29,6 +26,34 @@ export async function waitForScene(
       ),
     )
     .toBe(true);
+}
+
+/**
+ * Attend que le combat dessiné soit à l'écran (calque `#combat-dessine` visible). Le premier
+ * combat charge toutes les images dessinées (environ 25 Mo) : long en WebGL logiciel.
+ */
+export async function waitForDrawnCombat(page: Page): Promise<void> {
+  await expect(page.locator('#combat-dessine')).toBeVisible({ timeout: 60_000 });
+  // La scène écoute Entrée une fois créée (le calque s'affiche juste avant).
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (
+            window as unknown as {
+              __ANTIQUA_DRAWN__?: { scene: { isActive(key: string): boolean } } | null;
+            }
+          ).__ANTIQUA_DRAWN__?.scene.isActive('DrawnCombat') ?? false,
+      ),
+    )
+    .toBe(true);
+}
+
+/** Passe le combat dessiné (Entrée) et attend le retour à la carte. */
+export async function skipDrawnCombat(page: Page): Promise<void> {
+  await waitForDrawnCombat(page);
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#combat-dessine')).toBeHidden({ timeout: 10_000 });
 }
 
 export async function state(page: Page): Promise<GameState> {

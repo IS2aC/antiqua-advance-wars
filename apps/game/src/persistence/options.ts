@@ -6,13 +6,11 @@
 const KEY = 'antiqua:options';
 
 export interface Options {
-  /** Scènes de combat plein écran (sinon : animation courte sur la carte). */
+  /** Scènes de combat dessinées plein écran (sinon : animation courte sur la carte). */
   readonly combatScenes: boolean;
-  /** Style des scènes : grandes illustrations dessinées (par défaut), ou pixel art. */
-  readonly combatStyle: 'pixel' | 'dessin';
 }
 
-const DEFAULTS: Options = { combatScenes: true, combatStyle: 'dessin' };
+const DEFAULTS: Options = { combatScenes: true };
 
 export function loadOptions(): Options {
   try {
@@ -22,10 +20,6 @@ export function loadOptions(): Options {
     return {
       combatScenes:
         typeof parsed.combatScenes === 'boolean' ? parsed.combatScenes : DEFAULTS.combatScenes,
-      combatStyle:
-        parsed.combatStyle === 'pixel' || parsed.combatStyle === 'dessin'
-          ? parsed.combatStyle
-          : DEFAULTS.combatStyle,
     };
   } catch {
     return DEFAULTS;
@@ -40,26 +34,18 @@ export function saveOptions(options: Options): void {
   }
 }
 
-/** Réglage « Scènes de combat » de la pause : oui (pixel), non, dessinées. */
-export type CombatSetting = 'oui' | 'non' | 'dessinees';
+/** Réglage « Scènes de combat » de la pause. */
+export type CombatSetting = 'oui' | 'non';
 
 export function combatSetting(options: Options): CombatSetting {
-  if (!options.combatScenes) return 'non';
-  return options.combatStyle === 'dessin' ? 'dessinees' : 'oui';
+  return options.combatScenes ? 'oui' : 'non';
 }
 
-/**
- * Valeur suivante quand le joueur appuie sur le réglage : dessinées (par défaut) → non →
- * oui (pixel art) → dessinées.
- */
+/** Valeur suivante quand le joueur appuie sur le réglage. */
 export function nextCombatSetting(setting: CombatSetting): CombatSetting {
-  return setting === 'dessinees' ? 'non' : setting === 'non' ? 'oui' : 'dessinees';
+  return setting === 'oui' ? 'non' : 'oui';
 }
 
 export function withCombatSetting(options: Options, setting: CombatSetting): Options {
-  return {
-    ...options,
-    combatScenes: setting !== 'non',
-    combatStyle: setting === 'dessinees' ? 'dessin' : 'pixel',
-  };
+  return { ...options, combatScenes: setting === 'oui' };
 }

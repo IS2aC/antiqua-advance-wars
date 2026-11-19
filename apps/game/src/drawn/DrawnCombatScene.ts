@@ -639,7 +639,7 @@ export class DrawnCombatScene extends StagedScene {
       const [minDelay, maxDelay] = REACTION_MS[front ? 'front' : 'back'];
       const delay = Phaser.Math.Between(minDelay, maxDelay);
       const image = this.add
-        .sprite(homeX, slot.y, pose.key)
+        .sprite(homeX, slot.y, pose.key, pose.frame)
         .setOrigin(0.5, 1)
         .setScale(baseScale)
         .setFlipX(dir < 0)
@@ -851,7 +851,7 @@ export class DrawnCombatScene extends StagedScene {
   private setPose(view: SideView, figure: Figure, pose: Pose): void {
     const texture = poseTexture(this, view.side.owner, view.side.unitType, pose, FIGURE_SCREEN_H);
     figure.image
-      .setTexture(texture.key)
+      .setTexture(texture.key, texture.frame)
       .setOrigin(0.5, 1)
       .setAngle(texture.angle * view.dir);
     if (pose === 'down') {
@@ -905,9 +905,13 @@ export class DrawnCombatScene extends StagedScene {
     sprite.setOrigin(this.originX(view, anim.originX), anim.originY).setAngle(0);
     sprite.play(anim.key, true);
     if (action === 'idle' || action === 'run' || this.skipped) return Promise.resolve();
+    // Filet de sécurité : si la fin d'animation n'arrive jamais (animation remplacée,
+    // machine lente), le combat continue quand même après sa durée prévue.
+    const duration = this.anims.get(anim.key)?.duration ?? 0;
     return Promise.race([
       new Promise<void>((resolve) => sprite.once('animationcomplete', () => resolve())),
       this.skipSignal,
+      this.wait(duration * 2 + 600),
     ]);
   }
 
@@ -921,7 +925,7 @@ export class DrawnCombatScene extends StagedScene {
     const texture = poseTexture(this, view.side.owner, view.side.unitType, pose, FIGURE_SCREEN_H);
     sprite.anims.stop();
     sprite
-      .setTexture(texture.key)
+      .setTexture(texture.key, texture.frame)
       .setOrigin(0.5, 1)
       .setAngle(texture.angle * view.dir);
   }
@@ -938,7 +942,7 @@ export class DrawnCombatScene extends StagedScene {
     if (!anim || !texture) return;
     figure.image.anims.stop();
     figure.image
-      .setTexture(texture)
+      .setTexture(texture.key, texture.frame)
       .setOrigin(this.originX(view, anim.originX), anim.originY)
       .setAngle(0);
   }

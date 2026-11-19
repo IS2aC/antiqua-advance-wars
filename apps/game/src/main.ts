@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { BACKGROUND_COLOR, LOGICAL_HEIGHT, LOGICAL_WIDTH, integerZoom } from './config';
 import { CaptureScene } from './combat/CaptureScene';
-import { CombatScene } from './combat/CombatScene';
 import { BattleScene } from './scenes/BattleScene';
 import { TitleScene } from './scenes/TitleScene';
 import { startProtoBench } from './drawn/ProtoBench';
@@ -32,7 +31,7 @@ function startGame(): void {
       zoom: integerZoom(window.innerWidth, window.innerHeight),
     },
     // Combat et capture en dernier : ces scènes s'affichent par-dessus la bataille.
-    scene: [TitleScene, BattleScene, CombatScene, CaptureScene],
+    scene: [TitleScene, BattleScene, CaptureScene],
   });
 
   window.addEventListener('resize', () => {

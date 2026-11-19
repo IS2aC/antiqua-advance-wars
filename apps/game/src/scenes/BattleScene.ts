@@ -5,7 +5,7 @@ import { TILE_SIZE } from '../config';
 import { EventPlayer } from '../animation/EventPlayer';
 import { goToCover } from '../launch';
 import type { CaptureSceneData } from '../combat/CaptureScene';
-import type { CombatSceneData } from '../combat/CombatScene';
+import type { CombatSetup } from '../combat/setup';
 import { createFigureAnimations } from '../combat/packs';
 import { drawnStage } from '../drawn/DrawnStage';
 import type { CombatPresenter } from '../animation/EventPlayer';
@@ -133,21 +133,25 @@ export class BattleScene extends Phaser.Scene {
       (window as unknown as { __ANTIQUA__: DebugHook }).__ANTIQUA__ = hook;
     }
 
+    // Les dessins des combats se chargent pendant le premier tour, pour les seuls peuples
+    // de la partie : le premier combat n'attend pas.
+    if (loadOptions().combatScenes) {
+      void drawnStage.prepare(state.players.map((player) => player.id));
+    }
+
     void controller.start();
   }
 
   /**
-   * Scènes de combat : la scène « Combat » se superpose à la carte, qui ne reçoit plus
-   * d'entrées le temps de la scène. Elle suit la vitesse du tour (accélération de l'IA).
+   * Scènes de combat : les combats dessinés (second canvas en haute définition) et la prise
+   * de bâtiment (scène « Capture ») se posent sur la carte, qui ne reçoit plus d'entrées le
+   * temps de la scène. Elles suivent la vitesse du tour (accélération de l'IA).
    */
   private combatPresenter(): CombatPresenter {
-    const launch = (
-      key: 'Combat' | 'Capture',
-      setup: CombatSceneData['setup'] | CaptureSceneData['setup'],
-    ) =>
+    const capture = (setup: CaptureSceneData['setup']) =>
       new Promise<void>((resolve) => {
         this.input.enabled = false;
-        this.scene.launch(key, {
+        this.scene.launch('Capture', {
           setup,
           speed: this.tweens.timeScale,
           onDone: () => {
@@ -156,8 +160,7 @@ export class BattleScene extends Phaser.Scene {
           },
         });
       });
-    // Combats dessinés (prototype) : second canvas en haute définition, par-dessus la carte.
-    const drawn = async (setup: CombatSceneData['setup']) => {
+    const drawn = async (setup: CombatSetup) => {
       this.input.enabled = false;
       try {
         await drawnStage.play(this.game.canvas, setup, this.tweens.timeScale);
@@ -167,9 +170,8 @@ export class BattleScene extends Phaser.Scene {
     };
     return {
       enabled: () => loadOptions().combatScenes,
-      play: (setup) =>
-        loadOptions().combatStyle === 'dessin' ? drawn(setup) : launch('Combat', setup),
-      capture: (setup) => launch('Capture', setup),
+      play: drawn,
+      capture,
     };
   }
 }

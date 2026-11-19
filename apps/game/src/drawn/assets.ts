@@ -26,6 +26,8 @@ interface AnimInfo {
 }
 
 interface DrawnManifest {
+  /** Empreinte des images, ajoutée à leurs adresses (cache long côté serveur). */
+  readonly version?: string;
   readonly figures: Readonly<Record<string, Readonly<Record<string, unknown>>>>;
   /** Séquences (16 dessins) : peuple → unité → animation. */
   readonly anims?: Readonly<
@@ -35,13 +37,26 @@ interface DrawnManifest {
   readonly decors: readonly string[];
 }
 
-const figureKey = (people: string, unit: string, pose: string) => `d:fig:${people}:${unit}:${pose}`;
+/** Planche d'une unité (poses et séquences, `atlas.webp` + `atlas.json`). */
+const atlasKey = (people: string, unit: string) => `d:atlas:${people}:${unit}`;
+/** Texture et cadre d'une image de planche. */
+interface AtlasFrame {
+  readonly key: string;
+  readonly frame: string;
+}
+const atlasFrame = (people: string, unit: string, frame: string): AtlasFrame => ({
+  key: atlasKey(people, unit),
+  frame,
+});
+function hasFrame(scene: Phaser.Scene, { key, frame }: AtlasFrame): boolean {
+  return scene.textures.exists(key) && scene.textures.get(key).has(frame);
+}
 const portraitKey = (people: string, expression: string) => `d:por:${people}:${expression}`;
 const decorKey = (name: string) => `d:decor:${name}`;
 /** Écusson du peuple de la page de garde (`pnpm assets:cover`), fond transparent. */
 const emblemKey = (people: string) => `d:ecusson:${people}`;
-const animFrameKey = (people: string, unit: string, anim: string, i: number) =>
-  `d:anim:${people}:${unit}:${anim}:${i}`;
+const animFrame = (people: string, unit: string, anim: string, i: number) =>
+  atlasFrame(people, unit, `${anim}-${i}`);
 const animKey = (people: string, unit: string, anim: string) => `d:${people}:${unit}:${anim}`;
 
 /**
@@ -65,8 +80,8 @@ export interface DrawnAnimation {
   readonly key: string;
   readonly originX: number;
   readonly originY: number;
-  /** Texture de chaque image (pour afficher une image seule, comme l'anticipation). */
-  readonly frames: readonly string[];
+  /** Texture et cadre de chaque image (pour afficher une image seule, comme l’anticipation). */
+  readonly frames: readonly AtlasFrame[];
 }
 
 /** Crée une fois les animations Phaser des séquences chargées. */
@@ -78,9 +93,9 @@ export function createDrawnAnimations(scene: Phaser.Scene): void {
         const spec = DRAWN_ANIMS[anim as DrawnAnim] as (typeof DRAWN_ANIMS)[DrawnAnim] | undefined;
         const key = animKey(people, unit, anim);
         if (!spec || scene.anims.exists(key)) continue;
-        const frames = Array.from({ length: info.frames }, (_, i) => ({
-          key: animFrameKey(people, unit, anim, i),
-        })).filter((frame) => scene.textures.exists(frame.key));
+        const frames = Array.from({ length: info.frames }, (_, i) =>
+          animFrame(people, unit, anim, i),
+        ).filter((frame) => hasFrame(scene, frame));
         if (frames.length === 0) continue;
         scene.anims.create({
           key,
@@ -110,11 +125,19 @@ export function drawnAnimation(
     key,
     originX: info.originX,
     originY: info.originY,
-    frames: Array.from({ length: info.frames }, (_, i) => animFrameKey(people, unit, anim, i)),
+    frames: Array.from({ length: info.frames }, (_, i) => animFrame(people, unit, anim, i)),
   };
 }
 
-/** Charge le manifeste puis, dans la même passe, les images qu'il annonce. */
+/** Adresse d'une image dessinée, avec l'empreinte du manifeste (cache long, jamais périmé). */
+function drawnUrl(manifest: Partial<DrawnManifest> | undefined, path: string): string {
+  return manifest?.version ? `${BASE}${path}?v=${manifest.version}` : `${BASE}${path}`;
+}
+
+/**
+ * Au démarrage : le manifeste, les écussons et les décors (communs à tous, environ 1 Mo).
+ * Les dessins des unités, lourds (environ 6 Mo par peuple), viennent avec `loadPeoples`.
+ */
 export function preloadDrawn(scene: Phaser.Scene): void {
   scene.load.json(MANIFEST, `${BASE}manifest.json`);
   for (const people of Object.keys(FACTIONS)) {
@@ -122,42 +145,71 @@ export function preloadDrawn(scene: Phaser.Scene): void {
   }
   scene.load.once(`filecomplete-json-${MANIFEST}`, (_key: string, _type: string, data: unknown) => {
     const manifest = data as Partial<DrawnManifest> | undefined;
-    for (const [people, units] of Object.entries(manifest?.figures ?? {})) {
-      for (const [unit, poses] of Object.entries(units)) {
-        for (const pose of Object.keys(poses as object)) {
-          scene.load.image(figureKey(people, unit, pose), `${BASE}${people}/${unit}/${pose}.webp`);
-        }
-      }
-    }
-    for (const [people, units] of Object.entries(manifest?.anims ?? {})) {
-      for (const [unit, anims] of Object.entries(units)) {
-        for (const [anim, info] of Object.entries(anims)) {
-          for (let i = 0; i < info.frames; i++) {
-            scene.load.image(
-              animFrameKey(people, unit, anim, i),
-              `${BASE}${people}/${unit}/${anim}-${i}.webp`,
-            );
-          }
-        }
-      }
-    }
-    for (const people of manifest?.portraits ?? []) {
-      for (const expression of ['neutral', 'shout', 'hurt', 'smile']) {
-        scene.load.image(
-          portraitKey(people, expression),
-          `${BASE}portraits/${people}/${expression}.webp`,
-        );
-      }
-    }
     for (const name of manifest?.decors ?? []) {
-      scene.load.image(decorKey(name), `${BASE}decor-${name}.webp`);
+      scene.load.image(decorKey(name), drawnUrl(manifest, `decor-${name}.webp`));
     }
   });
+}
+
+/** Peuples déjà chargés ou en cours (une seule fois chacun, même en parallèle). */
+const peopleLoads = new Map<string, Promise<void>>();
+
+/**
+ * Charge les dessins (poses, séquences, portraits) des peuples demandés, une seule fois.
+ * `scene` doit rester active (scène d'amorce du jeu dessiné).
+ */
+export function loadPeoples(scene: Phaser.Scene, peoples: readonly PlayerId[]): Promise<void> {
+  const manifest = scene.cache.json.get(MANIFEST) as Partial<DrawnManifest> | undefined;
+  const pending = peoples.map((people) => {
+    const known = peopleLoads.get(people);
+    if (known) return known;
+    const load = new Promise<void>((resolve) => {
+      let queued = 0;
+      const queue = (key: string, url: string) => {
+        if (scene.textures.exists(key)) return;
+        scene.load.image(key, url);
+        queued++;
+      };
+      const units = new Set([
+        ...Object.keys(manifest?.figures?.[people] ?? {}),
+        ...Object.keys(manifest?.anims?.[people] ?? {}),
+      ]);
+      for (const unit of units) {
+        const key = atlasKey(people, unit);
+        if (scene.textures.exists(key)) continue;
+        scene.load.atlas(
+          key,
+          drawnUrl(manifest, `${people}/${unit}/atlas.webp`),
+          drawnUrl(manifest, `${people}/${unit}/atlas.json`),
+        );
+        queued++;
+      }
+      if (manifest?.portraits?.includes(people)) {
+        for (const expression of ['neutral', 'shout', 'hurt', 'smile']) {
+          queue(
+            portraitKey(people, expression),
+            drawnUrl(manifest, `portraits/${people}/${expression}.webp`),
+          );
+        }
+      }
+      if (queued === 0) {
+        resolve();
+        return;
+      }
+      scene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
+      scene.load.start();
+    });
+    peopleLoads.set(people, load);
+    return load;
+  });
+  return Promise.all(pending).then(() => undefined);
 }
 
 /** Texture d'une pose, et l'inclinaison à lui donner (les poses provisoires s'inclinent). */
 export interface PoseTexture {
   readonly key: string;
+  /** Cadre dans la planche de l'unité (absent pour une silhouette provisoire). */
+  readonly frame?: string;
   readonly angle: number;
   /** Échelle à l'écran pour un figurant du premier rang. */
   readonly scale: number;
@@ -177,16 +229,16 @@ export function poseTexture(
   pose: Pose,
   screenHeight: number,
 ): PoseTexture {
-  const real = figureKey(people, unit, pose);
-  if (scene.textures.exists(real)) {
-    return { key: real, angle: 0, scale: screenHeight / FIGURE_SOURCE_H };
+  const real = atlasFrame(people, unit, pose);
+  if (hasFrame(scene, real)) {
+    return { ...real, angle: 0, scale: screenHeight / FIGURE_SOURCE_H };
   }
   const key = placeholderFigure(scene, people, unit);
   return { key, angle: PLACEHOLDER_ANGLES[pose], scale: screenHeight / FIGURE_SOURCE_H };
 }
 
 export function hasRealFigure(scene: Phaser.Scene, people: PlayerId, unit: UnitType): boolean {
-  return scene.textures.exists(figureKey(people, unit, 'idle'));
+  return hasFrame(scene, atlasFrame(people, unit, 'idle'));
 }
 
 /**

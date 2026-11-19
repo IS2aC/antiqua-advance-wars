@@ -3,6 +3,7 @@ import {
   SAVE_KEY,
   clickEndTurnButton,
   clickTile,
+  skipDrawnCombat,
   state,
   waitForMode,
   waitForScene,
@@ -16,10 +17,6 @@ test('lancer une partie, produire, déplacer, attaquer, finir le tour', async ({
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
 
-  // Scène de combat en pixel art, courte (les combats dessinés sont le réglage par défaut).
-  await page.addInitScript(() =>
-    localStorage.setItem('antiqua:options', '{"combatScenes":true,"combatStyle":"pixel"}'),
-  );
   await page.goto('/jeu.html');
   await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
   await page.reload();
@@ -86,6 +83,7 @@ test('lancer une partie, produire, déplacer, attaquer, finir le tour', async ({
   await page.keyboard.press('Enter'); // « Attaquer »
   await waitForMode(page, 'targeting');
   await clickTile(page, target.x, target.y);
+  await skipDrawnCombat(page);
   await waitForMode(page, 'idle');
   current = await state(page);
   const hit = current.units.find((unit) => unit.id === defender.id);

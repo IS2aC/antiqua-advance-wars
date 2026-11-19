@@ -1,5 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
-import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
+import {
+  SAVE_KEY,
+  clickTile,
+  state,
+  waitForDrawnCombat,
+  waitForMode,
+  waitForScene,
+} from './helpers';
 
 /**
  * Prépare un duel : partie à deux, puis un fantassin de Carthage placé au contact du
@@ -27,22 +34,6 @@ async function stageDuel(page: Page): Promise<{ attackerId: number; defenderId: 
   return { attackerId: attacker.id, defenderId: defender.id };
 }
 
-/** Compte les lancements de la scène de combat (écouteur posé dans la page). */
-async function countCombatScenes(page: Page): Promise<void> {
-  await page.evaluate(() => {
-    const w = window as unknown as {
-      __combats: number;
-      __ANTIQUA_GAME__: {
-        scene: { getScene(key: string): { events: { on(e: string, f: () => void): void } } };
-      };
-    };
-    w.__combats = 0;
-    w.__ANTIQUA_GAME__.scene.getScene('Combat').events.on('create', () => {
-      w.__combats += 1;
-    });
-  });
-}
-
 async function attack(page: Page): Promise<void> {
   await clickTile(page, 2, 11);
   await waitForMode(page, 'selected');
@@ -53,39 +44,38 @@ async function attack(page: Page): Promise<void> {
   await clickTile(page, 2, 10);
 }
 
-test('une attaque joue la scène de combat, puis la partie reprend', async ({ page }) => {
+test('une attaque joue le combat dessiné, puis la partie reprend', async ({ page }) => {
+  // Le combat se joue en entier, sans être passé : long en WebGL logiciel.
+  test.setTimeout(300_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  // Scène en pixel art (les combats dessinés sont le réglage par défaut).
-  await page.addInitScript(() =>
-    localStorage.setItem('antiqua:options', '{"combatScenes":true,"combatStyle":"pixel"}'),
-  );
+  await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
   const { defenderId } = await stageDuel(page);
-  await countCombatScenes(page);
 
   await attack(page);
-  await waitForScene(page, 'Combat');
+  await waitForDrawnCombat(page);
   // La scène se termine seule et rend la main à la carte.
+  // WebGL logiciel de la CI : les images y sont si lentes que le temps du jeu avance moins
+  // vite que le temps réel ; un combat complet peut y dépasser 90 s.
+  await expect(page.locator('#combat-dessine')).toBeHidden({ timeout: 240_000 });
   await waitForMode(page, 'idle');
-  expect(await page.evaluate(() => (window as unknown as { __combats: number }).__combats)).toBe(1);
   const hit = (await state(page)).units.find((u) => u.id === defenderId);
   expect(hit?.hp ?? 0).toBeLessThan(100);
   expect(errors).toEqual([]);
 });
 
-test('Entrée passe la scène de combat', async ({ page }) => {
-  // Scène en pixel art (les combats dessinés sont le réglage par défaut).
-  await page.addInitScript(() =>
-    localStorage.setItem('antiqua:options', '{"combatScenes":true,"combatStyle":"pixel"}'),
-  );
+test('Entrée passe le combat dessiné', async ({ page }) => {
+  await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
   await stageDuel(page);
   await attack(page);
-  await waitForScene(page, 'Combat');
+  await waitForDrawnCombat(page);
   const started = Date.now();
   await page.keyboard.press('Enter');
+  await expect(page.locator('#combat-dessine')).toBeHidden();
   await waitForMode(page, 'idle');
-  // Sans passer, la scène dure plus de deux secondes.
-  expect(Date.now() - started).toBeLessThan(1500);
+  // Sans passer, le combat dure bien plus longtemps (plus de 30 s sur la CI, en WebGL
+  // logiciel ; passer y prend 3 à 4 s).
+  expect(Date.now() - started).toBeLessThan(8000);
 });
 
 test('scènes de combat désactivées dans la pause : animation courte sur la carte', async ({
@@ -93,7 +83,6 @@ test('scènes de combat désactivées dans la pause : animation courte sur la ca
 }) => {
   await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
   await stageDuel(page);
-  await countCombatScenes(page);
 
   // Pause → « Scènes de combat » (2ᵉ choix) bascule sur « non », puis Échap pour reprendre.
   await page.keyboard.press('Escape');
@@ -107,5 +96,6 @@ test('scènes de combat désactivées dans la pause : animation courte sur la ca
 
   await attack(page);
   await waitForMode(page, 'idle');
-  expect(await page.evaluate(() => (window as unknown as { __combats: number }).__combats)).toBe(0);
+  // Le combat dessiné (préparé dès l'ouverture de la partie) ne s'est pas affiché.
+  await expect(page.locator('#combat-dessine')).toBeHidden();
 });

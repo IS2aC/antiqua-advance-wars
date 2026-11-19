@@ -20,7 +20,6 @@ const MENU_TOP = GRID * 21;
 const SCENE_LABELS: Readonly<Record<CombatSetting, string>> = {
   oui: 'oui',
   non: 'non',
-  dessinees: 'dessinées (proto)',
 };
 /** Plus clair que le texte désactivé : il doit se lire sur le voile sombre. */
 const HINT_COLOR = '#d8c8a0';

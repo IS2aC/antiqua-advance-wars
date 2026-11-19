@@ -14,10 +14,12 @@
  * `A-FAIRE.md` dans le dossier source (ce qui reste à dessiner).
  * Lancement : `pnpm assets:dessin`.
  */
+import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { packUnitDir } from './drawn-atlas';
 import { COMBAT_UNITS, PEOPLES } from './combat';
 import {
   DRAWN_DECOR_H,
@@ -61,7 +63,18 @@ interface AnimInfo {
   readonly originY: number;
 }
 
+/**
+ * Qualité WebP des dessins : à 78 (contour 80), aucune différence visible sur ces aplats de
+ * dessin animé, et environ 30 % de poids en moins qu'à 90.
+ */
+const FIGURE_WEBP = { quality: 78, alphaQuality: 80, effort: 6 } as const;
+
 interface DrawnManifest {
+  /**
+   * Empreinte du contenu des images : ajoutée à leurs adresses (`?v=`), elle permet au
+   * serveur de les garder en cache longtemps (nginx.conf) sans servir d'image périmée.
+   */
+  version: string;
   figures: Record<string, Record<string, Record<string, PoseInfo>>>;
   /** Séquences par peuple et unité : images `<anim>-<i>.webp`. */
   anims: Record<string, Record<string, Record<string, AnimInfo>>>;
@@ -91,7 +104,7 @@ async function writePiece(
     .toBuffer();
   await sharp(piece)
     .resize({ width: w, height: h, kernel: 'lanczos3' })
-    .webp({ quality: 90, alphaQuality: 100, effort: 5 })
+    .webp(FIGURE_WEBP)
     .toFile(output);
   return { w, h };
 }
@@ -122,7 +135,7 @@ async function writeFrame(
     .toBuffer();
   await sharp(canvas)
     .resize({ width: w, height: h, kernel: 'lanczos3' })
-    .webp({ quality: 90, alphaQuality: 100, effort: 5 })
+    .webp(FIGURE_WEBP)
     .toFile(output);
 }
 
@@ -231,10 +244,30 @@ async function removeStale(dir: string, since: number): Promise<void> {
   }
 }
 
+/** Empreinte courte des images produites (chemins et contenus), manifeste exclu. */
+async function contentHash(dir: string): Promise<string> {
+  const hash = createHash('sha1');
+  const files = (await readdir(dir, { recursive: true, withFileTypes: true }))
+    .filter((entry) => entry.isFile() && entry.name !== 'manifest.json')
+    .map((entry) => join(entry.parentPath, entry.name))
+    .sort();
+  for (const file of files) {
+    hash.update(relative(dir, file));
+    hash.update(await readFile(file));
+  }
+  return hash.digest('hex').slice(0, 10);
+}
+
 async function main(): Promise<void> {
   const started = Date.now() - 1000;
   await mkdir(OUT, { recursive: true });
-  const manifest: DrawnManifest = { figures: {}, anims: {}, portraits: [], decors: [] };
+  const manifest: DrawnManifest = {
+    version: '',
+    figures: {},
+    anims: {},
+    portraits: [],
+    decors: [],
+  };
   const settings = await readSettings();
   const files = await listImages(SOURCE);
   if (files.length === 0)
@@ -257,7 +290,7 @@ async function main(): Promise<void> {
     if (role.kind === 'decor') {
       await sharp(input)
         .resize({ width: DRAWN_DECOR_W, height: DRAWN_DECOR_H, fit: 'cover', position: 'centre' })
-        .webp({ quality: 85, effort: 5 })
+        .webp({ quality: 80, effort: 6 })
         .toFile(join(OUT, `decor-${role.name}.webp`));
       manifest.decors.push(role.name);
       console.log(`[dessin] ${file} → décor « ${role.name} »`);
@@ -346,8 +379,23 @@ async function main(): Promise<void> {
     }
   }
 
-  await writeFile(join(OUT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+  // Une planche par unité : une vingtaine de fichiers par duel au lieu de 300.
+  const units = new Set<string>();
+  for (const [people, byUnit] of [
+    ...Object.entries(manifest.figures),
+    ...Object.entries(manifest.anims),
+  ]) {
+    for (const unit of Object.keys(byUnit)) units.add(join(people, unit));
+  }
+  for (const unit of [...units].sort()) {
+    const atlas = await packUnitDir(join(OUT, unit), FIGURE_WEBP);
+    console.log(
+      `[dessin] planche ${unit} : ${atlas.frames} images, ${atlas.width}×${atlas.height}`,
+    );
+  }
   await removeStale(OUT, started);
+  manifest.version = await contentHash(OUT);
+  await writeFile(join(OUT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   await mkdir(SOURCE, { recursive: true });
   await writeFile(join(SOURCE, 'A-FAIRE.md'), todoReport(present, PEOPLES, COMBAT_UNITS));
   console.log(`[dessin] manifeste écrit, liste à jour : art/raw/combat-dessine/A-FAIRE.md`);
@@ -384,7 +432,7 @@ async function writePortraits(file: string, people: string): Promise<void> {
           top: PORTRAIT_SIZE - size.h,
         },
       ])
-      .webp({ quality: 90, alphaQuality: 100 })
+      .webp(FIGURE_WEBP)
       .toFile(join(dir, `${expression}.webp`));
     await rm(tmp);
   }

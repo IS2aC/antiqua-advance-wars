@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { CombatSetup } from '../combat/setup';
-import { preloadDrawn } from './assets';
+import type { PlayerId } from '@antiqua/engine';
+import { loadPeoples, preloadDrawn } from './assets';
 import { DrawnCombatScene, type DrawnCombatData } from './DrawnCombatScene';
 import { DRAWN_H, DRAWN_W } from './layout';
 
@@ -39,7 +40,7 @@ class DrawnStage {
    */
   async play(host: HTMLElement, setup: CombatSetup, speed: number): Promise<void> {
     this.host = host;
-    await this.ensure();
+    await this.prepare([setup.left.owner, setup.right.owner]);
     const overlay = this.overlay;
     const game = this.game;
     if (!overlay || !game) return;
@@ -51,6 +52,16 @@ class DrawnStage {
       game.scene.start('DrawnCombat', data);
     });
     this.hide();
+  }
+
+  /**
+   * Prépare la scène et charge les dessins de ces peuples (une fois chacun). La partie
+   * l'appelle dès son ouverture, pour que le premier combat n'attende pas.
+   */
+  async prepare(peoples: readonly PlayerId[]): Promise<void> {
+    await this.ensure();
+    const boot = this.game?.scene.getScene('DrawnBoot');
+    if (boot) await loadPeoples(boot, peoples);
   }
 
   /**
@@ -101,8 +112,7 @@ class DrawnStage {
         });
         this.game.events.once(READY, () => resolve());
       });
-      // Le décor du jeu dessiné n'affiche rien hors combat.
-      this.game?.scene.stop('DrawnBoot');
+      // L'amorce reste active (elle n'affiche rien) : son chargeur sert aux peuples.
       if (import.meta.env.DEV) {
         (window as unknown as { __ANTIQUA_DRAWN__: Phaser.Game | null }).__ANTIQUA_DRAWN__ =
           this.game;

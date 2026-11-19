@@ -13,7 +13,7 @@ import { decorFor, figureAnimation, figureAtlas, hasFigure } from './packs';
  */
 
 /** Échelle des sprites de carte et des tuiles en scène. */
-export const SCALE = 2;
+const SCALE = 2;
 /** Hauteur du bandeau du haut (le décor passe dessous). */
 export const HUD_H = GRID * 7;
 const HORIZON = 168;
