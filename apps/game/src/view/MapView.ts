@@ -89,8 +89,9 @@ function drawTerrainMark(
  * case du dessus), ou bloc de couleur avec sa lettre si les atlas manquent.
  */
 class BuildingView {
-  private readonly image: Phaser.GameObjects.Image | null = null;
-  private readonly block: Phaser.GameObjects.Rectangle | null = null;
+  /** Sprite du bâtiment (ou bloc de couleur sans atlas), animé à la capture. */
+  readonly image: Phaser.GameObjects.Image | null = null;
+  readonly block: Phaser.GameObjects.Rectangle | null = null;
   private readonly capture: Phaser.GameObjects.Text;
 
   constructor(scene: Phaser.Scene, building: Building, withArt: boolean) {
@@ -143,6 +144,15 @@ export class MapView {
     for (const building of state.buildings) {
       this.buildings.get(`${building.x},${building.y}`)?.update(building);
     }
+  }
+
+  /** Visuel du bâtiment d'une case (pour l'animation de capture). */
+  buildingVisual(
+    x: number,
+    y: number,
+  ): Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle | null {
+    const view = this.buildings.get(`${x},${y}`);
+    return view?.image ?? view?.block ?? null;
   }
 
   /** Tuiles de l'atlas : variantes stables par case, routes et rivière en autotiling. */

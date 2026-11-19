@@ -32,7 +32,17 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
 });
 
-test('capturer un village joue la scène de siège, puis la partie reprend', async ({ page }) => {
+/** Vrai si la scène plein écran de capture est active. */
+const captureSceneActive = (page: Page) =>
+  page.evaluate(() =>
+    (
+      window as unknown as {
+        __ANTIQUA_GAME__: { scene: { isActive(key: string): boolean } };
+      }
+    ).__ANTIQUA_GAME__.scene.isActive('Capture'),
+  );
+
+test('capturer un village se joue sur le plateau, puis la partie reprend', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   // Fantassin de Koush posé sur le village neutre (7, 7).
@@ -41,11 +51,25 @@ test('capturer un village joue la scène de siège, puis la partie reprend', asy
     units: s.units.map((u) => (u.owner === 'koush' && u.x === 3 ? { ...u, x: 7, y: 7 } : u)),
   }));
   await captureAt(page, 7, 7);
-  await waitForScene(page, 'Capture');
+  expect(await captureSceneActive(page)).toBe(false);
   await waitForMode(page, 'idle');
+  expect(await captureSceneActive(page)).toBe(false);
   const village = (await state(page)).buildings.find((b) => b.x === 7 && b.y === 7);
   expect(village?.capturePoints).toBe(10);
   expect(errors).toEqual([]);
+});
+
+test('finir la capture d’un village le fait changer de camp, sur le plateau', async ({ page }) => {
+  await stage(page, (s) => ({
+    ...s,
+    units: s.units.map((u) => (u.owner === 'koush' && u.x === 3 ? { ...u, x: 7, y: 7 } : u)),
+    buildings: s.buildings.map((b) => (b.x === 7 && b.y === 7 ? { ...b, capturePoints: 10 } : b)),
+  }));
+  await captureAt(page, 7, 7);
+  await waitForMode(page, 'idle');
+  expect(await captureSceneActive(page)).toBe(false);
+  const village = (await state(page)).buildings.find((b) => b.x === 7 && b.y === 7);
+  expect(village?.owner).toBe('koush');
 });
 
 test('prendre le QG adverse joue l’annexion, puis l’écran de victoire', async ({ page }) => {

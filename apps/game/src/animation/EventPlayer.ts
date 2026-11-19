@@ -7,6 +7,7 @@ import {
   type CaptureSetup,
   type CombatSetup,
 } from '../combat/setup';
+import { playCaptureOnBoard } from '../view/CaptureFx';
 import type { Hud } from '../view/Hud';
 import type { MapView } from '../view/MapView';
 import { TEAM_COLORS } from '../view/palette';
@@ -26,7 +27,7 @@ export interface CombatPresenter {
   /** Réglage du joueur : scènes complètes, ou animation courte sur la carte. */
   enabled(): boolean;
   play(setup: CombatSetup): Promise<void>;
-  /** Scène de siège, de prise de bâtiment ou d'annexion du QG. */
+  /** Scène plein écran de l'annexion du QG adverse (les autres captures : sur le plateau). */
   capture(setup: CaptureSetup): Promise<void>;
 }
 
@@ -55,14 +56,30 @@ export class EventPlayer {
       let combatShown = false;
       let captureShown = false;
       for (const event of events) {
-        if (event.type === 'captureProgress' && before && this.combat?.enabled()) {
+        if (event.type === 'captureProgress' && before) {
           const captured = events.find(
             (e): e is Extract<GameEvent, { type: 'buildingCaptured' }> =>
               e.type === 'buildingCaptured' && e.x === event.x && e.y === event.y,
           );
           const setup = buildCaptureSetup(before, event, captured);
-          if (setup) {
+          if (setup?.annexation && this.combat?.enabled()) {
+            // Prise du QG adverse : la fin de la partie mérite la scène plein écran.
             await this.combat.capture(setup);
+            captureShown = true;
+          } else if (setup) {
+            // Capture ordinaire : jouée sur le plateau, sans quitter la carte.
+            await playCaptureOnBoard(this.scene, {
+              x: event.x,
+              y: event.y,
+              building: setup.building,
+              owner: setup.owner,
+              pointsBefore: setup.pointsBefore,
+              pointsAfter: setup.pointsAfter,
+              captured: setup.captured,
+              unit: this.views.units.get(event.unitId)?.container ?? null,
+              buildingVisual: this.views.map.buildingVisual(event.x, event.y),
+              syncMap: () => this.views.map.sync(state),
+            });
             captureShown = true;
           }
         }
@@ -70,7 +87,7 @@ export class EventPlayer {
           captureShown &&
           (event.type === 'captureProgress' || event.type === 'buildingCaptured')
         ) {
-          // Déjà montré en plein écran : la carte prend seulement l'état final du bâtiment.
+          // Déjà montré (plateau ou plein écran) : la carte prend l'état final du bâtiment.
           this.views.map.sync(state);
           continue;
         }
@@ -135,6 +152,46 @@ export class EventPlayer {
       case 'unitWaited':
         units.get(event.unitId)?.setExhausted(true);
         return;
+      case 'unitHealed': {
+        // Soin au village, au début du tour : « +2 PV » en vert au-dessus de l'unité.
+        const healed = units.get(event.unitId);
+        if (!healed) return;
+        const gained = displayHp(event.hp) - displayHp(healed.hpShown);
+        healed.setHp(event.hp);
+        this.popup(
+          healed.container.x,
+          healed.container.y - T / 2,
+          `+${Math.max(1, gained)} PV`,
+          '#8fe388',
+        );
+        await this.wait(260);
+        return;
+      }
+      case 'unitsMerged': {
+        // L'unité arrivée se fond dans celle qu'elle rejoint, qui reprend des forces.
+        const mover = units.get(event.unitId);
+        const joined = units.get(event.targetId);
+        units.forget(event.unitId);
+        await mover?.vanish();
+        if (joined) {
+          const gained = displayHp(event.hp) - displayHp(joined.hpShown);
+          joined.setHp(event.hp);
+          joined.setExhausted(true);
+          this.popup(
+            joined.container.x,
+            joined.container.y - T / 2,
+            gained > 0 ? `+${gained} PV` : 'Fusion',
+            '#8fe388',
+          );
+          await joined.flash();
+        }
+        if (event.refund > 0 && joined) {
+          this.popup(joined.container.x, joined.container.y - T, `+${event.refund} or`, '#ffe066');
+        }
+        this.views.hud.sync(state);
+        await this.wait(250);
+        return;
+      }
       case 'captureProgress':
         this.popup(event.x * T + T / 2, event.y * T, `Capture ${event.capturePoints}`, '#ffe066');
         this.views.map.sync(state);

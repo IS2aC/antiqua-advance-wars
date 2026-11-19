@@ -6,10 +6,12 @@ import {
   buildingAt,
   chooseGreedyAction,
   canCapture,
+  canMerge,
   findPath,
   findUnit,
   forecast,
   inBounds,
+  mergePath,
   reachableTiles,
   targetsInRange,
   threatTiles,
@@ -51,7 +53,7 @@ const T = TILE_SIZE;
 type Mode =
   'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'paused' | 'over';
 
-type Command = 'attack' | 'capture' | 'wait';
+type Command = 'attack' | 'capture' | 'wait' | 'merge';
 
 export interface ControllerViews {
   readonly cursor: Cursor;
@@ -81,6 +83,8 @@ export class BattleController {
   private mode: Mode = 'idle';
   private selectedId: number | null = null;
   private reachable: Position[] = [];
+  /** Unités alliées que l'unité sélectionnée peut rejoindre (fusion). */
+  private mergeTargets: Unit[] = [];
   private targets: Unit[] = [];
   private targetIndex = 0;
   private resolveTarget: ((target: Unit | null) => void) | null = null;
@@ -329,7 +333,11 @@ export class BattleController {
   private select(unit: Unit): void {
     this.selectedId = unit.id;
     this.reachable = unit.hasMoved ? [unit] : reachableTiles(this.state, unit.id);
-    this.views.overlay.show(this.reachable, threatTiles(this.state, unit.id));
+    this.mergeTargets = this.state.units.filter((other) => canMerge(this.state, unit.id, other.id));
+    this.views.overlay.show(
+      [...this.reachable, ...this.mergeTargets],
+      threatTiles(this.state, unit.id),
+    );
     this.mode = 'selected';
     this.updateArrow(this.views.cursor.position);
   }
@@ -343,6 +351,7 @@ export class BattleController {
   private clearSelection(): void {
     this.selectedId = null;
     this.reachable = [];
+    this.mergeTargets = [];
     this.views.overlay.clear();
     this.views.arrow.clear();
     if (this.mode !== 'over') this.mode = 'idle';
@@ -350,10 +359,14 @@ export class BattleController {
 
   private updateArrow(tile: Position): void {
     const unit = this.selectedId === null ? undefined : findUnit(this.state, this.selectedId);
-    const path =
-      unit && this.reachable.some((candidate) => same(candidate, tile)) && !same(unit, tile)
-        ? findPath(this.state, unit.id, tile)
-        : null;
+    const ally = this.mergeTargets.find((candidate) => same(candidate, tile));
+    const path = !unit
+      ? null
+      : ally
+        ? mergePath(this.state, unit.id, ally)
+        : this.reachable.some((candidate) => same(candidate, tile)) && !same(unit, tile)
+          ? findPath(this.state, unit.id, tile)
+          : null;
     if (path) this.views.arrow.show(path);
     else this.views.arrow.clear();
   }
@@ -364,6 +377,8 @@ export class BattleController {
     const unit = this.selectedId === null ? undefined : findUnit(this.state, this.selectedId);
     if (!unit) return this.clearSelection();
     if (same(unit, tile)) return this.commandMenu(unit.id, null);
+    const ally = this.mergeTargets.find((candidate) => same(candidate, tile));
+    if (ally) return this.mergeMenu(unit, ally);
     if (!this.reachable.some((candidate) => same(candidate, tile))) return this.clearSelection();
 
     const before = this.state;
@@ -374,6 +389,28 @@ export class BattleController {
     } else {
       this.clearSelection();
     }
+  }
+
+  /**
+   * Destination sur une unité alliée du même type, blessée : menu « Fusionner ». Échap
+   * revient au choix de la destination (rien n'a bougé).
+   */
+  private async mergeMenu(unit: Unit, ally: Unit): Promise<void> {
+    this.views.overlay.clear();
+    this.mode = 'menu';
+    const choice = await this.views.menu.open<Command>(
+      [{ value: 'merge', label: 'Fusionner' }],
+      this.screenPosition(ally),
+    );
+    this.views.arrow.clear();
+    if (choice !== 'merge') {
+      const restored = findUnit(this.state, unit.id);
+      if (restored) this.select(restored);
+      else this.clearSelection();
+      return;
+    }
+    await this.execute({ type: 'MERGE', unitId: unit.id, targetId: ally.id });
+    this.clearSelection();
   }
 
   /**
@@ -549,6 +586,17 @@ export class BattleController {
         this.pointAt(target, 2);
         await this.pause(AI_PREVIEW);
         this.views.overlay.clear();
+        return;
+      }
+      case 'MERGE': {
+        const unit = findUnit(this.state, action.unitId);
+        const ally = findUnit(this.state, action.targetId);
+        const path = unit && ally ? mergePath(this.state, unit.id, ally) : null;
+        if (!unit || !path) return;
+        this.pointAt(unit, 3);
+        this.views.arrow.show(path);
+        await this.pause(AI_PREVIEW);
+        this.views.arrow.clear();
         return;
       }
       case 'BUILD':

@@ -24,6 +24,7 @@ import {
   unitAt,
 } from '../rules/grid';
 import { CAPTURE_POINTS } from '../rules/capture';
+import { MAX_HP, canMerge } from '../rules/merge';
 import { reachableTiles } from '../rules/movement';
 
 /**
@@ -52,6 +53,12 @@ const WEIGHTS = {
   blockBarracks: 600,
   /** Bonus pour frapper une unité qui capture un de nos bâtiments. */
   stopCapture: 800,
+  /**
+   * Bonus pour une unité blessée qui finit sur un de ses villages (soin de 2 PV au tour
+   * suivant), par PV interne manquant et par point de coût : environ 200 à 5 PV pour un
+   * fantassin, soit cinq cases d'écart.
+   */
+  heal: 0.004,
 } as const;
 
 /** Valeur d'un bâtiment pris (ou dont la capture progresse). */
@@ -286,6 +293,10 @@ function bestCandidate(state: GameState, unit: Unit, threats: readonly Threat[])
     if (building?.type === 'caserne' && building.owner === unit.owner) {
       position -= WEIGHTS.blockBarracks;
     }
+    // Une unité blessée gagne à finir sur un de ses villages : +2 PV au prochain tour.
+    if (building?.type === 'village' && building.owner === unit.owner && unit.hp < MAX_HP) {
+      position += WEIGHTS.heal * (MAX_HP - unit.hp) * stats.cost;
+    }
 
     const options: { action: Action; value: number; spared: number | null }[] = [
       { action: { type: 'WAIT', unitId: unit.id }, value: 0, spared: null },
@@ -397,6 +408,26 @@ function frontDistance(state: GameState, position: Position): number {
   );
 }
 
+/** En dessous de ce nombre de PV affichés, une unité cherche à fusionner. */
+const MERGE_BELOW = 4;
+
+/**
+ * Fusion d'une unité très affaiblie avec une alliée du même type, blessée : la moins de
+ * PV perdus d'abord (puis la plus faible), pour remettre une unité solide en ligne.
+ */
+function mergeAction(state: GameState, unit: Unit): Action | null {
+  if (unit.hasMoved || displayHp(unit.hp) > MERGE_BELOW) return null;
+  const allies = state.units
+    .filter((ally) => canMerge(state, unit.id, ally.id))
+    .map((ally) => ({
+      ally,
+      waste: Math.max(0, displayHp(unit.hp) + displayHp(ally.hp) - 10),
+    }))
+    .sort((a, b) => a.waste - b.waste || a.ally.hp - b.ally.hp || a.ally.id - b.ally.id);
+  const choice = allies[0];
+  return choice ? { type: 'MERGE', unitId: unit.id, targetId: choice.ally.id } : null;
+}
+
 /** Prochaine action de l'IA pour le joueur courant. Déterministe, toujours légale. */
 export function chooseGreedyAction(state: GameState): Action {
   if (state.status !== 'playing') return { type: 'END_TURN' };
@@ -404,6 +435,10 @@ export function chooseGreedyAction(state: GameState): Action {
   if (unit) {
     const threats = threatsAgainst(state, state.currentPlayer);
     const best = bestCandidate(state, unit, threats);
+    // Une unité très affaiblie rejoint une alliée, sauf si elle peut prendre un QG
+    // ou achever une cible à coup sûr.
+    const merge = best.score < WINNING_CAPTURE ? mergeAction(state, unit) : null;
+    if (merge && best.action.type !== 'ATTACK') return merge;
     if (!samePosition(best.tile, unit)) {
       return { type: 'MOVE', unitId: unit.id, to: { x: best.tile.x, y: best.tile.y } };
     }

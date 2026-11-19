@@ -114,6 +114,8 @@ export type Action =
   | { readonly type: 'ATTACK'; readonly unitId: number; readonly targetId: number }
   | { readonly type: 'CAPTURE'; readonly unitId: number }
   | { readonly type: 'WAIT'; readonly unitId: number }
+  /** L'unité rejoint une unité alliée du même type (sur sa case) : fusion. */
+  | { readonly type: 'MERGE'; readonly unitId: number; readonly targetId: number }
   | { readonly type: 'BUILD'; readonly x: number; readonly y: number; readonly unitType: UnitType }
   | { readonly type: 'END_TURN' };
 
@@ -149,6 +151,16 @@ export type GameEvent =
     }
   | { readonly type: 'unitWaited'; readonly unitId: number }
   | {
+      /** `unitId` a rejoint `targetId`, qui a maintenant `hp` PV internes. */
+      readonly type: 'unitsMerged';
+      readonly unitId: number;
+      readonly targetId: number;
+      readonly hp: number;
+      /** Or rendu pour les PV en trop. */
+      readonly refund: number;
+      readonly funds: number;
+    }
+  | {
       readonly type: 'captureProgress';
       readonly unitId: number;
       readonly x: number;
@@ -163,6 +175,14 @@ export type GameEvent =
       readonly building: BuildingType;
       readonly owner: PlayerId;
       readonly previousOwner: PlayerId | null;
+    }
+  | {
+      /** Début de tour : l'unité, sur un de ses villages, a regagné des PV (`hp` internes). */
+      readonly type: 'unitHealed';
+      readonly unitId: number;
+      readonly x: number;
+      readonly y: number;
+      readonly hp: number;
     }
   | { readonly type: 'unitBuilt'; readonly unit: Unit; readonly cost: number }
   | { readonly type: 'turnEnded'; readonly player: PlayerId }

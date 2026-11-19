@@ -1,6 +1,7 @@
 import type { Draft } from '../model/draft';
 import type { GameEvent } from '../model/types';
 import { collectIncome } from './economy';
+import { healOnVillages } from './heal';
 
 /** Le revenu est versé au début de chaque tour, à partir du jour 2 (fin du tour 1 équitable). */
 export const INCOME_FROM_DAY = 2;
@@ -32,4 +33,5 @@ export function endTurn(draft: Draft, events: GameEvent[]): void {
 
   events.push({ type: 'turnStarted', player: draft.currentPlayer, day: draft.day });
   if (draft.day >= INCOME_FROM_DAY) collectIncome(draft, events);
+  healOnVillages(draft, events);
 }
