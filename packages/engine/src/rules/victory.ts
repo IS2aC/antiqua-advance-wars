@@ -18,6 +18,12 @@ export function defeatPlayer(
   if (!player || player.defeated) return;
   player.defeated = true;
   events.push({ type: 'playerDefeated', player: playerId, reason });
+  // Le royaume vaincu quitte la carte : ses unités disparaissent (elles ne bloquent plus
+  // le passage) et ses bâtiments redeviennent neutres, à reprendre.
+  draft.units = draft.units.filter((unit) => unit.owner !== playerId);
+  for (const building of draft.buildings) {
+    if (building.owner === playerId) building.owner = null;
+  }
 }
 
 /** Un joueur sans aucune unité à partir du jour 2 est vaincu. */

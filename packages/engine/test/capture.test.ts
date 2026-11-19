@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CAPTURE_POINTS, buildingAt, canCapture } from '../src/index';
+import { CAPTURE_POINTS, buildingAt, canCapture, createGame, parseAsciiMap } from '../src/index';
 import { C, K, act, endRound, errorOf, eventsOfType, play, setup } from './helpers';
 
 const VILLAGE_ROWS = ['V....', '.....'];
@@ -100,5 +100,47 @@ describe('capture', () => {
     expect(next.status).toBe('finished');
     expect(next.winner).toBe(K);
     expect(errorOf(next, { type: 'END_TURN' })).toBe('GAME_OVER');
+  });
+});
+
+describe('royaume vaincu (partie à plusieurs)', () => {
+  it('son QG pris, il quitte la carte : unités retirées, bâtiments neutres, la partie continue', () => {
+    const parsed = parseAsciiMap(['Q.V.Q', '.....', 'Q....']);
+    let state = createGame(
+      {
+        name: 'test',
+        width: parsed.width,
+        height: parsed.height,
+        tiles: parsed.tiles,
+        buildings: [
+          { type: 'qg', x: 0, y: 0, owner: C },
+          { type: 'village', x: 2, y: 0, owner: C },
+          { type: 'qg', x: 4, y: 0, owner: K },
+          { type: 'qg', x: 0, y: 2, owner: 'ashanti' },
+        ],
+        units: [
+          { type: 'fantassin', owner: K, x: 0, y: 0 },
+          { type: 'fantassin', owner: C, x: 2, y: 1 },
+          { type: 'fantassin', owner: 'ashanti', x: 1, y: 2 },
+        ],
+        players: [K, C, 'ashanti'],
+        startingFunds: 0,
+      },
+      { seed: 1 },
+    );
+    state = {
+      ...state,
+      buildings: state.buildings.map((b) =>
+        b.x === 0 && b.y === 0 ? { ...b, capturePoints: 5 } : b,
+      ),
+    };
+    const { state: next, events } = act(state, { type: 'CAPTURE', unitId: 1 });
+    expect(events).toContainEqual({ type: 'playerDefeated', player: C, reason: 'hq' });
+    expect(next.status).toBe('playing');
+    expect(next.units.some((u) => u.owner === C)).toBe(false);
+    expect(next.buildings.find((b) => b.x === 2 && b.y === 0)?.owner).toBeNull();
+    expect(next.buildings.find((b) => b.x === 0 && b.y === 0)?.owner).toBe(K);
+    // Le tour passe ensuite directement aux Ashanti.
+    expect(act(next, { type: 'END_TURN' }).state.currentPlayer).toBe('ashanti');
   });
 });

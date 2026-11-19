@@ -183,3 +183,22 @@ l'histoire de chaque peuple, comme pour les autres unités.
   - moteur : `BuildingType` (aujourd'hui village, caserne, QG) et leurs règles ;
   - rendu : sprites de bâtiment et animation de capture sur le plateau ;
   - cartes : placement des nouveaux bâtiments.
+
+## 9. Deux modes de jeu : combat classique et défense de forteresse
+
+- **Combat classique** : le mode actuel (prendre le QG adverse ou détruire toutes ses unités).
+- **Défense de la forteresse** : le joueur doit **tenir son QG pendant un nombre de jours**
+  (minuteur) face à des adversaires (IA) **beaucoup mieux équipés**. Il gagne s'il tient
+  jusqu'au bout, perd si son QG tombe.
+- À brainstormer ensemble :
+  - durée (nombre de jours), et si elle varie selon la difficulté ;
+  - avantage de l'attaquant : plus d'or au départ, plus de revenus, unités déjà placées,
+    renforts qui arrivent à certains jours (vagues) ;
+  - aides au défenseur : murailles ou bonus de défense autour du QG, revenus propres, une
+    réserve d'unités ;
+  - cartes : une carte dédiée (forteresse au centre ou dans un coin), ou les cartes actuelles ;
+  - affichage : compte à rebours des jours dans le HUD, annonce des vagues.
+- Code : un mode de partie dans l'état (`mode: 'classique' | 'forteresse'`, jour limite),
+  une condition de victoire de plus dans `rules/victory.ts`, l'IA adverse inchangée (elle
+  attaque déjà le QG), une entrée sur la page de garde.
+

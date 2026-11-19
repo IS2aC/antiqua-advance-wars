@@ -243,9 +243,14 @@ export class EventPlayer {
         // L'écran de fin est affiché par le contrôleur, une fois tous les événements joués.
         this.sync(state);
         return;
+      case 'playerDefeated':
+        // Le royaume vaincu quitte la carte : bandeau, puis ses unités disparaissent et ses
+        // bâtiments redeviennent neutres.
+        await banner.show(`${FACTIONS[event.player].name} est vaincu`, TEAM_COLORS[event.player]);
+        this.sync(state);
+        return;
       case 'captureReset':
       case 'fundsGained':
-      case 'playerDefeated':
         return;
     }
   }
