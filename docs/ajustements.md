@@ -190,14 +190,18 @@ l'histoire de chaque peuple, comme pour les autres unités.
 - **Défense de la forteresse** : le joueur doit **tenir son QG pendant un nombre de jours**
   (minuteur) face à des adversaires (IA) **beaucoup mieux équipés**. Il gagne s'il tient
   jusqu'au bout, perd si son QG tombe.
-- À brainstormer ensemble :
-  - durée (nombre de jours), et si elle varie selon la difficulté ;
-  - avantage de l'attaquant : plus d'or au départ, plus de revenus, unités déjà placées,
-    renforts qui arrivent à certains jours (vagues) ;
-  - aides au défenseur : murailles ou bonus de défense autour du QG, revenus propres, une
-    réserve d'unités ;
-  - cartes : une carte dédiée (forteresse au centre ou dans un coin), ou les cartes actuelles ;
-  - affichage : compte à rebours des jours dans le HUD, annonce des vagues.
+- Décidé (brainstorming du 19/11/2026) :
+  - **durée selon la difficulté**, choisie sur la page de garde : facile 10 jours,
+    normal 15, difficile 20 ;
+  - **vagues de renforts** : une armée de départ, puis des renforts tous les 3 jours qui
+    entrent par les bords de la carte, de plus en plus forts (catapultes, chars) ; un
+    bandeau annonce chaque vague ;
+  - **aucune aide au défenseur** (ni garnison, ni soins, ni revenus en plus) ;
+  - **carte dédiée, 1 adversaire** : « La Forteresse », le QG du joueur au centre d'une
+    citadelle, l'ennemi arrivant de plusieurs côtés ; le joueur choisit son peuple et
+    celui de l'assaillant.
+  - Ce mode pourra apporter des **terrains particuliers** propres au siège (à définir :
+    par exemple remparts, portes, douves, tours).
 - Code : un mode de partie dans l'état (`mode: 'classique' | 'forteresse'`, jour limite),
   une condition de victoire de plus dans `rules/victory.ts`, l'IA adverse inchangée (elle
   attaque déjà le QG), une entrée sur la page de garde.
