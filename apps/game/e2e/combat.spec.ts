@@ -46,7 +46,7 @@ async function attack(page: Page): Promise<void> {
 
 test('une attaque joue le combat dessiné, puis la partie reprend', async ({ page }) => {
   // Le combat se joue en entier, sans être passé : long en WebGL logiciel.
-  test.setTimeout(180_000);
+  test.setTimeout(300_000);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.addInitScript(() => localStorage.removeItem('antiqua:options'));
@@ -55,8 +55,9 @@ test('une attaque joue le combat dessiné, puis la partie reprend', async ({ pag
   await attack(page);
   await waitForDrawnCombat(page);
   // La scène se termine seule et rend la main à la carte.
-  // WebGL logiciel de la CI : un combat complet peut dépasser 30 s.
-  await expect(page.locator('#combat-dessine')).toBeHidden({ timeout: 90_000 });
+  // WebGL logiciel de la CI : les images y sont si lentes que le temps du jeu avance moins
+  // vite que le temps réel ; un combat complet peut y dépasser 90 s.
+  await expect(page.locator('#combat-dessine')).toBeHidden({ timeout: 240_000 });
   await waitForMode(page, 'idle');
   const hit = (await state(page)).units.find((u) => u.id === defenderId);
   expect(hit?.hp ?? 0).toBeLessThan(100);

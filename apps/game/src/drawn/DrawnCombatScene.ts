@@ -905,9 +905,13 @@ export class DrawnCombatScene extends StagedScene {
     sprite.setOrigin(this.originX(view, anim.originX), anim.originY).setAngle(0);
     sprite.play(anim.key, true);
     if (action === 'idle' || action === 'run' || this.skipped) return Promise.resolve();
+    // Filet de sécurité : si la fin d'animation n'arrive jamais (animation remplacée,
+    // machine lente), le combat continue quand même après sa durée prévue.
+    const duration = this.anims.get(anim.key)?.duration ?? 0;
     return Promise.race([
       new Promise<void>((resolve) => sprite.once('animationcomplete', () => resolve())),
       this.skipSignal,
+      this.wait(duration * 2 + 600),
     ]);
   }
 
