@@ -97,6 +97,7 @@ B = dégâts de base (table ci-dessous), L = chance 0–9 tirée par le PRNG, E 
   - **Brèche** : éboulis praticable (1 étoile ; coût 2 à pied, 1 lourd, 2 monture, 3 roues).
   - **Tour** : sur le rempart, accessible à pied seulement (pas aux montures ni aux roues), **4 étoiles** ; un tireur (archers, catapulte) qui y est posté porte **1 case plus loin**.
   - **Douves** : fossé d'eau infranchissable, sauf par un **pont**.
+- **Défense de forteresse** (mode de jeu, carte « La Forteresse ») : le défenseur doit **tenir son QG** jusqu'au jour limite (10, 15 ou 20 jours selon la difficulté) ; il gagne au début du jour suivant, perd si son QG est pris. L'assaillant n'a ni bâtiment ni or : une armée de départ, puis une **vague de renforts tous les 3 jours** par les bords de la carte, de plus en plus lourde (fantassins et lancier, puis archers et catapulte, puis char et cavalerie…). Aucune aide au défenseur.
 - **Carte « La Côte des Comptoirs »** (20×14, duel) : un bras de mer au centre, deux isthmes aux bords, un port par camp.
 - **Char ashanti** : remplacé par un cavalier sur buffle noir paré d'or (mêmes caractéristiques que le char de guerre).
 - **Fusion** : une unité qui n'a pas encore bougé peut rejoindre, sur sa case, une unité alliée **du même type** et **blessée** (action MERGE ; le chemin suit les règles de déplacement). Les PV s'additionnent, plafonnés à 10 ; chaque PV affiché en trop rend **10 % du prix** de l'unité (6 + 7 PV : 3 PV en trop, 30 % du prix). L'unité qui reste a **fini son tour**. Une capture entamée par l'unité qui part est remise à zéro.

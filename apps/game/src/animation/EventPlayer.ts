@@ -261,6 +261,16 @@ export class EventPlayer {
         this.views.map.refreshTile(state, event.x, event.y);
         await this.wait(200);
         return;
+      case 'reinforcements': {
+        // Défense de forteresse : bandeau, puis les renforts apparaissent aux bords.
+        await banner.show(`Renforts ennemis : vague ${event.wave}`, TEAM_COLORS[event.player]);
+        for (const unit of event.units) {
+          const sprite = units.get(unit.id) ?? units.add(unit);
+          void sprite.appear();
+        }
+        await this.wait(400);
+        return;
+      }
       case 'playerDefeated':
         // Le royaume vaincu quitte la carte : bandeau, puis ses unités disparaissent et ses
         // bâtiments redeviennent neutres.

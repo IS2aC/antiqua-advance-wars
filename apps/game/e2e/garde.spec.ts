@@ -161,3 +161,26 @@ test('duel sur la côte : carte avec mer et ports, peuples au choix', async ({ p
   expect(current.players.map((player) => player.id)).toEqual(['carthage', 'koush']);
   expect(current.buildings.filter((b) => b.type === 'port')).toHaveLength(2);
 });
+
+test('défense de forteresse : peuples, difficulté, compte à rebours', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate((key) => localStorage.removeItem(key), SAVE_KEY);
+  await page.reload();
+  await page.getByRole('link', { name: /Défense de forteresse/ }).click();
+  await page
+    .getByRole('dialog', { name: 'Choisis ton peuple' })
+    .getByRole('link', { name: /Koush/ })
+    .click();
+  await page
+    .getByRole('dialog', { name: "Choisis le peuple de l'IA" })
+    .getByRole('link', { name: /Carthage/ })
+    .click();
+  const levels = page.getByRole('dialog', { name: 'Choisis la difficulté' });
+  await expect(levels.getByRole('link')).toHaveCount(3);
+  await levels.getByRole('link', { name: /Facile/ }).click();
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  const current = await state(page);
+  expect(current.map.name).toBe('La Forteresse');
+  expect(current.siege).toMatchObject({ defender: 'koush', untilDay: 10 });
+});

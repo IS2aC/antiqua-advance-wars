@@ -40,6 +40,33 @@ interface ChoiceStep {
   readonly duel: boolean;
   /** Peuple déjà choisi par le joueur (deuxième étape du duel). */
   readonly human?: PlayerId;
+  /** Peuple de l'IA déjà choisi (défense de forteresse : reste la difficulté). */
+  readonly rival?: PlayerId;
+}
+
+const DIFFICULTIES = [
+  { id: 'facile', label: 'Facile', days: 10 },
+  { id: 'normal', label: 'Normal', days: 15 },
+  { id: 'difficile', label: 'Difficile', days: 20 },
+] as const;
+
+/** Carte de difficulté (défense de forteresse) : jours à tenir. */
+function difficultyCard(label: string, days: number, href: string): HTMLAnchorElement {
+  const link = document.createElement('a');
+  link.className = 'peuple peuple--difficulte';
+  link.href = href;
+  const body = document.createElement('span');
+  body.className = 'peuple__corps';
+  const nom = document.createElement('span');
+  nom.className = 'peuple__nom';
+  nom.textContent = label;
+  const texte = document.createElement('span');
+  texte.className = 'peuple__texte';
+  texte.textContent = `Tenir ton QG ${days} jours face aux vagues ennemies.`;
+  body.append(nom, texte);
+  link.append(body);
+  link.setAttribute('aria-label', `${label}, tenir ${days} jours`);
+  return link;
 }
 let step: ChoiceStep | null = null;
 
@@ -81,6 +108,24 @@ function showStep(next: ChoiceStep): void {
   const launch = `./jeu.html?mode=ia&carte=${next.map}`;
   let ids: PlayerId[];
   let href: (id: PlayerId) => string;
+  if (next.duel && next.human && next.rival) {
+    const { human, rival } = next;
+    title.textContent = 'Choisis la difficulté';
+    subtitle.textContent = `${name} · ${PEOPLE_CARDS[human].name} contre ${PEOPLE_CARDS[rival].name}`;
+    back.hidden = false;
+    grid.replaceChildren(
+      ...DIFFICULTIES.map((level) =>
+        difficultyCard(
+          level.label,
+          level.days,
+          `${launch}&peuple=${human}&adversaire=${rival}&difficulte=${level.id}`,
+        ),
+      ),
+    );
+    if (!dialog.open) dialog.showModal();
+    grid.querySelector<HTMLElement>('.peuple')?.focus();
+    return;
+  }
   if (next.duel && next.human) {
     const human = next.human;
     title.textContent = "Choisis le peuple de l'IA";
@@ -112,12 +157,22 @@ for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-choix-car
 grid?.addEventListener('click', (event) => {
   const card = (event.target as Element).closest<HTMLAnchorElement>('.peuple');
   const id = card?.dataset.peuple as PlayerId | undefined;
-  if (!step?.duel || step.human || !id) return;
-  event.preventDefault();
-  showStep({ ...step, human: id });
+  if (!step?.duel || !id || step.rival) return;
+  if (!step.human) {
+    event.preventDefault();
+    showStep({ ...step, human: id });
+    return;
+  }
+  // Défense de forteresse : après le peuple de l'IA, le choix de la difficulté.
+  if (MAPS[step.map].siege) {
+    event.preventDefault();
+    showStep({ ...step, rival: id });
+  }
 });
 const stepBack = () => {
-  if (step) showStep({ map: step.map, duel: step.duel });
+  if (!step) return;
+  if (step.rival && step.human) showStep({ map: step.map, duel: step.duel, human: step.human });
+  else showStep({ map: step.map, duel: step.duel });
 };
 back?.addEventListener('click', stepBack);
 // Échap à la deuxième étape : revenir au choix de son peuple plutôt que tout fermer.

@@ -119,7 +119,13 @@ export class Hud {
   sync(state: GameState): void {
     const player = state.players.find((candidate) => candidate.id === state.currentPlayer);
     const name = FACTIONS[state.currentPlayer].name;
-    this.status.setText(`Jour ${state.day} · ${name} · ${formatGold(player?.funds ?? 0)} or`);
+    // Défense de forteresse : jours à tenir encore.
+    const siege = state.siege
+      ? ` · tenir ${Math.max(0, state.siege.untilDay - state.day + 1)} j`
+      : '';
+    this.status.setText(
+      `Jour ${state.day} · ${name} · ${formatGold(player?.funds ?? 0)} or${siege}`,
+    );
     this.statusPanel.setSize(Math.ceil((this.status.width + 32) / GRID) * GRID, BAR_H);
     this.teamPip.setFillStyle(TEAM_COLORS[state.currentPlayer]);
   }

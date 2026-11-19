@@ -710,3 +710,10 @@ body {
     transition: none;
   }
 }
+
+/* Défense de forteresse : cartes de difficulté, sans portrait. */
+.peuple--difficulte {
+  justify-content: center;
+  min-height: 9rem;
+  border-top: 6px solid var(--gold, #c8962a);
+}

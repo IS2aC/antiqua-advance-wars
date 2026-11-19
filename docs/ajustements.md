@@ -184,7 +184,7 @@ l'histoire de chaque peuple, comme pour les autres unités.
   - rendu : sprites de bâtiment et animation de capture sur le plateau ;
   - cartes : placement des nouveaux bâtiments.
 
-## 9. Deux modes de jeu : combat classique et défense de forteresse
+## 9. Deux modes de jeu : combat classique et défense de forteresse — fait
 
 - **Combat classique** : le mode actuel (prendre le QG adverse ou détruire toutes ses unités).
 - **Défense de la forteresse** : le joueur doit **tenir son QG pendant un nombre de jours**
@@ -203,7 +203,10 @@ l'histoire de chaque peuple, comme pour les autres unités.
   - **Terrains de siège faits** : rempart (la catapulte y ouvre une brèche), tour (+1 de
     portée aux tireurs), douves (passées par un pont) ; images via Codex. Pas de case
     « porte » : les ouvertures du rempart sont des cases normales, ouvertes à tous.
-  - Reste : la carte « La Forteresse » et le mode lui-même (minuteur, vagues, victoire).
+  - **Mode fait** : carte « La Forteresse », minuteur selon la difficulté, vagues tous les
+    3 jours, victoire en tenant ; « Défense de forteresse » sur la page de garde (peuple,
+    assaillant, difficulté). Reste éventuellement : apprendre à l'IA à abattre les remparts
+    (aujourd'hui elle passe par les portes).
 - Code : un mode de partie dans l'état (`mode: 'classique' | 'forteresse'`, jour limite),
   une condition de victoire de plus dans `rules/victory.ts`, l'IA adverse inchangée (elle
   attaque déjà le QG), une entrée sur la page de garde.

@@ -35,6 +35,8 @@ export interface BattleData {
   readonly map?: MapId;
   /** Peuples de la nouvelle partie, dans l'ordre de jeu (absent : ceux de la carte). */
   readonly peoples?: readonly PlayerId[];
+  /** Défense de forteresse : nombre de jours à tenir (carte de siège seulement). */
+  readonly siegeDays?: number;
 }
 
 /** Développement : accès à l'état courant pour la console et les tests de bout en bout. */
@@ -50,6 +52,7 @@ export class BattleScene extends Phaser.Scene {
   private aiPlayers: readonly PlayerId[] = [];
   private map: MapId = DEFAULT_MAP;
   private peoples: readonly PlayerId[] | null = null;
+  private siegeDays: number | undefined;
 
   constructor() {
     super('Battle');
@@ -61,6 +64,7 @@ export class BattleScene extends Phaser.Scene {
     this.map = data.state ? mapOfState(data.state) : (data.map ?? DEFAULT_MAP);
     // « Rejouer » relance avec les mêmes peuples, même après une reprise de sauvegarde.
     this.peoples = data.state?.players.map((player) => player.id) ?? data.peoples ?? null;
+    this.siegeDays = data.state?.siege?.untilDay ?? data.siegeDays;
   }
 
   create(): void {
@@ -69,7 +73,11 @@ export class BattleScene extends Phaser.Scene {
     createFigureAnimations(this);
     const definition = this.peoples ? assignPeoples(MAPS[this.map], this.peoples) : MAPS[this.map];
     const state =
-      this.initial ?? createGame(definition, { seed: Math.floor(Math.random() * 2 ** 31) });
+      this.initial ??
+      createGame(definition, {
+        seed: Math.floor(Math.random() * 2 ** 31),
+        ...(this.siegeDays ? { siegeDays: this.siegeDays } : {}),
+      });
 
     this.cameras.main.setBounds(0, 0, state.map.width * TILE_SIZE, state.map.height * TILE_SIZE);
 
@@ -102,6 +110,7 @@ export class BattleScene extends Phaser.Scene {
             aiPlayers: this.aiPlayers,
             map: this.map,
             ...(this.peoples ? { peoples: this.peoples } : {}),
+            ...(this.siegeDays ? { siegeDays: this.siegeDays } : {}),
           });
         } else goToCover();
       },

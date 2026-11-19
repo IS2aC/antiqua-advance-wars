@@ -1,4 +1,11 @@
-import { CARREFOUR, COTE, GUE_DU_NIL, type GameState, type MapDefinition } from '@antiqua/engine';
+import {
+  CARREFOUR,
+  COTE,
+  FORTERESSE,
+  GUE_DU_NIL,
+  type GameState,
+  type MapDefinition,
+} from '@antiqua/engine';
 
 /**
  * Cartes jouables, par identifiant d'URL (`jeu.html?mode=ia&carte=carrefour`) :
@@ -9,6 +16,7 @@ export const MAPS = {
   'gue-du-nil': GUE_DU_NIL,
   carrefour: CARREFOUR,
   cote: COTE,
+  forteresse: FORTERESSE,
 } as const satisfies Readonly<Record<string, MapDefinition>>;
 
 export type MapId = keyof typeof MAPS;
