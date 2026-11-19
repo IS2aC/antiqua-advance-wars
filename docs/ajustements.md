@@ -200,8 +200,10 @@ l'histoire de chaque peuple, comme pour les autres unités.
   - **carte dédiée, 1 adversaire** : « La Forteresse », le QG du joueur au centre d'une
     citadelle, l'ennemi arrivant de plusieurs côtés ; le joueur choisit son peuple et
     celui de l'assaillant.
-  - Ce mode pourra apporter des **terrains particuliers** propres au siège (à définir :
-    par exemple remparts, portes, douves, tours).
+  - **Terrains de siège faits** : rempart (la catapulte y ouvre une brèche), tour (+1 de
+    portée aux tireurs), douves (passées par un pont) ; images via Codex. Pas de case
+    « porte » : les ouvertures du rempart sont des cases normales, ouvertes à tous.
+  - Reste : la carte « La Forteresse » et le mode lui-même (minuteur, vagues, victoire).
 - Code : un mode de partie dans l'état (`mode: 'classique' | 'forteresse'`, jour limite),
   une condition de victoire de plus dans `rules/victory.ts`, l'IA adverse inchangée (elle
   attaque déjà le QG), une entrée sur la page de garde.

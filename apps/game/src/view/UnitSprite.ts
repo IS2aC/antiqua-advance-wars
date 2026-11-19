@@ -133,8 +133,13 @@ export class UnitSprite {
 
   /** Petit élan vers la cible. */
   async lunge(target: UnitSprite): Promise<void> {
-    const dx = Math.sign(target.container.x - this.container.x) * 4;
-    const dy = Math.sign(target.container.y - this.container.y) * 4;
+    await this.lungeAt(target.container.x, target.container.y);
+  }
+
+  /** Petit élan vers un point de la carte (par exemple un rempart visé). */
+  async lungeAt(x: number, y: number): Promise<void> {
+    const dx = Math.sign(x - this.container.x) * 4;
+    const dy = Math.sign(y - this.container.y) * 4;
     if (dx !== 0) {
       this.facing = dx > 0 ? 'right' : 'left';
       this.playIdle();

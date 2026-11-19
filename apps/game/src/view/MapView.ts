@@ -130,6 +130,8 @@ class BuildingView {
 /** Terrain (posé une fois) et bâtiments (mis à jour à chaque capture). */
 export class MapView {
   private readonly buildings = new Map<string, BuildingView>();
+  private readonly tiles = new Map<string, Phaser.GameObjects.Image>();
+  private frames: TerrainFrames | null = null;
 
   constructor(scene: Phaser.Scene, state: GameState) {
     const withArt = hasArt(scene);
@@ -157,18 +159,27 @@ export class MapView {
 
   /** Tuiles de l'atlas : variantes stables par case, routes et rivière en autotiling. */
   private drawTiles(scene: Phaser.Scene, state: GameState): void {
-    const frames = new TerrainFrames(scene);
+    this.frames = new TerrainFrames(scene);
     const { map } = state;
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        const frame = frames.frameFor(state, x, y);
+        const frame = this.frames.frameFor(state, x, y);
         if (frame)
-          scene.add
-            .image(x * T, y * T, TERRAIN_ATLAS, frame)
-            .setOrigin(0)
-            .setDepth(0);
+          this.tiles.set(
+            `${x},${y}`,
+            scene.add
+              .image(x * T, y * T, TERRAIN_ATLAS, frame)
+              .setOrigin(0)
+              .setDepth(0),
+          );
       }
     }
+  }
+
+  /** Redessine une case dont le terrain a changé (rempart devenu brèche). */
+  refreshTile(state: GameState, x: number, y: number): void {
+    const frame = this.frames?.frameFor(state, x, y);
+    if (frame) this.tiles.get(`${x},${y}`)?.setFrame(frame);
   }
 
   private drawPlaceholders(scene: Phaser.Scene, state: GameState): void {

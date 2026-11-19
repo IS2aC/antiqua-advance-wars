@@ -32,7 +32,7 @@ import {
   BASE_TILES,
   BUILDING_TILES,
   PORT_TILES,
-  SEA_TILES,
+  EXTRA_TILES,
   RIVER_TILES,
   ROAD_TILES,
   UNIT_SHEETS,
@@ -179,17 +179,19 @@ async function main(): Promise<void> {
     collect(processed);
     for (const [name, frame] of processed.frames) terrain.set(name, frame);
   }
-  // Mer : planche facultative, au format des tuiles de base.
-  if (existsSync(join(RAW, SEA_TILES.file))) {
-    const sea = processBaseTiles(
-      quantize(await load(SEA_TILES.file), palette, { team: false }),
-      SEA_TILES,
+  // Mer, rempart, brèche, tour : planches facultatives, au format des tuiles de base.
+  for (const extra of EXTRA_TILES) {
+    if (!existsSync(join(RAW, extra.file))) {
+      warnings.push(`${extra.file} absent : ${extra.rows.join(', ')} sans tuile`);
+      continue;
+    }
+    const tiles = processBaseTiles(
+      quantize(await load(extra.file), palette, { team: false }),
+      extra,
     );
-    await applyCleanOverrides(sea, palette, false);
-    collect(sea);
-    for (const [name, frame] of sea.frames) terrain.set(name, frame);
-  } else {
-    warnings.push(`${SEA_TILES.file} absent : la mer s'affiche sans tuile`);
+    await applyCleanOverrides(tiles, palette, false);
+    collect(tiles);
+    for (const [name, frame] of tiles.frames) terrain.set(name, frame);
   }
   const buildings = collect(
     processBuildings(quantize(buildingSheet, palette, { team: true }), palette),

@@ -19,6 +19,7 @@ import {
   threatTiles,
   unitAt,
   unloadTiles,
+  wallsInRange,
   type Action,
   type Building,
   type GameState,
@@ -56,7 +57,7 @@ const T = TILE_SIZE;
 type Mode =
   'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'paused' | 'over';
 
-type Command = 'attack' | 'capture' | 'wait' | 'merge' | 'load' | 'unload';
+type Command = 'attack' | 'capture' | 'wait' | 'merge' | 'load' | 'unload' | 'breach';
 
 const DIRECTION_NAMES: Readonly<Record<string, string>> = {
   '0,-1': 'Nord',
@@ -97,9 +98,10 @@ export class BattleController {
   private mergeTargets: Unit[] = [];
   /** Transports alliés où l'unité sélectionnée peut monter. */
   private loadTargets: Unit[] = [];
-  private targets: Unit[] = [];
+  /** Cibles proposées (unités ennemies, ou remparts pour la catapulte). */
+  private targets: Position[] = [];
   private targetIndex = 0;
-  private resolveTarget: ((target: Unit | null) => void) | null = null;
+  private resolveTarget: ((target: Position | null) => void) | null = null;
   private cameraTween: Phaser.Tweens.Tween | null = null;
   private fast = false;
 
@@ -254,7 +256,8 @@ export class BattleController {
   /** Prévision de combat pour la cible sous le curseur (pendant le choix de la cible). */
   private updateForecast(tile: Position): void {
     const attacker = this.selectedId === null ? undefined : findUnit(this.state, this.selectedId);
-    const target = this.targets.find((unit) => same(unit, tile));
+    const spot = this.targets.find((candidate) => same(candidate, tile));
+    const target = spot ? unitAt(this.state, spot.x, spot.y) : undefined;
     const prediction = attacker && target ? forecast(this.state, attacker.id, target.id) : null;
     if (attacker && target && prediction) this.views.forecast.show(attacker, target, prediction);
     else this.views.forecast.hide();
@@ -493,6 +496,8 @@ export class BattleController {
     const targets = targetsInRange(this.state, unitId);
     const items: MenuItem<Command>[] = [];
     if (targets.length > 0) items.push({ value: 'attack', label: 'Attaquer' });
+    const walls = wallsInRange(this.state, unit);
+    if (walls.length > 0) items.push({ value: 'breach', label: 'Abattre le rempart' });
     if (canCapture(this.state, unitId)) items.push({ value: 'capture', label: 'Capturer' });
     if ((unit.cargo ?? []).some((p) => unloadTiles(this.state, unitId, p.id).length > 0)) {
       items.push({ value: 'unload', label: 'Débarquer' });
@@ -514,6 +519,14 @@ export class BattleController {
     }
 
     if (choice === 'unload') return this.unloadMenu(unit, beforeMove);
+    if (choice === 'breach') {
+      const wall = await this.pickTile(walls);
+      if (!wall) return this.commandMenu(unitId, beforeMove);
+      this.views.overlay.clear();
+      await this.execute({ type: 'FIRE_WALL', unitId, x: wall.x, y: wall.y });
+      this.clearSelection();
+      return;
+    }
     let action: Action;
     if (choice === 'attack') {
       const target = await this.pickTarget(targets);
@@ -529,8 +542,14 @@ export class BattleController {
     this.clearSelection();
   }
 
-  private pickTarget(targets: Unit[]): Promise<Unit | null> {
-    this.targets = targets;
+  private async pickTarget(targets: Unit[]): Promise<Unit | null> {
+    const spot = await this.pickTile(targets);
+    return spot ? (targets.find((unit) => same(unit, spot)) ?? null) : null;
+  }
+
+  /** Choix d'une case parmi `targets` (curseur, flèches ou clic ; Échap annule). */
+  private pickTile(targets: readonly Position[]): Promise<Position | null> {
+    this.targets = [...targets];
     this.targetIndex = 0;
     this.mode = 'targeting';
     this.views.overlay.showTargets(targets);
@@ -549,7 +568,7 @@ export class BattleController {
     if (target) this.pointAt(target, 1);
   }
 
-  private finishTargeting(target: Unit | null): void {
+  private finishTargeting(target: Position | null): void {
     const resolve = this.resolveTarget;
     this.resolveTarget = null;
     this.targets = [];
@@ -665,6 +684,12 @@ export class BattleController {
         this.views.overlay.clear();
         return;
       }
+      case 'FIRE_WALL':
+        this.views.overlay.showTargets([action]);
+        this.pointAt(action, 2);
+        await this.pause(AI_PREVIEW);
+        this.views.overlay.clear();
+        return;
       case 'UNLOAD':
         this.pointAt(action.to, 3);
         await this.pause(AI_PREVIEW / 2);

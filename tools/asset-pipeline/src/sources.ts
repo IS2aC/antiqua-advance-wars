@@ -61,12 +61,20 @@ export const RIVER_TILES = {
   ],
 } as const;
 
-/** Mer : une ligne de 4 variantes, au format des tuiles de base (facultative). */
-export const SEA_TILES = {
-  file: 'sprites-terrains/mer.png',
-  rows: ['mer'],
-  perRow: 4,
-} as const;
+/**
+ * Terrains ajoutés après les tuiles de base : une planche d'une ligne de 4 variantes chacun,
+ * au même format (facultatives). Les douves reprennent l'eau de la rivière.
+ */
+export const EXTRA_TILES: readonly {
+  readonly file: string;
+  readonly rows: readonly string[];
+  readonly perRow: number;
+}[] = [
+  { file: 'sprites-terrains/mer.png', rows: ['mer'], perRow: 4 },
+  { file: 'sprites-terrains/rempart.png', rows: ['rempart'], perRow: 4 },
+  { file: 'sprites-terrains/breche.png', rows: ['breche'], perRow: 4 },
+  { file: 'sprites-terrains/tour.png', rows: ['tour'], perRow: 4 },
+];
 
 /** Port : version neutre puis rouge, au format des bâtiments (facultatif). */
 export const PORT_TILES: {

@@ -243,6 +243,24 @@ export class EventPlayer {
         // L'écran de fin est affiché par le contrôleur, une fois tous les événements joués.
         this.sync(state);
         return;
+      case 'wallDamaged': {
+        // Tir sur le rempart : le tireur vise, la case tremble, la solidité restante s'affiche.
+        const shooter = units.get(event.unitId);
+        await shooter?.lungeAt(event.x * T + T / 2, event.y * T + T / 2);
+        this.scene.cameras.main.shake(140, 0.004);
+        this.popup(
+          event.x * T + T / 2,
+          event.y * T,
+          event.hp > 0 ? `Rempart ${Math.ceil(event.hp / 10)}` : 'Brèche !',
+          '#ffb27a',
+        );
+        await this.wait(320);
+        return;
+      }
+      case 'wallBreached':
+        this.views.map.refreshTile(state, event.x, event.y);
+        await this.wait(200);
+        return;
       case 'playerDefeated':
         // Le royaume vaincu quitte la carte : bandeau, puis ses unités disparaissent et ses
         // bâtiments redeviennent neutres.
