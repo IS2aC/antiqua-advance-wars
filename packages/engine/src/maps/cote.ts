@@ -12,8 +12,8 @@ import { parseAsciiMap } from './ascii';
  * w = mer.
  */
 const NORTH_HALF = [
-  'F..h.F..V..MM..h.Q.F',
-  '.F...h.....M..C...F.',
+  'F..h.F..V......h.Q.F',
+  '.F...h........C...F.',
   '..V...hP..wwwwwwwwww',
   '..wwwwwwwwwwwwwwwwww',
   '.vwwwwwwwwwwwwwwwwww',

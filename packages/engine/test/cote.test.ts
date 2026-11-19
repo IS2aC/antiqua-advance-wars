@@ -5,6 +5,7 @@ import {
   applyAction,
   chooseGreedyAction,
   createGame,
+  movementCost,
   reachableTiles,
 } from '../src/index';
 
@@ -46,6 +47,32 @@ describe('carte « La Côte des Comptoirs »', () => {
     const state = createGame(COTE, { seed: 1 });
     const foot = state.units.find((u) => u.owner === 'koush')!;
     expect(reachableTiles(state, foot.id).length).toBeGreaterThan(1);
+  });
+
+  it('la cavalerie peut aller de sa côte au couloir et jusqu’à la côte adverse', () => {
+    // Parcours en largeur sur le terrain praticable pour une monture.
+    const ok = (x: number, y: number) =>
+      movementCost(COTE.tiles[y * COTE.width + x]!, 'monture') !== null;
+    const seen = new Set<string>(['17,1']);
+    const queue = [{ x: 17, y: 1 }];
+    while (queue.length > 0) {
+      const p = queue.shift()!;
+      for (const [dx, dy] of [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+      ] as const) {
+        const x = p.x + dx;
+        const y = p.y + dy;
+        const key = `${x},${y}`;
+        if (x < 0 || y < 0 || x >= COTE.width || y >= COTE.height || seen.has(key)) continue;
+        if (!ok(x, y)) continue;
+        seen.add(key);
+        queue.push({ x, y });
+      }
+    }
+    expect(seen.has('17,12')).toBe(true);
   });
 
   it('l’IA joue plusieurs tours sans action illégale', () => {
