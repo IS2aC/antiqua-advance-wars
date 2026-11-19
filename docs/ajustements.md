@@ -109,3 +109,57 @@ et garder un rendu fluide.
     `art/specs/portraits.json` (dirigeants d'après les planches) ;
   - sprites : chaque peuple ayant son look, il faudra des sprites de carte et des dessins de
     combat propres à chaque peuple, au lieu d'un seul modèle rouge recoloré.
+
+## 6. Fusion de deux unités du même type
+
+- Une unité blessée peut rejoindre une autre unité **du même type** de son camp (par
+  exemple un fantassin à 3 PV et un fantassin à 7 PV donnent un fantassin à 10 PV).
+- Les PV s'additionnent, **plafonnés à 10** (règle actuelle du maximum).
+- À décider ensemble : ce que deviennent les PV en trop (perdus, ou remboursés en or comme
+  dans le genre), et si l'unité fusionnée peut encore agir ce tour-ci.
+- Code : une action `MERGE` dans le moteur (`packages/engine`, avec sa règle et son fichier
+  de test), un choix « Fusionner » dans le menu d'action quand on arrive sur une unité alliée
+  du même type (`BattleController`, `ActionMenu`), et l'IA (`greedy-ai.ts`).
+
+## 7. Moyens de transport, propres à chaque peuple
+
+Nouvelles unités de transport, avec **un quota** (nombre d'unités embarquées) pour chacune,
+à fixer ensemble. Sprites de carte et animations (combats dessinés compris) d'après
+l'histoire de chaque peuple, comme pour les autres unités.
+
+- **Transport terrestre** : embarque les unités à pied.
+  - Fantassin.
+  - Lancier lourd.
+  - Archers.
+- **Bateau** : navire de guerre et transport maritime.
+  - Fantassin.
+  - Lancier lourd.
+  - Archers.
+  - Cavalerie légère.
+  - Char de guerre.
+  - Catapulte.
+- Le bateau suppose aussi :
+  - des cases de mer, ou de fleuve navigable, sur les cartes ;
+  - un mode de déplacement « naval » ;
+  - un port (ou un bâtiment de production navale) ;
+  - les animations d'embarquement et de débarquement.
+- Pistes d'inspiration historique, à valider :
+  - Carthage : la grande puissance navale du jeu (quinquérèmes, port circulaire).
+  - Koush : embarcations du Nil.
+  - Almoravides : caravanes et navires du détroit vers al-Andalus.
+  - Ashanti : pirogues de rivière.
+- Code :
+  - moteur : nouveaux types d'unités (`UNITS`), quota et actions `LOAD` / `UNLOAD`,
+    terrains marins, déplacement naval, avec leurs fichiers de test ;
+  - rendu : unités embarquées affichées dans le transport, menu « Embarquer / Débarquer » ;
+  - pipeline : sprites et planches de combat (`art/specs/unites.json`).
+
+## 8. Nouveaux bâtiments
+
+- D'autres bâtiments que la caserne, par exemple un **grenier**.
+- À définir ensemble (brainstorming) : leur rôle (revenu, soins, production, ravitaillement),
+  leur coût et s'ils se capturent comme les villages.
+- Code :
+  - moteur : `BuildingType` (aujourd'hui village, caserne, QG) et leurs règles ;
+  - rendu : sprites de bâtiment et animation de capture sur le plateau ;
+  - cartes : placement des nouveaux bâtiments.
