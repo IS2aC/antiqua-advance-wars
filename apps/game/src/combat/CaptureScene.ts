@@ -26,7 +26,7 @@ export interface CaptureSceneData {
 const BUILDING_SCALE = 3;
 const BUILDING_X = 476;
 const GROUND_Y = 352;
-const NAMES = { village: 'Village', caserne: 'Caserne', qg: 'QG' } as const;
+const NAMES = { village: 'Village', caserne: 'Caserne', qg: 'QG', port: 'Port' } as const;
 
 /** Rangs des troupes qui assiègent (côté gauche), du premier rang vers l'arrière. */
 const SLOTS: readonly (readonly [number, number])[] = [

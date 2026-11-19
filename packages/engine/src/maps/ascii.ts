@@ -18,6 +18,8 @@ export const ASCII_LEGEND: Readonly<Record<string, TerrainType>> = {
   v: 'village',
   C: 'caserne',
   Q: 'qg',
+  w: 'mer',
+  P: 'port',
 };
 
 export interface AsciiBuildingCell {
@@ -36,7 +38,7 @@ export interface ParsedAsciiMap {
 }
 
 function isBuilding(terrain: TerrainType): terrain is BuildingType {
-  return terrain === 'village' || terrain === 'caserne' || terrain === 'qg';
+  return terrain === 'village' || terrain === 'caserne' || terrain === 'qg' || terrain === 'port';
 }
 
 export function parseAsciiMap(rows: readonly string[]): ParsedAsciiMap {

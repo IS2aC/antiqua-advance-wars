@@ -2,6 +2,7 @@ import {
   displayHp,
   isIndirect,
   terrainAt,
+  type BuildingType,
   type GameEvent,
   type GameState,
   type PlayerId,
@@ -131,7 +132,7 @@ export interface CaptureSetup {
   readonly unitType: UnitType;
   /** PV affichés de l'unité qui capture (nombre de figurants). */
   readonly unitHp: number;
-  readonly building: 'village' | 'caserne' | 'qg';
+  readonly building: BuildingType;
   /** Propriétaire du bâtiment avant la capture (null = neutre). */
   readonly previousOwner: PlayerId | null;
   readonly pointsBefore: number;

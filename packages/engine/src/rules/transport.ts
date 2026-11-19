@@ -6,6 +6,7 @@ import type { GameEvent, GameState, Position, Unit } from '../model/types';
 import { resetCaptureAt } from './capture';
 import { distance, findUnit, inBounds, terrainOf, unitAt } from './grid';
 import { mergePath } from './merge';
+import { findPath, reachableTiles, type ReachableTile } from './movement';
 
 /** Places libres à bord (0 pour une unité qui ne transporte pas). */
 export function freeSeats(transport: Unit): number {
@@ -29,10 +30,29 @@ export function loadError(state: GameState, unit: Unit, transportId: number): Ac
   }
   if (freeSeats(transport) <= 0) return actionError('CANNOT_LOAD', 'Le transport est plein.');
   if (unit.hasMoved) return actionError('UNIT_ALREADY_MOVED', 'Cette unité a déjà bougé ce tour.');
-  if (!mergePath(state, unit.id, transport)) {
+  if (!loadPath(state, unit, transport)) {
     return actionError('UNREACHABLE', 'Transport hors de portée de déplacement.');
   }
   return null;
+}
+
+/**
+ * Chemin pour monter à bord : jusqu'à la case du transport si l'unité peut y aller (convoi,
+ * bateau au port) ; sinon jusqu'à la case voisine la moins coûteuse, puis un pas sur l'eau.
+ */
+export function loadPath(state: GameState, unit: Unit, transport: Unit): Position[] | null {
+  const terrain = terrainOf(state.map, transport);
+  if (movementCost(terrain, UNITS[unit.type].moveType) !== null) {
+    return mergePath(state, unit.id, transport);
+  }
+  let best: { tile: ReachableTile } | null = null;
+  for (const tile of reachableTiles(state, unit.id)) {
+    if (distance(tile, transport) !== 1) continue;
+    if (!best || tile.cost < best.tile.cost) best = { tile };
+  }
+  if (!best) return null;
+  const path = findPath(state, unit.id, best.tile) ?? [unit];
+  return [...path, { x: transport.x, y: transport.y }];
 }
 
 export function canLoad(state: GameState, unitId: number, transportId: number): boolean {
@@ -47,7 +67,7 @@ export function resolveLoad(
   unit: Unit,
   transport: Unit,
 ): void {
-  const path = mergePath(state, unit.id, transport) ?? [unit, transport];
+  const path = loadPath(state, unit, transport) ?? [unit, transport];
   events.push({ type: 'unitMoved', unitId: unit.id, path });
   resetCaptureAt(draft, events, unit.x, unit.y);
   draft.units = draft.units.filter((u) => u.id !== unit.id);

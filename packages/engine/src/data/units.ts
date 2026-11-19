@@ -21,6 +21,7 @@ export const UNIT_TYPES: readonly UnitType[] = [
   'char',
   'catapulte',
   'convoi',
+  'bateau',
 ];
 
 export const UNITS: Readonly<Record<UnitType, UnitStats>> = {
@@ -88,6 +89,20 @@ export const UNITS: Readonly<Record<UnitType, UnitStats>> = {
     maxRange: 0,
     canCapture: false,
     transport: { capacity: 2, carries: ['fantassin', 'lancier', 'archers'] },
+  },
+  // Bateau de guerre et de transport : tire comme une catapulte, porte 3 unités.
+  bateau: {
+    name: 'Bateau',
+    cost: 6000,
+    move: 5,
+    moveType: 'naval',
+    minRange: 2,
+    maxRange: 3,
+    canCapture: false,
+    transport: {
+      capacity: 3,
+      carries: ['fantassin', 'lancier', 'archers', 'cavalerie', 'char', 'catapulte'],
+    },
   },
 };
 

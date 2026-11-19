@@ -7,11 +7,12 @@
 export type PlayerId = 'koush' | 'carthage' | 'ashanti' | 'almoravides';
 
 export type UnitType =
-  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi';
+  'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi' | 'bateau';
 
-export type MoveType = 'pied' | 'lourd' | 'monture' | 'roues';
+/** `naval` : bateaux, sur la mer, les rivières et les ports seulement. */
+export type MoveType = 'pied' | 'lourd' | 'monture' | 'roues' | 'naval';
 
-export type BuildingType = 'village' | 'caserne' | 'qg';
+export type BuildingType = 'village' | 'caserne' | 'qg' | 'port';
 
 export type TerrainType =
   | 'plaine'
@@ -23,6 +24,7 @@ export type TerrainType =
   | 'route'
   | 'riviere'
   | 'pont'
+  | 'mer'
   | BuildingType;
 
 export interface Position {

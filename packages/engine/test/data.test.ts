@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BASE_DAMAGE, FACTIONS, TERRAINS, UNITS, UNIT_TYPES, isIndirect } from '../src/index';
 
 describe('données (conformes à docs/game-design.md)', () => {
-  it('définit les 6 unités du Stage 1 et le convoi, avec leurs coûts et déplacements', () => {
-    expect(UNIT_TYPES).toHaveLength(7);
+  it('définit les 6 unités du Stage 1 le convoi et le bateau, avec leurs coûts et déplacements', () => {
+    expect(UNIT_TYPES).toHaveLength(8);
     expect(UNIT_TYPES.map((type) => [UNITS[type].cost, UNITS[type].move])).toEqual([
       [1000, 3],
       [2500, 2],
@@ -12,6 +12,7 @@ describe('données (conformes à docs/game-design.md)', () => {
       [7000, 6],
       [6000, 4],
       [1500, 6],
+      [6000, 5],
     ]);
     expect(UNITS.convoi.transport).toEqual({
       capacity: 2,
@@ -26,7 +27,7 @@ describe('données (conformes à docs/game-design.md)', () => {
   it('archers (2 exactement) et catapulte (2–3) tirent à distance', () => {
     expect([UNITS.archers.minRange, UNITS.archers.maxRange]).toEqual([2, 2]);
     expect([UNITS.catapulte.minRange, UNITS.catapulte.maxRange]).toEqual([2, 3]);
-    expect(UNIT_TYPES.filter(isIndirect)).toEqual(['archers', 'catapulte']);
+    expect(UNIT_TYPES.filter(isIndirect)).toEqual(['archers', 'catapulte', 'bateau']);
   });
 
   it('les bâtiments rapportent 1 000 et les terrains naturels rien', () => {

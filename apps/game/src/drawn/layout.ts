@@ -57,7 +57,10 @@ export function decorCandidates(terrain: TerrainType): string[] {
     terrain === 'caserne' ||
     terrain === 'qg'
       ? 'plaine'
-      : terrain;
+      : // Mer et port : en attendant leur propre décor, celui du fleuve.
+        terrain === 'mer' || terrain === 'port'
+        ? 'riviere'
+        : terrain;
   return [name, 'savane'];
 }
 

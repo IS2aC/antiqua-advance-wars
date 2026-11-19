@@ -17,6 +17,8 @@ export const TERRAIN_COLORS: Readonly<Record<TerrainType, number>> = {
   village: 0xb8b04a,
   caserne: 0xb8b04a,
   qg: 0xb8b04a,
+  port: 0xb8b04a,
+  mer: 0x2a5ea8,
 };
 
 /**
@@ -73,9 +75,10 @@ export const UNIT_LABELS: Readonly<Record<UnitType, string>> = {
   char: 'Ch',
   catapulte: 'Ca',
   convoi: 'Co',
+  bateau: 'Ba',
 };
 
-export const BUILDING_LABELS = { village: 'V', caserne: 'C', qg: 'QG' } as const;
+export const BUILDING_LABELS = { village: 'V', caserne: 'C', qg: 'QG', port: 'P' } as const;
 
 /** Assombrit une couleur (unités ayant agi). */
 export function darken(color: number, factor = 0.45): number {

@@ -30,6 +30,7 @@ const UNIT_LETTERS: Record<UnitType, string> = {
   char: 'r',
   catapulte: 't',
   convoi: 'v',
+  bateau: 'b',
 };
 const COLORS: Record<PlayerId, string> = {
   koush: '\x1b[34m',

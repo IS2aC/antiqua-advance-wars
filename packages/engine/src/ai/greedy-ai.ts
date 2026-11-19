@@ -66,6 +66,7 @@ const CAPTURE_VALUE: Readonly<Record<BuildingType, number>> = {
   village: 1200,
   caserne: 1800,
   qg: 3000,
+  port: 1200,
 };
 
 /** Prendre le QG adverse gagne la partie. */
@@ -92,6 +93,7 @@ const CATEGORY_OF: Readonly<Record<UnitType, Category>> = {
   catapulte: 'indirect',
   // Le convoi ne combat pas : il n'entre pas dans la composition visée.
   convoi: 'mobile',
+  bateau: 'indirect',
 };
 
 const NEIGHBOURS: readonly Position[] = [
