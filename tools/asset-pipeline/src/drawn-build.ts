@@ -19,6 +19,7 @@ import { mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { packUnitDir } from './drawn-atlas';
 import { COMBAT_UNITS, PEOPLES } from './combat';
 import {
   DRAWN_DECOR_H,
@@ -378,6 +379,20 @@ async function main(): Promise<void> {
     }
   }
 
+  // Une planche par unité : une vingtaine de fichiers par duel au lieu de 300.
+  const units = new Set<string>();
+  for (const [people, byUnit] of [
+    ...Object.entries(manifest.figures),
+    ...Object.entries(manifest.anims),
+  ]) {
+    for (const unit of Object.keys(byUnit)) units.add(join(people, unit));
+  }
+  for (const unit of [...units].sort()) {
+    const atlas = await packUnitDir(join(OUT, unit), FIGURE_WEBP);
+    console.log(
+      `[dessin] planche ${unit} : ${atlas.frames} images, ${atlas.width}×${atlas.height}`,
+    );
+  }
   await removeStale(OUT, started);
   manifest.version = await contentHash(OUT);
   await writeFile(join(OUT, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);

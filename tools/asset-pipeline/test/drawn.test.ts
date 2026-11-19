@@ -1,3 +1,4 @@
+import { alphaBounds, packShelves } from '../src/drawn-atlas';
 import { describe, expect, it } from 'vitest';
 import {
   FIGURE_IDLE_HEIGHT,
@@ -294,5 +295,39 @@ describe('repère partagé', () => {
     // Cadre commun : x 10..24 (local), y 5..40 ; repère = pieds du dessin posé (x 18.5, y 40).
     expect(layout.originX).toBeCloseTo((18.5 - 10) / 14);
     expect(layout.originY).toBe(1);
+  });
+});
+
+describe('planches des combats dessinés', () => {
+  it('cadre les pixels visibles', () => {
+    const data = new Uint8Array(10 * 6 * 4);
+    for (const [x, y] of [
+      [2, 1],
+      [6, 4],
+    ] as const)
+      data[(y * 10 + x) * 4 + 3] = 255;
+    expect(alphaBounds(data, 10, 6)).toEqual({ x: 2, y: 1, w: 5, h: 4 });
+    expect(alphaBounds(new Uint8Array(4 * 4), 2, 2)).toEqual({ x: 0, y: 0, w: 1, h: 1 });
+  });
+
+  it('range les images en étagères sans chevauchement, dans la largeur', () => {
+    const sizes = [
+      { w: 50, h: 40 },
+      { w: 60, h: 80 },
+      { w: 70, h: 30 },
+      { w: 40, h: 80 },
+    ];
+    const { positions, width, height } = packShelves(sizes, 130, 2);
+    expect(width).toBeLessThanOrEqual(130);
+    sizes.forEach((a, i) =>
+      sizes.forEach((b, j) => {
+        if (i >= j) return;
+        const p = positions[i]!;
+        const q = positions[j]!;
+        const apart = p.x + a.w <= q.x || q.x + b.w <= p.x || p.y + a.h <= q.y || q.y + b.h <= p.y;
+        expect(apart).toBe(true);
+      }),
+    );
+    positions.forEach((p, i) => expect(p.y + sizes[i]!.h).toBeLessThanOrEqual(height));
   });
 });
