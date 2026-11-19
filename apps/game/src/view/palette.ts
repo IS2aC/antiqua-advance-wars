@@ -19,6 +19,10 @@ export const TERRAIN_COLORS: Readonly<Record<TerrainType, number>> = {
   qg: 0xb8b04a,
   port: 0xb8b04a,
   mer: 0x2a5ea8,
+  rempart: 0x8a7a68,
+  breche: 0xa89478,
+  tour: 0x9a8a72,
+  douves: 0x2e6a9a,
 };
 
 /**

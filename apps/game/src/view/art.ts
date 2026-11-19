@@ -128,8 +128,11 @@ export class TerrainFrames {
         );
       case 'riviere':
         return this.autotile('riviere', this.mask(state, x, y, ['riviere', 'pont'], true), x, y);
+      // Douves : dessinées comme la rivière (même eau, mêmes raccords).
+      case 'douves':
+        return this.autotile('riviere', this.mask(state, x, y, ['douves', 'pont'], true), x, y);
       case 'pont': {
-        const river = this.mask(state, x, y, ['riviere'], true);
+        const river = this.mask(state, x, y, ['riviere', 'douves'], true);
         const riverNorthSouth = river.includes('n') || river.includes('s');
         return this.pick(`terrain/pont/${riverNorthSouth ? 'ew' : 'ns'}`, x, y);
       }

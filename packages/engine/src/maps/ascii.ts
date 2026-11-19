@@ -20,6 +20,9 @@ export const ASCII_LEGEND: Readonly<Record<string, TerrainType>> = {
   Q: 'qg',
   w: 'mer',
   P: 'port',
+  '#': 'rempart',
+  T: 'tour',
+  o: 'douves',
 };
 
 export interface AsciiBuildingCell {

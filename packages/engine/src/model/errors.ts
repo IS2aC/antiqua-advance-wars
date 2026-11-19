@@ -17,6 +17,7 @@ export type ActionErrorCode =
   | 'CANNOT_CAPTURE'
   | 'CANNOT_MERGE'
   | 'CANNOT_LOAD'
+  | 'CANNOT_BREACH'
   | 'CANNOT_UNLOAD'
   | 'NOT_A_BUILDING'
   | 'ALREADY_OWNED'

@@ -3,12 +3,13 @@ import { cloneState, draftUnit, type Draft } from './model/draft';
 import { actionError, type ActionError, type ActionErrorCode } from './model/errors';
 import type { Action, GameEvent, GameState, Unit } from './model/types';
 import { resetCaptureAt, resolveCapture } from './rules/capture';
-import { isInRange, resolveAttack } from './rules/combat';
+import { isInRange, maxRangeFrom, resolveAttack } from './rules/combat';
 import { buildError, resolveBuild } from './rules/economy';
 import { buildingAt, findUnit, inBounds, samePosition, unitAt } from './rules/grid';
 import { findPath } from './rules/movement';
 import { mergeError, resolveMerge } from './rules/merge';
 import { loadError, resolveLoad, resolveUnload, unloadError } from './rules/transport';
+import { resolveWallFire, wallFireError } from './rules/siege';
 import { endTurn } from './rules/turn';
 import { checkGameOver, checkRout } from './rules/victory';
 
@@ -80,7 +81,7 @@ function attack(state: GameState, action: AttackAction): ActionResult {
       'Une unité à distance ne tire pas après avoir bougé.',
     );
   }
-  if (!isInRange(unit.type, unit, target)) {
+  if (!isInRange(unit.type, unit, target, maxRangeFrom(state, unit.type, unit))) {
     return failure('TARGET_OUT_OF_RANGE', 'Cible hors de portée.');
   }
 
@@ -160,6 +161,17 @@ function unload(state: GameState, action: UnloadAction): ActionResult {
   return success(draft, events);
 }
 
+function fireWall(state: GameState, unitId: number, at: { x: number; y: number }): ActionResult {
+  const unit = commandableUnit(state, unitId);
+  if (isResult(unit)) return unit;
+  const error = wallFireError(state, unit, at);
+  if (error) return { ok: false, error };
+  const draft = cloneState(state);
+  const events: GameEvent[] = [];
+  resolveWallFire(draft, events, unit, at);
+  return success(draft, events);
+}
+
 function build(state: GameState, action: BuildAction): ActionResult {
   const error = buildError(state, action.x, action.y, action.unitType);
   if (error) return { ok: false, error };
@@ -200,6 +212,8 @@ export function applyAction(state: GameState, action: Action): ActionResult {
       return load(state, action.unitId, action.transportId);
     case 'UNLOAD':
       return unload(state, action);
+    case 'FIRE_WALL':
+      return fireWall(state, action.unitId, action);
     case 'BUILD':
       return build(state, action);
     case 'END_TURN':

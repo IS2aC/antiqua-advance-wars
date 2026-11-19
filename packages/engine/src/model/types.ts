@@ -25,6 +25,12 @@ export type TerrainType =
   | 'riviere'
   | 'pont'
   | 'mer'
+  // Siège : rempart (bloque tout, la catapulte y ouvre une brèche), brèche (éboulis
+  // praticable), tour (poste de tir sur le rempart), douves (fossé d'eau, passé par un pont).
+  | 'rempart'
+  | 'breche'
+  | 'tour'
+  | 'douves'
   | BuildingType;
 
 export interface Position {
@@ -78,6 +84,8 @@ export interface Player {
 export type GameStatus = 'playing' | 'finished';
 
 export interface GameState {
+  /** Solidité des remparts entamés, par case « x,y » (absent : intact). */
+  readonly walls?: Readonly<Record<string, number>>;
   readonly map: GameMap;
   readonly units: readonly Unit[];
   readonly buildings: readonly Building[];
@@ -131,6 +139,8 @@ export type Action =
       readonly to: Position;
     }
   | { readonly type: 'BUILD'; readonly x: number; readonly y: number; readonly unitType: UnitType }
+  /** La catapulte tire sur un rempart (case x, y). */
+  | { readonly type: 'FIRE_WALL'; readonly unitId: number; readonly x: number; readonly y: number }
   | { readonly type: 'END_TURN' };
 
 export type DefeatReason = 'hq' | 'rout';
@@ -190,6 +200,15 @@ export type GameEvent =
       readonly owner: PlayerId;
       readonly previousOwner: PlayerId | null;
     }
+  | {
+      readonly type: 'wallDamaged';
+      readonly unitId: number;
+      readonly x: number;
+      readonly y: number;
+      /** Solidité restante (0 : brèche). */
+      readonly hp: number;
+    }
+  | { readonly type: 'wallBreached'; readonly x: number; readonly y: number }
   | { readonly type: 'unitLoaded'; readonly unitId: number; readonly transportId: number }
   | {
       readonly type: 'unitUnloaded';

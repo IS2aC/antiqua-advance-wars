@@ -65,6 +65,31 @@ export const TERRAINS: Readonly<Record<TerrainType, TerrainStats>> = {
     moveCost: { pied: null, lourd: null, monture: null, roues: null, naval: 1 },
     income: 0,
   },
+  rempart: {
+    name: 'Rempart',
+    defense: 0,
+    moveCost: { pied: null, lourd: null, monture: null, roues: null, naval: null },
+    income: 0,
+  },
+  breche: {
+    name: 'Brèche',
+    defense: 1,
+    moveCost: { pied: 2, lourd: 1, monture: 2, roues: 3, naval: null },
+    income: 0,
+  },
+  // Tour : on s'y poste à pied ; ceux qui tirent depuis la tour portent 1 case plus loin.
+  tour: {
+    name: 'Tour',
+    defense: 4,
+    moveCost: { pied: 1, lourd: 1, monture: null, roues: null, naval: null },
+    income: 0,
+  },
+  douves: {
+    name: 'Douves',
+    defense: 0,
+    moveCost: { pied: null, lourd: null, monture: null, roues: null, naval: null },
+    income: 0,
+  },
   // Port : bâtiment au bord de l'eau, ouvert aux troupes et aux bateaux ; il produit les bateaux.
   port: {
     name: 'Port',

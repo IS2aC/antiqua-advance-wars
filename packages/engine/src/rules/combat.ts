@@ -31,9 +31,20 @@ export function computeDamage(
   return Math.max(0, Math.min(raw, defender.hp));
 }
 
-export function isInRange(type: UnitType, from: Position, target: Position): boolean {
+/** Portée maximale depuis une case : +1 pour un tireur posté sur une tour. */
+export function maxRangeFrom(state: GameState, type: UnitType, from: Position): number {
+  const bonus = isIndirect(type) && terrainOf(state.map, from) === 'tour' ? 1 : 0;
+  return UNITS[type].maxRange + bonus;
+}
+
+export function isInRange(
+  type: UnitType,
+  from: Position,
+  target: Position,
+  maxRange = UNITS[type].maxRange,
+): boolean {
   const gap = distance(from, target);
-  return gap >= UNITS[type].minRange && gap <= UNITS[type].maxRange;
+  return gap >= UNITS[type].minRange && gap <= maxRange;
 }
 
 /** Riposte : seulement entre unités directes, adjacentes ; le défenseur doit survivre. */
@@ -57,8 +68,9 @@ export function targetsInRange(state: GameState, unitId: number, from?: Position
   const origin = from ?? unit;
   const moved = unit.hasMoved || !samePosition(origin, unit);
   if (isIndirect(unit.type) && moved) return [];
+  const reach = maxRangeFrom(state, unit.type, origin);
   return state.units.filter(
-    (other) => other.owner !== unit.owner && isInRange(unit.type, origin, other),
+    (other) => other.owner !== unit.owner && isInRange(unit.type, origin, other, reach),
   );
 }
 
@@ -70,7 +82,8 @@ export function targetsInRange(state: GameState, unitId: number, from?: Position
 export function threatTiles(state: GameState, unitId: number): Position[] {
   const unit = findUnit(state, unitId);
   if (!unit || unit.hasActed) return [];
-  const { minRange, maxRange } = UNITS[unit.type];
+  const { minRange } = UNITS[unit.type];
+  const maxRange = maxRangeFrom(state, unit.type, unit);
   let origins: readonly Position[];
   if (isIndirect(unit.type)) origins = unit.hasMoved ? [] : [unit];
   else origins = unit.hasMoved ? [unit] : reachableTiles(state, unitId);

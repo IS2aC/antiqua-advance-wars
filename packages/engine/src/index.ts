@@ -54,6 +54,7 @@ export { ASCII_LEGEND, parseAsciiMap, rotateRows, type ParsedAsciiMap } from './
 export { GUE_DU_NIL, GUE_DU_NIL_ROWS } from './maps/gue-du-nil';
 export { CARREFOUR, CARREFOUR_ROWS } from './maps/carrefour';
 export { COTE, COTE_ROWS } from './maps/cote';
+export { WALL_DAMAGE, WALL_HP, wallHp, wallsInRange } from './rules/siege';
 export { assignPeoples } from './maps/peoples';
 
 export { chooseRandomAction, type AgentDecision } from './ai/random-ai';
