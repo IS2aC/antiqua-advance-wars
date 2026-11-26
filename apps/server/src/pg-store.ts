@@ -49,8 +49,12 @@ const toUser = (row: UserRow): User => ({
 export class PgStore implements Store {
   private constructor(private readonly pool: pg.Pool) {}
 
-  static async connect(connectionString: string): Promise<PgStore> {
-    const pool = new pg.Pool({ connectionString });
+  /**
+   * Sans adresse, `pg` lit PGHOST, PGUSER, PGPASSWORD, PGDATABASE (et PGPORT) : le mot de
+   * passe peut alors contenir n'importe quel caractère, sans encodage d'URL.
+   */
+  static async connect(connectionString?: string): Promise<PgStore> {
+    const pool = new pg.Pool(connectionString ? { connectionString } : {});
     await pool.query(SCHEMA);
     await pool.query('DELETE FROM sessions WHERE expire_le < now()');
     return new PgStore(pool);

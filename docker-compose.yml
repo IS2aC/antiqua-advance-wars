@@ -33,7 +33,12 @@ services:
       dockerfile: apps/server/Dockerfile
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgres://alkebulan:${POSTGRES_PASSWORD:-alkebulan-dev}@db:5432/alkebulan
+      # Paramètres séparés (pas d'URL) : le mot de passe peut contenir / + = @ etc.
+      PGHOST: db
+      PGPORT: '5432'
+      PGUSER: alkebulan
+      PGDATABASE: alkebulan
+      PGPASSWORD: ${POSTGRES_PASSWORD:-alkebulan-dev}
       # Cookie de session « Secure » : true derrière HTTPS (Dokploy).
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
     expose:
