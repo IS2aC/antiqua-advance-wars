@@ -1,5 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
+/** Port du serveur de test (E2E_PORT si 5173 est déjà pris sur la machine). */
+const port = Number(process.env.E2E_PORT ?? 5173);
+
 /** Tests de bout en bout : le jeu tourne sur le serveur de dev Vite (crochets de debug actifs). */
 export default defineConfig({
   testDir: './e2e',
@@ -10,7 +13,7 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? 'line' : 'list',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: `http://localhost:${port}`,
     browserName: 'chromium',
     // 1300×800 : zoom ×2 du jeu (640×384).
     viewport: { width: 1300, height: 800 },
@@ -18,8 +21,8 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: 'pnpm exec vite --port 5173 --strictPort',
-    url: 'http://localhost:5173',
+    command: `pnpm exec vite --port ${port} --strictPort`,
+    url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

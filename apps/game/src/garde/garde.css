@@ -694,3 +694,227 @@ body {
   min-height: 9rem;
   border-top: 6px solid var(--gold, #c8962a);
 }
+
+/* ——— Compte : la page reste floutée tant que le joueur n'est pas connecté ——— */
+
+.garde {
+  transition: filter 320ms ease;
+}
+
+.garde--verrouillee {
+  filter: blur(10px) saturate(0.85);
+  pointer-events: none;
+  user-select: none;
+}
+
+.compte {
+  width: min(26rem, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 1.75rem 1.75rem 1.5rem;
+  border: 1px solid var(--gold-border);
+  border-radius: 20px;
+  background: var(--ivory);
+  color: var(--noble-brown);
+  box-shadow: 0 24px 60px rgba(52, 30, 15, 0.35);
+  overflow: auto;
+}
+
+.compte::backdrop {
+  background: rgba(52, 30, 15, 0.28);
+}
+
+.compte[open] {
+  animation: choix-entree 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.compte__logo {
+  display: block;
+  width: 11rem;
+  height: auto;
+  margin: 0 auto 0.5rem;
+}
+
+.compte__titre {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  color: var(--dark-brown);
+}
+
+.compte__onglets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--cream);
+}
+
+.compte__onglets button {
+  min-height: 2.25rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: 600 0.8125rem var(--font-ui);
+  cursor: pointer;
+}
+
+.compte__onglets button[aria-selected='true'] {
+  background: #fff;
+  color: var(--noble-brown);
+  box-shadow: 0 1px 4px rgba(90, 60, 35, 0.12);
+}
+
+.compte__onglets button:focus-visible {
+  outline: 3px solid var(--gold-light);
+  outline-offset: 1px;
+}
+
+.compte__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.champ {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.champ[hidden] {
+  display: none;
+}
+
+.champ input {
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: #fff;
+  color: var(--dark-brown);
+  font: 500 1rem var(--font-ui);
+}
+
+.champ input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255, 200, 59, 0.35);
+}
+
+.champ__aide {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.champ__aide[hidden] {
+  display: none;
+}
+
+.compte__erreur {
+  min-height: 1.25rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--crimson);
+}
+
+.compte__envoi:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* ——— Joueur connecté : en ligne, pseudo, déconnexion ——— */
+
+.joueur {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.joueur[hidden] {
+  display: none;
+}
+
+.joueur__enligne {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+}
+
+.joueur__point {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #2f9e44;
+  box-shadow: 0 0 0 3px rgba(47, 158, 68, 0.18);
+}
+
+.joueur__pseudo {
+  color: var(--dark-brown);
+}
+
+.joueur__sortie,
+.garde__retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.3rem 0.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: 600 0.8125rem var(--font-ui);
+  cursor: pointer;
+}
+
+.garde__retour {
+  align-self: flex-start;
+  margin-left: -0.5rem;
+}
+
+.garde__retour svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.joueur__sortie:hover,
+.joueur__sortie:focus-visible,
+.garde__retour:hover,
+.garde__retour:focus-visible {
+  background: var(--ivory);
+  color: var(--noble-brown);
+  outline: none;
+}
+
+.garde__menu[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garde,
+  .compte[open] {
+    transition: none;
+    animation: none;
+  }
+}

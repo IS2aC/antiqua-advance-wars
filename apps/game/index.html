@@ -30,6 +30,14 @@
       </div>
 
       <section class="garde__panel" aria-labelledby="garde-titre">
+        <div class="joueur" id="joueur" hidden>
+          <span class="joueur__enligne" id="en-ligne" aria-live="polite">
+            <span class="joueur__point" aria-hidden="true"></span>
+            <span id="en-ligne-nombre">—</span>
+          </span>
+          <span class="joueur__pseudo" id="joueur-pseudo"></span>
+          <button class="joueur__sortie" type="button" id="deconnexion">Se déconnecter</button>
+        </div>
         <div class="garde__center">
           <h1 id="garde-titre" class="garde__logo">
             <img
@@ -70,6 +78,34 @@
               <span class="action__badge">Bientôt</span>
             </button>
 
+            <button class="action action--primary" type="button" id="ouvrir-battle">
+              <span class="action__sheen" aria-hidden="true"></span>
+              <span class="action__play" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+              </span>
+              <span class="action__label">Battle</span>
+              <span class="action__detail">contre l'IA ou en ligne</span>
+            </button>
+            <!--
+              Banc d'essai des combats dessinés (outil de test, caché aux joueurs) : en
+              développement, il reste ouvert par jeu.html?mode=proto. Décommenter pour le
+              remettre au menu.
+            <a class="action" href="./jeu.html?mode=proto" data-mode="proto">
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5h16v14H4z" />
+                <path d="M10 9l5 3-5 3z" />
+              </svg>
+              <span class="action__label">Animation (proto)</span>
+              <span class="action__detail">banc d'essai</span>
+            </a>
+            -->
+          </nav>
+
+          <nav class="garde__menu" id="menu-battle" aria-label="Battle" hidden>
+            <button class="garde__retour" type="button" id="retour-menu">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+              Menu principal
+            </button>
             <a
               class="action action--primary"
               href="./jeu.html?mode=ia"
@@ -81,10 +117,42 @@
               <span class="action__play" aria-hidden="true">
                 <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
               </span>
-              <span class="action__label">À deux joueurs</span>
-              <span class="action__detail">toi contre l'IA</span>
+              <span class="action__label">J1 vs CPU</span>
+              <span class="action__detail">duel contre l'IA</span>
             </a>
-
+            <a
+              class="action"
+              href="./jeu.html?mode=ia&amp;carte=carrefour"
+              data-mode="ia"
+              data-choix-carte="carrefour"
+            >
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v18M3 12h18" />
+                <path d="M5 5h4v4H5zM15 5h4v4h-4zM15 15h4v4h-4zM5 15h4v4H5z" />
+              </svg>
+              <span class="action__label">J1 vs 3 CPU</span>
+              <span class="action__detail">quatre royaumes</span>
+            </a>
+            <button class="action" type="button" disabled>
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="8" cy="8" r="3" />
+                <circle cx="16" cy="8" r="3" />
+                <path d="M3 19c0-3 2.2-5 5-5s5 2 5 5M11 19c0-3 2.2-5 5-5s5 2 5 5" />
+              </svg>
+              <span class="action__label">J1 vs J2 online</span>
+              <span class="action__badge">Bientôt</span>
+            </button>
+            <button class="action" type="button" disabled>
+              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="6" cy="7" r="2.5" />
+                <circle cx="18" cy="7" r="2.5" />
+                <circle cx="6" cy="17" r="2.5" />
+                <circle cx="18" cy="17" r="2.5" />
+                <path d="M9 7h6M9 17h6M6 10v4M18 10v4" />
+              </svg>
+              <span class="action__label">JN — 4 joueurs online</span>
+              <span class="action__badge">Bientôt</span>
+            </button>
             <a
               class="action"
               href="./jeu.html?mode=ia&amp;carte=cote"
@@ -113,33 +181,6 @@
               <span class="action__label">Défense de forteresse</span>
               <span class="action__detail">tiens ton QG face aux vagues</span>
             </a>
-            <a
-              class="action"
-              href="./jeu.html?mode=ia&amp;carte=carrefour"
-              data-mode="ia"
-              data-choix-carte="carrefour"
-            >
-              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3v18M3 12h18" />
-                <path d="M5 5h4v4H5zM15 5h4v4h-4zM15 15h4v4h-4zM5 15h4v4H5z" />
-              </svg>
-              <span class="action__label">À quatre joueurs</span>
-              <span class="action__detail">toi contre 3 IA</span>
-            </a>
-
-            <!--
-              Banc d'essai des combats dessinés (outil de test, caché aux joueurs) : en
-              développement, il reste ouvert par jeu.html?mode=proto. Décommenter pour le
-              remettre au menu.
-            <a class="action" href="./jeu.html?mode=proto" data-mode="proto">
-              <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 5h16v14H4z" />
-                <path d="M10 9l5 3-5 3z" />
-              </svg>
-              <span class="action__label">Animation (proto)</span>
-              <span class="action__detail">banc d'essai</span>
-            </a>
-            -->
           </nav>
 
           <p class="garde__hint">
@@ -149,6 +190,44 @@
         </div>
       </section>
     </main>
+
+    <dialog class="compte" id="compte" aria-labelledby="compte-titre">
+      <img class="compte__logo" src="./assets/garde/logo.webp" alt="" width="768" height="384" />
+      <h2 class="compte__titre" id="compte-titre">Connexion</h2>
+      <div class="compte__onglets" role="tablist" aria-label="Compte">
+        <button type="button" role="tab" id="onglet-connexion" aria-selected="true">
+          Se connecter
+        </button>
+        <button type="button" role="tab" id="onglet-inscription" aria-selected="false">
+          Créer un compte
+        </button>
+      </div>
+      <form class="compte__form" id="compte-form" novalidate>
+        <label class="champ" id="champ-pseudo" hidden>
+          <span>Pseudo</span>
+          <input name="pseudo" autocomplete="username" minlength="3" maxlength="20" />
+        </label>
+        <label class="champ">
+          <span>Email</span>
+          <input name="email" type="email" autocomplete="email" required />
+        </label>
+        <label class="champ">
+          <span>Mot de passe</span>
+          <input
+            name="motDePasse"
+            type="password"
+            autocomplete="current-password"
+            minlength="8"
+            required
+          />
+          <small class="champ__aide" id="aide-mdp" hidden>Au moins 8 caractères.</small>
+        </label>
+        <p class="compte__erreur" id="compte-erreur" role="alert"></p>
+        <button class="action action--primary compte__envoi" type="submit" id="compte-envoi">
+          <span class="action__label">Se connecter</span>
+        </button>
+      </form>
+    </dialog>
 
     <dialog class="choix" id="choix-peuple" aria-labelledby="choix-titre">
       <header class="choix__tete">

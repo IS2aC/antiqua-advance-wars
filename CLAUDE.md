@@ -13,6 +13,7 @@ Monorepo pnpm :
 | `packages/engine`      | `@antiqua/engine`         | Moteur de règles, **TypeScript pur, zéro dépendance** |
 | `apps/game`            | `@antiqua/game`           | Client Phaser 4 + Vite (rendu, input, UI)             |
 | `apps/site`            | `@antiqua/site`           | Site vitrine Astro                                    |
+| `apps/server`          | `@antiqua/server`         | Comptes joueurs et présence (Fastify + PostgreSQL)    |
 | `tools/asset-pipeline` | `@antiqua/asset-pipeline` | Pipeline d'assets Node (`pnpm assets:build`)          |
 | `tools/cli`            | `@antiqua/cli`            | Match aléatoire en console (`pnpm match`)             |
 
@@ -23,9 +24,15 @@ Monorepo pnpm :
 - Le rendu traduit les clics en `Action`, envoie au moteur, puis joue les `GameEvent` dans l'ordre (`EventPlayer`). **La vue ne modifie jamais l'état.**
 - Une action illégale renvoie une erreur typée, jamais d'exception silencieuse.
 
+### Comptes et serveur (`apps/server`)
+
+- Pas d'accès au jeu sans compte : la page de garde est floutée derrière « Se connecter / Créer un compte » (`src/garde/compte.ts`), `jeu.html` renvoie à la page de garde sans session (`src/main.ts`). Client de l'API : `src/compte/api.ts`.
+- API sous `/api` : `inscription`, `connexion`, `deconnexion`, `moi`, `sante`, WebSocket `presence` (nombre de joueurs en ligne). Mots de passe hachés scrypt, session = cookie HttpOnly (`alk_session`), seule l'empreinte SHA-256 du jeton est en base. Schéma créé au démarrage (`pg-store.ts`) ; tests sur `MemoryStore`, sans base.
+- En développement : `docker compose -f docker-compose.yml -f compose.local.yml up -d db`, puis `pnpm dev:server` (port 3000) ; Vite relaie `/api` (`vite.config.ts`). Tests de bout en bout : `e2e/fixtures.ts` simule un joueur connecté (`connecte: false` pour l'écran de connexion) ; `E2E_PORT` si 5173 est pris.
+
 ### Client de jeu (`apps/game/src`)
 
-- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. La page de garde lance `jeu.html?mode=ia|deux|continuer&carte=…` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
+- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. Menu : Continuer, Campagne (bientôt), Battle → J1 vs CPU, J1 vs 3 CPU, J1 vs J2 online et JN (bientôt), Duel sur la côte, Défense de forteresse. La page de garde lance `jeu.html?mode=ia|deux|continuer&carte=…` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
 
 - `controller/BattleController.ts` : seul endroit qui transforme les entrées en `Action`, appelle `applyAction` et remplace l'état courant. Annuler un déplacement = revenir à l'état d'avant le `MOVE` (le moteur n'a rien tiré au hasard).
 - `animation/EventPlayer.ts` : joue les `GameEvent` dans l'ordre, puis recale la vue sur l'état final (`sync`).
@@ -58,6 +65,7 @@ Monorepo pnpm :
 pnpm install          # dépendances
 pnpm dev              # client de jeu (http://localhost:5173)
 pnpm dev:site         # site vitrine
+pnpm dev:server       # serveur des comptes (base : voir docker-compose.yml)
 pnpm test             # tests (Vitest, couverture du moteur)
 pnpm lint             # ESLint + Prettier
 pnpm typecheck        # tsc sur tous les packages
@@ -69,4 +77,4 @@ pnpm art:generer      # génère les dessins de combat via OpenRouter ou OpenAI 
 pnpm match            # match aléatoire en ligne de commande (moteur seul)
 ```
 
-Docker : `docker build -t antiqua .` sert `apps/game/dist` via Nginx (compatible Dokploy).
+Docker : `docker-compose.yml` (Dokploy, aucun port publié) lance la base PostgreSQL, le serveur des comptes et le jeu (service `alkebulan`, Nginx, `/api` relayé vers le serveur) ; `POSTGRES_PASSWORD` à définir dans Dokploy. En local, ajouter `-f compose.local.yml` (ports, cookie sans HTTPS) : http://localhost:8080. `docker build -t antiqua .` seul sert le jeu sans comptes.

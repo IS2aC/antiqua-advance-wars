@@ -1,14 +1,19 @@
-# Alkébulan — déploiement Dokploy (type « Docker Compose »).
+# Alkébulan — déploiement Dokploy (type « Docker Compose ») : le jeu, le serveur des comptes
+# et la base PostgreSQL.
 #
 # Dans Dokploy :
 #   1. Créer un service « Compose », source = ce dépôt Git, branche à déployer,
 #      chemin du fichier = ./docker-compose.yml.
-#   2. Onglet « Domains » : service `alkebulan`, port 80, ton nom de domaine,
+#   2. Onglet « Environment » : POSTGRES_PASSWORD (mot de passe fort, à garder : il protège
+#      la base des joueurs).
+#   3. Onglet « Domains » : service `alkebulan`, port 80, ton nom de domaine,
 #      HTTPS activé avec Let's Encrypt. Dokploy ajoute lui-même les labels Traefik
 #      et le réseau ; ne pas publier de port ici.
-#   3. Déployer. Le DNS du domaine (enregistrement A) doit pointer vers le serveur.
+#   4. Déployer. Le DNS du domaine (enregistrement A) doit pointer vers le serveur.
 #
-# En local : docker compose build, puis docker run --rm -p 8080:80 <image>
+# En local (ports publiés, cookie sans HTTPS) :
+#   docker compose -f docker-compose.yml -f compose.local.yml up -d --build  → http://localhost:8080
+#   docker compose -f docker-compose.yml -f compose.local.yml up -d db       → base seule, pour `pnpm dev:server`
 
 services:
   alkebulan:
@@ -18,3 +23,40 @@ services:
     restart: unless-stopped
     expose:
       - '80'
+    depends_on:
+      - server
+
+  # Comptes et présence ; Nginx (service alkebulan) lui relaie /api.
+  server:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://alkebulan:${POSTGRES_PASSWORD:-alkebulan-dev}@db:5432/alkebulan
+      # Cookie de session « Secure » : true derrière HTTPS (Dokploy).
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+    expose:
+      - '3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Base des joueurs. Jamais publiée : seul le serveur y accède. Données dans un volume.
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: alkebulan
+      POSTGRES_USER: alkebulan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-alkebulan-dev}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U alkebulan -d alkebulan']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db-data:

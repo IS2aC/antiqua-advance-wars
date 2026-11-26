@@ -1,0 +1,12 @@
+# Ajouts pour la machine de développement (jamais sur Dokploy) : ports publiés en local et
+# cookie de session sans HTTPS. Voir l'en-tête de docker-compose.yml.
+services:
+  alkebulan:
+    ports:
+      - '${WEB_PORT:-8080}:80'
+  server:
+    environment:
+      COOKIE_SECURE: 'false'
+  db:
+    ports:
+      - '127.0.0.1:5432:5432'

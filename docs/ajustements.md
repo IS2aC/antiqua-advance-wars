@@ -3,6 +3,80 @@
 Idées retenues pour plus tard, **pas pour maintenant**. Chaque entrée dit ce qu'on veut et
 où elle se branchera dans le code actuel. On la sort de cette liste quand on la planifie.
 
+## 0. URGENT — priorités du 26/11/2026
+
+À faire avant tout le reste, dans cet ordre de dépendance (les comptes avant le jeu en ligne).
+
+### 0.1 Comptes joueurs : inscription et connexion à l'arrivée — fait
+
+> Fait (26/11/2026) : serveur `apps/server` (Fastify, mots de passe hachés scrypt, session
+> par cookie HttpOnly de 30 jours, essais de connexion limités), base PostgreSQL,
+> `docker-compose.yml` (db, server, web). Formulaire « Se connecter / Créer un compte » sur
+> la page de garde floutée ; `jeu.html` renvoie à la page de garde sans session.
+> Reste : « mot de passe oublié » (suppose l'envoi d'emails).
+
+- Dès l'ouverture de la page de garde, un formulaire par-dessus le site, **fond flouté**
+  (`backdrop-filter: blur`) : le joueur crée son compte ou se connecte. Tant qu'il n'est pas
+  connecté, il n'a pas accès à l'espace de jeu.
+- Inscription : pseudo, email, mot de passe (règle basique : longueur minimale). Connexion :
+  email + mot de passe. Prévoir « mot de passe oublié » plus tard.
+- **Suppose un serveur**, ce que le projet n'a pas aujourd'hui (le Docker ne sert que des
+  fichiers statiques via Nginx) : une API d'authentification (mots de passe hachés, jamais en
+  clair ; session par cookie `HttpOnly`), une base de données des joueurs, et le déploiement
+  de ce service à côté du jeu sur Dokploy. Choix de pile à faire ensemble (service maison
+  Node + PostgreSQL/SQLite, ou service tout fait type Supabase / PocketBase).
+- Code : `apps/game/index.html` et `src/garde/` (le formulaire), un nouveau package serveur
+  (par ex. `apps/server`), `launch.ts` (refuser `jeu.html` sans session).
+
+### 0.2 Nouveau menu de jeu — menu fait, jeu en ligne à faire
+
+> Fait : menu principal (Continuer, Campagne, Battle) et sous-menu Battle (J1 vs CPU,
+> J1 vs 3 CPU, Duel sur la côte, Défense de forteresse). « J1 vs J2 online » et « JN » sont
+> affichés « Bientôt » : reste tout le jeu en ligne (salons, arbitrage par le moteur).
+
+- **Campagne** (Bientôt) — inchangé, grisé.
+- **Battle**, qui ouvre plusieurs modes :
+  - **J1 vs CPU** — l'actuel duel contre l'IA ;
+  - **J1 vs 3 CPU** — l'actuelle partie à quatre (Carrefour des Royaumes) ;
+  - **J1 vs J2 online** — duel au tour par tour entre deux joueurs connectés, dans une
+    session partagée ;
+  - **JN** — combat à 4 joueurs en ligne (J1 vs J2 vs J3 vs J4).
+- Les autres entrées actuelles (Côte des Comptoirs, Défense de forteresse) : à ranger dans
+  Battle ou à part, à décider.
+- Le jeu en ligne s'appuie sur ce qui existe : le moteur est déterministe et pur
+  (`applyAction`), donc le serveur peut valider chaque `Action` et la renvoyer aux autres
+  joueurs (WebSocket). À prévoir : salons (créer / rejoindre une session), à qui le tour,
+  reprise après déconnexion, abandon.
+
+### 0.3 Joueurs connectés — fait
+
+> Fait : « N joueurs en ligne » en direct en haut de la page de garde (WebSocket
+> `/api/presence`, un compte compte une fois même avec plusieurs onglets).
+
+- Une fois connecté, le joueur voit **combien de joueurs sont en ligne** (compteur sur la
+  page de garde). Même service temps réel que le jeu en ligne (présence par WebSocket).
+
+### 0.4 Combats dessinés du convoi et du bateau (images Codex)
+
+- Quand un convoi ou un bateau attaque ou est attaqué, un vrai combat dessiné, comme les
+  6 autres unités (aujourd'hui : silhouettes provisoires).
+- Sprites et animations **obligatoirement générés par Codex** (`art/codex/`), jamais à la
+  main ni par l'API payante : 2 unités × 4 peuples × 6 planches (poses, repos, attaque,
+  charge, chute, sonné). Valider une unité avant de lancer les autres.
+- Plus un décor de mer pour les combats en mer.
+
+### 0.5 Deux nouveaux peuples : Dahomey et Sosso
+
+- **Dahomey** — chef : **Béhanzin** ; armée **principalement féminine** (les Agojié, les
+  guerrières du roi). Sprites et combats dessinés en conséquence.
+- **Sosso** — chef : **Soumaoro Kanté** ; ses **dozos** (chasseurs-guerriers, tenues de
+  chasseur à amulettes, arcs et fusils de traite à exclure selon l'époque visée).
+- Pour chacun, comme pour les 4 peuples actuels : planche de référence et prompts
+  (`docs/planches-peuples.md`), couleur d'équipe, portrait et écusson, sprites de carte des
+  unités (`art/specs/sprites-peuples.json`), dessins de combat par unité, puis l'ajout au
+  moteur (liste des peuples) et à l'écran « Choisis ton peuple ». Images via Codex.
+- À décider : la place de Kemet et Aksoum (§ 5), qui étaient prévus comme 5e et 6e peuples.
+
 ## 1. Mode campagne
 
 - Le bouton « Campagne » existe déjà sur la page de garde (`apps/game/index.html`), grisé

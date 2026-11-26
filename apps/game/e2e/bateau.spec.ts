@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
 
 test('sur la côte : un fantassin monte dans un bateau depuis le rivage, puis débarque', async ({

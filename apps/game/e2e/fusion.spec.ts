@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
 
 test('fusionner deux fantassins blessés : 3 + 7 PV donnent 10 PV', async ({ page }) => {

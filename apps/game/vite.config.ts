@@ -3,7 +3,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   base: './',
-  server: { port: 5173 },
+  // /api (comptes, présence) : serveur `pnpm dev:server` sur le port 3000.
+  server: {
+    port: 5173,
+    proxy: { '/api': { target: 'http://localhost:3000', ws: true } },
+  },
   // Les deux pages sont analysées dès le démarrage : sinon Vite découvre Phaser au premier
   // passage sur jeu.html et recharge la page en cours de route.
   optimizeDeps: { entries: ['index.html', 'jeu.html'] },

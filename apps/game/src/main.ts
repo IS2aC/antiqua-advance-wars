@@ -5,6 +5,15 @@ import { BattleScene } from './scenes/BattleScene';
 import { TitleScene } from './scenes/TitleScene';
 import { startProtoBench } from './drawn/ProtoBench';
 import { loadFonts } from './ui/font';
+import { fetchMe } from './compte/api';
+
+// Pas de partie sans compte : retour à la page de garde, qui affiche le formulaire.
+// Serveur injoignable : même chose, la page de garde le dit.
+const me = await fetchMe().catch(() => null);
+if (!me) {
+  window.location.replace('./');
+  await new Promise(() => undefined);
+}
 
 // La police pixel doit être prête avant le premier texte (sinon Phaser garde la police
 // de secours dans ses textures).

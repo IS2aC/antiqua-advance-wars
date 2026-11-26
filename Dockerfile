@@ -1,5 +1,5 @@
 # Alkébulan — image de production : le jeu est un site statique servi par Nginx.
-# Aucun serveur applicatif au Stage 1 (sauvegarde dans le navigateur).
+# Les comptes et la présence passent par le service « server » (docker-compose.yml).
 
 # --- Étape 1 : build ---
 FROM node:22-alpine AS build
@@ -14,6 +14,7 @@ COPY patches patches
 COPY packages/engine/package.json packages/engine/
 COPY apps/game/package.json apps/game/
 COPY apps/site/package.json apps/site/
+COPY apps/server/package.json apps/server/
 COPY tools/asset-pipeline/package.json tools/asset-pipeline/
 COPY tools/cli/package.json tools/cli/
 

@@ -6,6 +6,7 @@ import type { PlayerId } from '@antiqua/engine';
 import { MAPS, mapFromParam, type MapId } from '../maps';
 import { loadGame } from '../persistence/save';
 import './garde.css';
+import { requireAccount } from './compte';
 import { PEOPLE_CARDS } from './peuples';
 
 const save = loadGame();
@@ -18,9 +19,24 @@ if (save && resume && detail) {
   resume.hidden = false;
 }
 
-// Une partie en cours passe en premier ; sinon « À deux joueurs ».
-const first = document.querySelector<HTMLElement>(save ? '#continuer' : '.action--primary');
-first?.focus({ preventScroll: true });
+// ——— Menus : principal (Continuer, Campagne, Battle) et Battle (les modes de bataille) ———
+const mainMenu = document.querySelector<HTMLElement>('.garde__menu:not(#menu-battle)');
+const battleMenu = document.querySelector<HTMLElement>('#menu-battle');
+
+function showMenu(battle: boolean): void {
+  if (!mainMenu || !battleMenu) return;
+  mainMenu.hidden = battle;
+  battleMenu.hidden = !battle;
+  const first = battle
+    ? battleMenu.querySelector<HTMLElement>('.action--primary')
+    : document.querySelector<HTMLElement>(save ? '#continuer' : '#ouvrir-battle');
+  first?.focus({ preventScroll: true });
+}
+document.querySelector('#ouvrir-battle')?.addEventListener('click', () => showMenu(true));
+document.querySelector('#retour-menu')?.addEventListener('click', () => showMenu(false));
+
+// Pas d'accès au menu sans compte : une partie en cours passe en premier, sinon « Battle ».
+requireAccount(() => showMenu(false));
 
 // ——— Choix du peuple ———
 // « À deux joueurs » : on choisit son peuple parmi les 4, puis celui de l'IA parmi les 3
@@ -189,10 +205,15 @@ dialog?.addEventListener('click', (event) => {
 });
 
 // Navigation au clavier : flèches dans le menu, ou entre les peuples quand le choix est ouvert.
-const actions = [...document.querySelectorAll<HTMLElement>('.garde__menu .action')].filter(
-  (element) => !element.hidden && !element.hasAttribute('disabled'),
-);
+// Échap dans le menu Battle : retour au menu principal.
+const visibleActions = () =>
+  [
+    ...document.querySelectorAll<HTMLElement>(
+      '.garde__menu:not([hidden]) .action, .garde__menu:not([hidden]) .garde__retour',
+    ),
+  ].filter((element) => !element.hidden && !element.hasAttribute('disabled'));
 document.addEventListener('keydown', (event) => {
+  if (document.querySelector<HTMLDialogElement>('#compte')?.open) return;
   if (dialog?.open) {
     const cards = [...(grid?.querySelectorAll<HTMLElement>('.peuple') ?? [])];
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
@@ -202,7 +223,13 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault();
     return;
   }
+  if (event.key === 'Escape' && battleMenu && !battleMenu.hidden) {
+    showMenu(false);
+    event.preventDefault();
+    return;
+  }
   if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+  const actions = visibleActions();
   const current = actions.indexOf(document.activeElement as HTMLElement);
   const step = event.key === 'ArrowDown' ? 1 : -1;
   const next = actions[(current + step + actions.length) % actions.length];
