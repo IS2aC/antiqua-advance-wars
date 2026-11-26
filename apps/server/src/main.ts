@@ -5,15 +5,19 @@ import { PgStore } from './pg-store';
 // En développement, la base de compose.local.yml (mot de passe par défaut).
 const DEV_DATABASE = 'postgres://alkebulan:alkebulan-dev@localhost:5432/alkebulan';
 const production = process.env.NODE_ENV === 'production';
+// Docker : PGHOST, PGUSER, PGPASSWORD, PGDATABASE (mot de passe quelconque, sans encodage) ;
+// sinon DATABASE_URL.
+const usePgEnv = process.env.DATABASE_URL === undefined && process.env.PGHOST !== undefined;
 const databaseUrl = process.env.DATABASE_URL ?? (production ? undefined : DEV_DATABASE);
-if (!databaseUrl) {
+if (!usePgEnv && !databaseUrl) {
   console.error(
-    'DATABASE_URL manquant (ex. postgres://alkebulan:motdepasse@localhost:5432/alkebulan)',
+    'Base introuvable : PGHOST, PGUSER, PGPASSWORD, PGDATABASE, ou DATABASE_URL ' +
+      '(ex. postgres://alkebulan:motdepasse@localhost:5432/alkebulan)',
   );
   process.exit(1);
 }
 
-const store = await PgStore.connect(databaseUrl);
+const store = await PgStore.connect(usePgEnv ? undefined : databaseUrl);
 const app = await buildApp({
   store,
   secureCookie: production && process.env.COOKIE_SECURE !== 'false',
