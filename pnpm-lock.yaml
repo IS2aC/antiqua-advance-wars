@@ -37,6 +37,9 @@ importers:
       '@antiqua/engine':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@antiqua/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
       phaser:
         specifier: 4.2.1
         version: 4.2.1(patch_hash=fbd2f6504089afacf7cbd4714d730485a858003b02ec0acc453aa6e63e3128cb)
@@ -50,6 +53,12 @@ importers:
 
   apps/server:
     dependencies:
+      '@antiqua/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      '@antiqua/protocol':
+        specifier: workspace:*
+        version: link:../../packages/protocol
       '@fastify/cookie':
         specifier: ^11.1.5
         version: 11.1.5
@@ -93,6 +102,12 @@ importers:
       vitest:
         specifier: ^5.1.0
         version: 5.1.0(@types/node@26.6.6)(@vitest/coverage-v8@5.1.0)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  packages/protocol:
+    dependencies:
+      '@antiqua/engine':
+        specifier: workspace:*
+        version: link:../engine
 
   tools/asset-pipeline:
     dependencies:

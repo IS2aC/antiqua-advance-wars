@@ -1,5 +1,12 @@
 import pg from 'pg';
-import { newToken, tokenHash, type CreateUserResult, type Store, type User } from './store';
+import {
+  newToken,
+  tokenHash,
+  type CreateUserResult,
+  type Store,
+  type StoredOnlineGame,
+  type User,
+} from './store';
 
 /** Schéma, créé au démarrage s'il manque. Pseudo unique sans tenir compte de la casse. */
 const SCHEMA = `
@@ -17,6 +24,12 @@ CREATE TABLE IF NOT EXISTS sessions (
   expire_le timestamptz NOT NULL
 );
 CREATE INDEX IF NOT EXISTS sessions_expire ON sessions (expire_le);
+CREATE TABLE IF NOT EXISTS parties_en_ligne (
+  id text PRIMARY KEY,
+  finie boolean NOT NULL DEFAULT false,
+  donnees jsonb NOT NULL,
+  mise_a_jour timestamptz NOT NULL DEFAULT now()
+);
 `;
 
 interface UserRow {
@@ -91,6 +104,21 @@ export class PgStore implements Store {
 
   async deleteSession(token: string): Promise<void> {
     await this.pool.query('DELETE FROM sessions WHERE jeton = $1', [tokenHash(token)]);
+  }
+
+  async saveOnlineGame(game: StoredOnlineGame): Promise<void> {
+    await this.pool.query(
+      `INSERT INTO parties_en_ligne (id, finie, donnees, mise_a_jour) VALUES ($1, $2, $3, now())
+       ON CONFLICT (id) DO UPDATE SET finie = $2, donnees = $3, mise_a_jour = now()`,
+      [game.id, game.finished, JSON.stringify(game.data)],
+    );
+  }
+
+  async loadOnlineGames(): Promise<unknown[]> {
+    const { rows } = await this.pool.query<{ donnees: unknown }>(
+      'SELECT donnees FROM parties_en_ligne WHERE NOT finie',
+    );
+    return rows.map((row) => row.donnees);
   }
 
   async close(): Promise<void> {

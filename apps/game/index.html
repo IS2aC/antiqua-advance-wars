@@ -133,14 +133,14 @@
               <span class="action__label">J1 vs 3 CPU</span>
               <span class="action__detail">quatre royaumes</span>
             </a>
-            <button class="action" type="button" disabled>
+            <button class="action" type="button" id="ouvrir-en-ligne">
               <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="8" cy="8" r="3" />
                 <circle cx="16" cy="8" r="3" />
                 <path d="M3 19c0-3 2.2-5 5-5s5 2 5 5M11 19c0-3 2.2-5 5-5s5 2 5 5" />
               </svg>
               <span class="action__label">J1 vs J2 online</span>
-              <span class="action__badge">Bientôt</span>
+              <span class="action__detail">duel au tour par tour</span>
             </button>
             <button class="action" type="button" disabled>
               <svg class="action__icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -227,6 +227,48 @@
           <span class="action__label">Se connecter</span>
         </button>
       </form>
+    </dialog>
+
+    <dialog class="choix en-ligne" id="salon-en-ligne" aria-labelledby="en-ligne-titre">
+      <header class="choix__tete">
+        <div>
+          <h2 id="en-ligne-titre" class="choix__titre">Partie en ligne</h2>
+          <p class="choix__carte" id="en-ligne-etat">Connexion au salon…</p>
+        </div>
+        <button class="choix__fermer" type="button" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </header>
+      <div class="en-ligne__corps">
+        <section aria-labelledby="en-ligne-peuple">
+          <h3 id="en-ligne-peuple" class="en-ligne__titre">Ton peuple</h3>
+          <div class="en-ligne__peuples" id="en-ligne-peuples" role="radiogroup"></div>
+        </section>
+        <section aria-labelledby="en-ligne-creer">
+          <h3 id="en-ligne-creer" class="en-ligne__titre">Créer une partie</h3>
+          <div class="en-ligne__ligne">
+            <label class="champ en-ligne__carte">
+              <span>Carte</span>
+              <select id="en-ligne-carte"></select>
+            </label>
+            <button
+              class="action action--primary en-ligne__creer"
+              type="button"
+              id="en-ligne-creer-btn"
+            >
+              <span class="action__label">Créer</span>
+            </button>
+          </div>
+        </section>
+        <section aria-labelledby="en-ligne-ouvertes">
+          <h3 id="en-ligne-ouvertes" class="en-ligne__titre">Parties ouvertes</h3>
+          <ul class="en-ligne__liste" id="parties-ouvertes"></ul>
+        </section>
+        <section aria-labelledby="en-ligne-miennes">
+          <h3 id="en-ligne-miennes" class="en-ligne__titre">Mes parties</h3>
+          <ul class="en-ligne__liste" id="mes-parties"></ul>
+        </section>
+      </div>
     </dialog>
 
     <dialog class="choix" id="choix-peuple" aria-labelledby="choix-titre">

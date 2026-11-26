@@ -31,6 +31,7 @@ import {
 import { TILE_SIZE, VIEW_TILES_X, VIEW_TILES_Y } from '../config';
 import type { EventPlayer } from '../animation/EventPlayer';
 import { combatSetting, loadOptions, saveOptions, withCombatSetting } from '../persistence/options';
+import type { RemoteSession } from '../online/session';
 import { clearSave, saveGame } from '../persistence/save';
 import type { EndChoice, EndScreen } from '../view/EndScreen';
 import type { ForecastPanel } from '../view/ForecastPanel';
@@ -55,7 +56,17 @@ const T = TILE_SIZE;
  * - over : partie terminée.
  */
 type Mode =
-  'idle' | 'selected' | 'inspecting' | 'menu' | 'targeting' | 'busy' | 'ai' | 'paused' | 'over';
+  | 'idle'
+  | 'selected'
+  | 'inspecting'
+  | 'menu'
+  | 'targeting'
+  | 'busy'
+  | 'ai'
+  /** Tour de l'adversaire en ligne : ses actions arrivent du serveur. */
+  | 'remote'
+  | 'paused'
+  | 'over';
 
 type Command = 'attack' | 'capture' | 'wait' | 'merge' | 'load' | 'unload' | 'breach';
 
@@ -104,6 +115,9 @@ export class BattleController {
   private resolveTarget: ((target: Position | null) => void) | null = null;
   private cameraTween: Phaser.Tweens.Tween | null = null;
   private fast = false;
+  /** En ligne : déplacement pas encore envoyé (il part avec l'action qui le suit). */
+  private pendingMove: Action | null = null;
+  private opponentOnline = true;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -113,6 +127,8 @@ export class BattleController {
     private readonly onFinished: (choice: EndChoice) => void,
     /** Camps joués par l'IA (vide : partie à deux sur le même écran). */
     private readonly aiPlayers: readonly PlayerId[] = [],
+    /** Partie en ligne : l'autre camp est joué par un adversaire distant. */
+    private readonly remote: RemoteSession | null = null,
   ) {}
 
   /** État courant (lecture seule) : tests de bout en bout et console de développement. */
@@ -134,8 +150,10 @@ export class BattleController {
       this.state,
     );
     this.mode = 'idle';
+    if (this.remote) this.listenRemote(this.remote);
     // Reprise d'une sauvegarde faite pendant le tour de l'IA.
     if (this.isAiTurn()) await this.runAiTurns();
+    else if (this.isRemoteTurn()) await this.runRemoteTurns();
   }
 
   // ——— Entrées ———
@@ -148,7 +166,7 @@ export class BattleController {
       else if (code === 'Escape' || code === 'Backspace') this.views.pauseMenu.cancel();
       return;
     }
-    if (this.mode === 'ai') {
+    if (this.mode === 'ai' || this.mode === 'remote') {
       if (code === 'Enter' || code === 'Space') this.toggleFast();
       return;
     }
@@ -190,12 +208,13 @@ export class BattleController {
   }
 
   onPointerMove(worldX: number, worldY: number): void {
-    if (this.mode === 'menu' || this.mode === 'ai' || this.mode === 'paused') return;
+    if (this.mode === 'menu' || this.mode === 'ai' || this.mode === 'remote') return;
+    if (this.mode === 'paused') return;
     this.pointAt({ x: Math.floor(worldX / T), y: Math.floor(worldY / T) }, 0);
   }
 
   onPointerDown(worldX: number, worldY: number, rightButton: boolean): void {
-    if (this.mode === 'ai' || this.mode === 'paused') return;
+    if (this.mode === 'ai' || this.mode === 'remote' || this.mode === 'paused') return;
     if (rightButton) {
       if (this.mode === 'menu') this.views.menu.cancel();
       else this.cancel();
@@ -224,14 +243,17 @@ export class BattleController {
       this.mode = 'idle';
       return;
     }
-    if (choice === 'quitter') saveGame(this.state, this.aiPlayers);
+    // En ligne, la partie est gardée par le serveur ; « Abandonner » la donne à l'adversaire.
+    if (this.remote) {
+      if (choice !== 'quitter') this.remote.resign();
+    } else if (choice === 'quitter') saveGame(this.state, this.aiPlayers);
     else clearSave();
     this.onFinished('menu');
   }
 
   /** Bouton du HUD : « Fin de tour », ou « Accélérer » pendant le tour de l'IA. */
   requestEndTurn(): void {
-    if (this.mode === 'ai') {
+    if (this.mode === 'ai' || this.mode === 'remote') {
       this.toggleFast();
       return;
     }
@@ -509,6 +531,7 @@ export class BattleController {
 
     if (choice === null) {
       if (beforeMove) {
+        this.pendingMove = null;
         this.state = beforeMove;
         this.views.player.sync(this.state);
       }
@@ -613,6 +636,7 @@ export class BattleController {
   private async endTurn(): Promise<void> {
     if (!(await this.execute({ type: 'END_TURN' }))) return;
     if (this.isAiTurn()) await this.runAiTurns();
+    else if (this.isRemoteTurn()) await this.runRemoteTurns();
     else this.focusCurrentPlayer();
   }
 
@@ -724,6 +748,77 @@ export class BattleController {
     }
   }
 
+  // ——— Adversaire en ligne ———
+
+  private isRemoteTurn(): boolean {
+    return (
+      this.remote !== null &&
+      this.state.status === 'playing' &&
+      this.state.currentPlayer !== this.remote.me
+    );
+  }
+
+  private listenRemote(remote: RemoteSession): void {
+    remote.bindLocalState(() => this.state);
+    remote.onOpponent((online) => {
+      this.opponentOnline = online;
+      if (this.mode === 'remote') this.views.hud.setButtonLabel(this.remoteLabel());
+    });
+    // Abandon (de l'un ou de l'autre) : écran de fin, même au milieu du tour adverse.
+    remote.onEnd((winner, reason) => {
+      if (this.mode === 'over' || reason !== 'abandon') return;
+      void this.showEnd(winner === remote.me ? 'Victoire : abandon adverse' : 'Défaite : abandon');
+    });
+  }
+
+  /** Partie terminée (le mode change pendant les `await`, d'où une méthode). */
+  private isOver(): boolean {
+    return this.mode === 'over';
+  }
+
+  private remoteLabel(): string {
+    return this.opponentOnline ? 'Tour adverse' : 'Adversaire absent';
+  }
+
+  /** Rejoue les actions de l'adversaire, reçues du serveur, jusqu'à ce que la main revienne. */
+  private async runRemoteTurns(): Promise<void> {
+    while (this.isRemoteTurn() && this.remote) {
+      this.clearSelection();
+      this.mode = 'remote';
+      this.views.hud.setPauseEnabled(false);
+      this.views.hud.setButtonLabel(this.remoteLabel());
+      const action = await this.remote.next();
+      if (this.isOver()) return;
+      await this.previewAiAction(action);
+      const ok = await this.execute(action, true);
+      if (this.isOver()) return;
+      if (!ok) {
+        // Désaccord avec le serveur : son état fait foi.
+        window.location.reload();
+        return;
+      }
+      this.mode = 'remote';
+      if (action.type !== 'MOVE' && action.type !== 'END_TURN') await this.pause(AI_UNIT_PAUSE);
+    }
+    this.setFast(false);
+    this.views.hud.setButtonLabel('Fin de tour');
+    this.views.hud.setPauseEnabled(true);
+    if (this.state.status === 'finished') return;
+    this.mode = 'idle';
+    this.focusCurrentPlayer();
+  }
+
+  /** Envoie au serveur une action jouée sur cet écran (un MOVE attend l'action suivante). */
+  private sendToRemote(action: Action): void {
+    if (!this.remote) return;
+    if (action.type === 'MOVE') {
+      this.pendingMove = action;
+      return;
+    }
+    this.remote.send(this.pendingMove ? [this.pendingMove, action] : [action]);
+    this.pendingMove = null;
+  }
+
   /** « Accélérer » : animations, minuteries et tweens tournent plus vite. */
   private toggleFast(): void {
     this.setFast(!this.fast);
@@ -736,6 +831,7 @@ export class BattleController {
     this.scene.time.timeScale = scale;
     this.scene.anims.globalTimeScale = scale;
     if (this.isAiTurn()) this.views.hud.setButtonLabel(fast ? 'Vitesse ×4' : 'Accélérer');
+    else if (this.mode === 'remote') this.views.hud.setButtonLabel(this.remoteLabel());
   }
 
   private pause(ms: number): Promise<void> {
@@ -745,7 +841,7 @@ export class BattleController {
   // ——— Moteur ———
 
   /** Envoie l'action au moteur, puis joue ses événements. Renvoie false si l'action est refusée. */
-  private async execute(action: Action): Promise<boolean> {
+  private async execute(action: Action, fromRemote = false): Promise<boolean> {
     const result = applyAction(this.state, action);
     if (!result.ok) {
       console.warn(
@@ -755,16 +851,17 @@ export class BattleController {
     }
     const before = this.state;
     this.state = result.state;
+    if (!fromRemote) this.sendToRemote(action);
     this.mode = 'busy';
     await this.views.player.play(result.events, result.state, before);
     this.views.hud.inspect(this.state, this.views.cursor.position);
     if (this.state.status === 'finished' || this.humansDefeated()) {
-      clearSave();
+      if (!this.remote) clearSave();
       void this.showEnd();
       return true;
     }
     // Sauvegarde automatique à chaque fin de tour.
-    if (action.type === 'END_TURN') saveGame(this.state, this.aiPlayers);
+    if (action.type === 'END_TURN' && !this.remote) saveGame(this.state, this.aiPlayers);
     this.mode = 'idle';
     return true;
   }
@@ -779,11 +876,11 @@ export class BattleController {
     return humans.length > 0 && humans.every((player) => player.defeated);
   }
 
-  private async showEnd(): Promise<void> {
+  private async showEnd(heading: string | null = null): Promise<void> {
     this.mode = 'over';
     this.clearSelection();
     this.views.hud.setVisible(false);
     const defeat = this.state.status !== 'finished' ? 'Défaite' : null;
-    this.onFinished(await this.views.endScreen.show(this.state, defeat));
+    this.onFinished(await this.views.endScreen.show(this.state, heading ?? defeat));
   }
 }

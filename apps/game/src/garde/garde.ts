@@ -7,6 +7,7 @@ import { MAPS, mapFromParam, type MapId } from '../maps';
 import { loadGame } from '../persistence/save';
 import './garde.css';
 import { requireAccount } from './compte';
+import { setupOnlineLobby } from './en-ligne';
 import { PEOPLE_CARDS } from './peuples';
 
 const save = loadGame();
@@ -37,6 +38,7 @@ document.querySelector('#retour-menu')?.addEventListener('click', () => showMenu
 
 // Pas d'accès au menu sans compte : une partie en cours passe en premier, sinon « Battle ».
 requireAccount(() => showMenu(false));
+setupOnlineLobby();
 
 // ——— Choix du peuple ———
 // « À deux joueurs » : on choisit son peuple parmi les 4, puis celui de l'IA parmi les 3
@@ -215,6 +217,7 @@ const visibleActions = () =>
   ].filter((element) => !element.hidden && !element.hasAttribute('disabled'));
 document.addEventListener('keydown', (event) => {
   if (document.querySelector<HTMLDialogElement>('#compte')?.open) return;
+  if (document.querySelector<HTMLDialogElement>('#salon-en-ligne')?.open) return;
   if (dialog?.open) {
     const cards = [...(grid?.querySelectorAll<HTMLElement>('.peuple') ?? [])];
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];

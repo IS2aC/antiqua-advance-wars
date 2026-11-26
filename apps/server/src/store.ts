@@ -21,6 +21,13 @@ export const toPublic = ({ id, pseudo, email }: User): PublicUser => ({ id, pseu
 export type CreateUserResult =
   { ok: true; user: User } | { ok: false; conflict: 'email' | 'pseudo' };
 
+/** Partie en ligne enregistrée (voir `online.ts`) : l'objet est stocké tel quel en JSON. */
+export interface StoredOnlineGame {
+  readonly id: string;
+  readonly finished: boolean;
+  readonly data: unknown;
+}
+
 export interface Store {
   createUser(pseudo: string, email: string, passwordHash: string): Promise<CreateUserResult>;
   findUserByEmail(email: string): Promise<User | null>;
@@ -28,6 +35,10 @@ export interface Store {
   createSession(userId: string, expiresAt: Date): Promise<string>;
   findUserBySession(token: string): Promise<User | null>;
   deleteSession(token: string): Promise<void>;
+  /** Enregistre une partie en ligne (création ou mise à jour). */
+  saveOnlineGame(game: StoredOnlineGame): Promise<void>;
+  /** Parties en ligne non terminées, à recharger au démarrage. */
+  loadOnlineGames(): Promise<unknown[]>;
   close(): Promise<void>;
 }
 
@@ -39,6 +50,7 @@ export const tokenHash = (token: string): string =>
 export class MemoryStore implements Store {
   private readonly users = new Map<string, User>();
   private readonly sessions = new Map<string, { userId: string; expiresAt: Date }>();
+  private readonly games = new Map<string, StoredOnlineGame>();
 
   async createUser(pseudo: string, email: string, passwordHash: string): Promise<CreateUserResult> {
     for (const user of this.users.values()) {
@@ -69,6 +81,14 @@ export class MemoryStore implements Store {
 
   async deleteSession(token: string): Promise<void> {
     this.sessions.delete(tokenHash(token));
+  }
+
+  async saveOnlineGame(game: StoredOnlineGame): Promise<void> {
+    this.games.set(game.id, structuredClone(game));
+  }
+
+  async loadOnlineGames(): Promise<unknown[]> {
+    return [...this.games.values()].filter((game) => !game.finished).map((game) => game.data);
   }
 
   async close(): Promise<void> {}

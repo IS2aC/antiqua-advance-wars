@@ -2,6 +2,7 @@ import { FACTIONS, SIEGE_DAYS, type PlayerId, type SiegeDifficulty } from '@anti
 import { clearSave, loadGame } from './persistence/save';
 import { MAPS, mapFromParam, type MapId } from './maps';
 import type { BattleData } from './scenes/BattleScene';
+import type { OnlineStart } from './online/session';
 
 /**
  * Lancement depuis la page de garde : `jeu.html?mode=ia|deux|continuer&carte=…`.
@@ -10,7 +11,8 @@ import type { BattleData } from './scenes/BattleScene';
  *   (n'importe lequel des 4 : la carte est réattribuée, le joueur prend le premier camp) ;
  * - deux : nouvelle partie à plusieurs sur le même écran (autant de joueurs que la carte) ;
  * - carte : identifiant de `maps.ts` (`gue-du-nil` par défaut, `carrefour` à 4 peuples) ;
- * - continuer : reprend la sauvegarde ; sans sauvegarde, nouvelle partie du mode `repli`.
+ * - continuer : reprend la sauvegarde ; sans sauvegarde, nouvelle partie du mode `repli` ;
+ * - enligne : partie en ligne `partie=<id>`, ouverte par `main.ts` (état venu du serveur).
  * Sans paramètre, le jeu affiche son propre écran titre.
  */
 export type LaunchMode = 'ia' | 'deux' | 'continuer';
@@ -72,9 +74,19 @@ function newGame(mode: string | null, params: URLSearchParams): BattleData | nul
   return null;
 }
 
+/** Partie en ligne ouverte par `main.ts` avant le démarrage de Phaser (mode `enligne`). */
+let onlineStart: OnlineStart | null = null;
+
+export function setOnlineStart(start: OnlineStart): void {
+  onlineStart = start;
+}
+
 export function battleFromUrl(search: string = window.location.search): BattleData | null {
   const params = new URLSearchParams(search);
   const mode = params.get('mode');
+  if (mode === 'enligne') {
+    return onlineStart ? { state: onlineStart.state, online: onlineStart.session } : null;
+  }
   if (mode === 'continuer') {
     const save = loadGame();
     if (save) return { state: save.state, aiPlayers: save.aiPlayers };

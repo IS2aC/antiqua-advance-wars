@@ -12,6 +12,7 @@ COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 # Correctifs de dépendances (pnpm patch) : appliqués pendant l'installation.
 COPY patches patches
 COPY packages/engine/package.json packages/engine/
+COPY packages/protocol/package.json packages/protocol/
 COPY apps/game/package.json apps/game/
 COPY apps/site/package.json apps/site/
 COPY apps/server/package.json apps/server/
@@ -22,6 +23,7 @@ COPY tools/cli/package.json tools/cli/
 RUN pnpm install --frozen-lockfile --filter "@antiqua/game..."
 
 COPY packages/engine packages/engine
+COPY packages/protocol packages/protocol
 COPY apps/game apps/game
 RUN pnpm --filter @antiqua/game build
 

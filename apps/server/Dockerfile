@@ -7,6 +7,7 @@ RUN corepack enable
 COPY pnpm-lock.yaml pnpm-workspace.yaml package.json tsconfig.base.json ./
 COPY patches patches
 COPY packages/engine/package.json packages/engine/
+COPY packages/protocol/package.json packages/protocol/
 COPY apps/game/package.json apps/game/
 COPY apps/site/package.json apps/site/
 COPY apps/server/package.json apps/server/
@@ -16,6 +17,7 @@ RUN pnpm install --frozen-lockfile --prod --filter "@antiqua/server..."
 
 # Le moteur sera utilisé pour arbitrer les parties en ligne.
 COPY packages/engine packages/engine
+COPY packages/protocol packages/protocol
 COPY apps/server apps/server
 
 ENV NODE_ENV=production PORT=3000

@@ -2,6 +2,7 @@ import cookie from '@fastify/cookie';
 import websocket from '@fastify/websocket';
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
 import { hashPassword, verifyPassword } from './password';
+import { OnlineHub } from './online';
 import { Presence } from './presence';
 import { toPublic, type Store, type User } from './store';
 import { checkLogin, checkSignup } from './validation';
@@ -28,6 +29,7 @@ export interface AppOptions {
  * - POST /api/deconnexion → 204
  * - GET /api/moi → 200 { joueur } ou 401
  * - GET /api/presence (WebSocket, connecté) → { type: 'enLigne', nombre }
+ * - GET /api/jeu (WebSocket, connecté) → jeu en ligne (online.ts)
  */
 export async function buildApp({
   store,
@@ -38,6 +40,8 @@ export async function buildApp({
   await app.register(cookie);
   await app.register(websocket);
   const presence = new Presence();
+  const online = new OnlineHub(store);
+  await online.restore();
   const attempts = new Map<string, { count: number; since: number }>();
 
   const openSession = async (reply: FastifyReply, user: User) => {
@@ -126,6 +130,30 @@ export async function buildApp({
       }
       presence.join(socket, user.id);
       socket.on('close', () => presence.leave(socket));
+    });
+
+    // Jeu en ligne : salons et parties (online.ts, messages de @antiqua/protocol).
+    scope.get('/api/jeu', { websocket: true }, async (socket, request) => {
+      // Les écouteurs s'attachent tout de suite : les messages reçus pendant la lecture de
+      // la session attendent dans la file, puis sont traités dans l'ordre.
+      const queued: string[] = [];
+      let ready = false;
+      let chain = Promise.resolve();
+      const handle = (raw: string) => {
+        chain = chain.then(() => online.handle(socket, raw));
+      };
+      socket.on('message', (data) =>
+        ready ? handle(data.toString()) : queued.push(data.toString()),
+      );
+      socket.on('close', () => online.disconnect(socket));
+      const user = await currentUser(request);
+      if (!user) {
+        socket.close(4401, 'Non connecté');
+        return;
+      }
+      online.connect(socket, { id: user.id, pseudo: user.pseudo });
+      ready = true;
+      for (const raw of queued.splice(0)) handle(raw);
     });
   });
 

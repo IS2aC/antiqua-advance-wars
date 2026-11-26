@@ -1,0 +1,169 @@
+/**
+ * Salon du jeu en ligne (J1 contre J2) : choix de son peuple, création d'une partie, liste
+ * des parties ouvertes par les autres joueurs et de ses propres parties. Quand la partie
+ * commence, les deux joueurs passent sur `jeu.html?mode=enligne&partie=…`.
+ */
+import type { PlayerId } from '@antiqua/engine';
+import { ONLINE_MAPS, type OnlineSummary, type ServerMessage } from '@antiqua/protocol';
+import { MAPS } from '../maps';
+import { OnlineConnection } from '../online/connection';
+import { PEOPLE_CARDS } from './peuples';
+
+const PEOPLE_KEY = 'antiqua:peuple-en-ligne';
+const $ = <T extends HTMLElement>(selector: string) => document.querySelector<T>(selector);
+
+export const gameUrl = (id: string) => `./jeu.html?mode=enligne&partie=${encodeURIComponent(id)}`;
+
+export function setupOnlineLobby(): void {
+  const dialog = $<HTMLDialogElement>('#salon-en-ligne');
+  const opener = $<HTMLButtonElement>('#ouvrir-en-ligne');
+  const status = $<HTMLElement>('#en-ligne-etat');
+  const peoples = $<HTMLElement>('#en-ligne-peuples');
+  const mapSelect = $<HTMLSelectElement>('#en-ligne-carte');
+  const create = $<HTMLButtonElement>('#en-ligne-creer-btn');
+  const openList = $<HTMLUListElement>('#parties-ouvertes');
+  const mineList = $<HTMLUListElement>('#mes-parties');
+  if (!dialog || !opener || !status || !peoples || !mapSelect || !create) return;
+  if (!openList || !mineList) return;
+
+  const ids = Object.keys(PEOPLE_CARDS) as PlayerId[];
+  const saved = localStorage.getItem(PEOPLE_KEY);
+  let people: PlayerId = ids.find((id) => id === saved) ?? 'koush';
+  let connection: OnlineConnection | null = null;
+  let lastLobby: Extract<ServerMessage, { type: 'salons' }> | null = null;
+
+  // ——— Choix du peuple et de la carte ———
+  for (const id of ids) {
+    const card = PEOPLE_CARDS[id];
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'en-ligne__peuple';
+    button.setAttribute('role', 'radio');
+    button.dataset.peuple = id;
+    button.style.setProperty('--equipe', card.color);
+    button.innerHTML = `<img src="./assets/garde/peuples/${id}-ecusson.webp" alt="" /><span></span>`;
+    const label = button.querySelector('span');
+    if (label) label.textContent = card.name;
+    button.addEventListener('click', () => {
+      people = id;
+      localStorage.setItem(PEOPLE_KEY, id);
+      renderPeoples();
+      if (lastLobby) renderLobby(lastLobby);
+    });
+    peoples.append(button);
+  }
+  const renderPeoples = () => {
+    for (const button of peoples.querySelectorAll<HTMLButtonElement>('.en-ligne__peuple')) {
+      button.setAttribute('aria-checked', String(button.dataset.peuple === people));
+    }
+  };
+  renderPeoples();
+  for (const map of ONLINE_MAPS) mapSelect.append(new Option(MAPS[map].name, map));
+
+  // ——— Listes ———
+  const peopleName = (id: PlayerId) => PEOPLE_CARDS[id].name;
+
+  function item(text: string, detail: string, actions: HTMLElement[]): HTMLLIElement {
+    const li = document.createElement('li');
+    li.className = 'en-ligne__partie';
+    const body = document.createElement('div');
+    const title = document.createElement('strong');
+    title.textContent = text;
+    const small = document.createElement('span');
+    small.textContent = detail;
+    body.append(title, small);
+    li.append(body, ...actions);
+    return li;
+  }
+
+  function button(label: string, onClick: () => void, primary = false): HTMLButtonElement {
+    const element = document.createElement('button');
+    element.type = 'button';
+    element.className = primary ? 'en-ligne__bouton en-ligne__bouton--fort' : 'en-ligne__bouton';
+    element.textContent = label;
+    element.addEventListener('click', onClick);
+    return element;
+  }
+
+  function empty(text: string): HTMLLIElement {
+    const li = document.createElement('li');
+    li.className = 'en-ligne__vide';
+    li.textContent = text;
+    return li;
+  }
+
+  function renderOpen(game: OnlineSummary): HTMLLIElement {
+    const host = game.seats[0];
+    const samePeople = host?.people === people;
+    const join = button(
+      'Rejoindre',
+      () => connection?.send({ type: 'rejoindre', id: game.id, people }),
+      true,
+    );
+    join.disabled = samePeople;
+    if (samePeople) join.title = 'Choisis un autre peuple que celui de ton adversaire.';
+    return item(
+      `${host?.pseudo ?? '?'} · ${host ? peopleName(host.people) : ''}`,
+      MAPS[game.map].name,
+      [join],
+    );
+  }
+
+  function renderMine(game: OnlineSummary): HTMLLIElement {
+    if (game.status === 'attente') {
+      return item(
+        'En attente d’un adversaire…',
+        `${MAPS[game.map].name} · ${peopleName(game.me ?? 'koush')}`,
+        [button('Annuler', () => connection?.send({ type: 'annuler', id: game.id }))],
+      );
+    }
+    const opponent = game.seats.find((seat) => seat.people !== game.me);
+    const myTurn = game.turn !== null && game.turn === game.me;
+    return item(
+      `Contre ${opponent?.pseudo ?? '?'} (${opponent ? peopleName(opponent.people) : ''})`,
+      `${MAPS[game.map].name} · ${myTurn ? 'à toi de jouer' : 'tour adverse'}`,
+      [button('Reprendre', () => window.location.assign(gameUrl(game.id)), myTurn)],
+    );
+  }
+
+  function renderLobby(lobby: Extract<ServerMessage, { type: 'salons' }>): void {
+    lastLobby = lobby;
+    openList?.replaceChildren(
+      ...(lobby.open.length > 0
+        ? lobby.open.map(renderOpen)
+        : [empty('Aucune partie ouverte pour l’instant : crée la tienne.')]),
+    );
+    mineList?.replaceChildren(
+      ...(lobby.mine.length > 0 ? lobby.mine.map(renderMine) : [empty('Aucune partie en cours.')]),
+    );
+    if (status) status.textContent = 'Duel au tour par tour contre un autre joueur connecté.';
+  }
+
+  // ——— Connexion au salon, seulement quand il est ouvert ———
+  function connect(): void {
+    if (connection) return;
+    if (status) status.textContent = 'Connexion au salon…';
+    connection = new OnlineConnection(() => connection?.send({ type: 'salons' }));
+    connection.on((message) => {
+      if (message.type === 'salons') renderLobby(message);
+      else if (message.type === 'commencee') window.location.assign(gameUrl(message.id));
+      else if (message.type === 'erreur' && status) status.textContent = message.message;
+    });
+  }
+
+  create.addEventListener('click', () => {
+    const map = ONLINE_MAPS.find((id) => id === mapSelect.value) ?? ONLINE_MAPS[0];
+    connection?.send({ type: 'creer', map, people });
+  });
+  opener.addEventListener('click', () => {
+    connect();
+    dialog.showModal();
+    peoples.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
+  });
+  dialog.querySelector('.choix__fermer')?.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+  // La connexion reste ouverte une fois le salon fermé : un joueur en attente est prévenu
+  // (et emmené dans la partie) dès qu'un adversaire le rejoint.
+}

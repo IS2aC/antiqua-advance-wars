@@ -918,3 +918,155 @@ body {
     animation: none;
   }
 }
+
+/* ——— Salon du jeu en ligne ——— */
+
+.en-ligne {
+  width: min(760px, calc(100vw - 32px));
+}
+
+.en-ligne__corps {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 4px 24px 24px;
+}
+
+.en-ligne__titre {
+  margin: 0 0 10px;
+  font: 700 0.8125rem var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.en-ligne__peuples {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.en-ligne__peuple {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 3rem;
+  padding: 6px 10px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--noble-brown);
+  font: 600 0.8125rem var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.en-ligne__peuple img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.en-ligne__peuple[aria-checked='true'] {
+  border-color: var(--equipe);
+  box-shadow: 0 0 0 2px var(--equipe);
+}
+
+.en-ligne__peuple:focus-visible,
+.en-ligne__bouton:focus-visible {
+  outline: 3px solid var(--gold-light);
+  outline-offset: 2px;
+}
+
+.en-ligne__ligne {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.en-ligne__carte {
+  flex: 1 1 220px;
+}
+
+.en-ligne__carte select {
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: #fff;
+  color: var(--dark-brown);
+  font: 500 1rem var(--font-ui);
+}
+
+.en-ligne__creer {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 9rem;
+}
+
+.en-ligne__liste {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.en-ligne__partie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.en-ligne__partie div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.en-ligne__partie strong {
+  color: var(--dark-brown);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.en-ligne__partie span {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.en-ligne__vide {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.en-ligne__bouton {
+  flex: none;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--noble-brown);
+  font: 700 0.8125rem var(--font-ui);
+  cursor: pointer;
+}
+
+.en-ligne__bouton--fort {
+  border-color: transparent;
+  background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+  color: #fff;
+}
+
+.en-ligne__bouton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

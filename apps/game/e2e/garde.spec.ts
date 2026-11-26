@@ -24,7 +24,8 @@ test('à deux joueurs : on choisit son peuple et celui de l’IA', async ({ page
   await expect(page.getByText('3 joueurs en ligne')).toBeVisible();
 
   await openBattle(page);
-  await expect(page.getByRole('button', { name: /J1 vs J2 online/ })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /J1 vs J2 online/ })).toBeEnabled();
+  await expect(page.getByRole('button', { name: /JN/ })).toBeDisabled();
   await page.getByRole('link', { name: /J1 vs CPU/ }).click();
   // Duel : son peuple parmi les 4, puis celui de l'IA parmi les 3 autres.
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
@@ -35,7 +36,8 @@ test('à deux joueurs : on choisit son peuple et celui de l’IA', async ({ page
   await expect(rival.getByRole('link')).toHaveCount(5);
   await expect(rival.getByRole('link', { name: /Empire ashanti/ })).toHaveCount(0);
   await rival.getByRole('link', { name: /Almoravides/ }).click();
-  await expect(page).toHaveURL(/jeu\.html\?mode=continuer.*repli=ia/);
+  // L'URL est réécrite une fois le jeu chargé (atlas des 6 peuples) : même délai que la scène.
+  await expect(page).toHaveURL(/jeu\.html\?mode=continuer.*repli=ia/, { timeout: 30_000 });
   await waitForScene(page, 'Battle');
   await waitForMode(page, 'idle');
   const current = await state(page);

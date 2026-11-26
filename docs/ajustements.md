@@ -28,7 +28,12 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 - Code : `apps/game/index.html` et `src/garde/` (le formulaire), un nouveau package serveur
   (par ex. `apps/server`), `launch.ts` (refuser `jeu.html` sans session).
 
-### 0.2 Nouveau menu de jeu — menu fait, jeu en ligne à faire
+### 0.2 Nouveau menu de jeu — menu et J1 vs J2 online faits, JN à faire
+
+> Fait (26/11/2026) : J1 vs J2 online. Salon (créer, rejoindre, reprendre), parties gardées
+> par le serveur et en base, coups validés par le moteur côté serveur, abandon. Reste :
+> JN (4 joueurs), un minuteur de tour, l'abandon pendant le tour adverse (la pause est
+> fermée pendant ce tour), et la notification quand c'est son tour hors du jeu.
 
 > Fait : menu principal (Continuer, Campagne, Battle) et sous-menu Battle (J1 vs CPU,
 > J1 vs 3 CPU, Duel sur la côte, Défense de forteresse). « J1 vs J2 online » et « JN » sont

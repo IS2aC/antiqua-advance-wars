@@ -8,14 +8,15 @@ Idées pour plus tard (à ne pas implémenter sans demande) : `docs/ajustements.
 
 Monorepo pnpm :
 
-| Dossier                | Package                   | Rôle                                                  |
-| ---------------------- | ------------------------- | ----------------------------------------------------- |
-| `packages/engine`      | `@antiqua/engine`         | Moteur de règles, **TypeScript pur, zéro dépendance** |
-| `apps/game`            | `@antiqua/game`           | Client Phaser 4 + Vite (rendu, input, UI)             |
-| `apps/site`            | `@antiqua/site`           | Site vitrine Astro                                    |
-| `apps/server`          | `@antiqua/server`         | Comptes joueurs et présence (Fastify + PostgreSQL)    |
-| `tools/asset-pipeline` | `@antiqua/asset-pipeline` | Pipeline d'assets Node (`pnpm assets:build`)          |
-| `tools/cli`            | `@antiqua/cli`            | Match aléatoire en console (`pnpm match`)             |
+| Dossier                | Package                   | Rôle                                                   |
+| ---------------------- | ------------------------- | ------------------------------------------------------ |
+| `packages/engine`      | `@antiqua/engine`         | Moteur de règles, **TypeScript pur, zéro dépendance**  |
+| `apps/game`            | `@antiqua/game`           | Client Phaser 4 + Vite (rendu, input, UI)              |
+| `apps/site`            | `@antiqua/site`           | Site vitrine Astro                                     |
+| `apps/server`          | `@antiqua/server`         | Comptes, présence, jeu en ligne (Fastify + PostgreSQL) |
+| `packages/protocol`    | `@antiqua/protocol`       | Messages du jeu en ligne (types partagés)              |
+| `tools/asset-pipeline` | `@antiqua/asset-pipeline` | Pipeline d'assets Node (`pnpm assets:build`)           |
+| `tools/cli`            | `@antiqua/cli`            | Match aléatoire en console (`pnpm match`)              |
 
 ### Séparation moteur / rendu (règle n°1)
 
@@ -30,9 +31,16 @@ Monorepo pnpm :
 - API sous `/api` : `inscription`, `connexion`, `deconnexion`, `moi`, `sante`, WebSocket `presence` (nombre de joueurs en ligne). Mots de passe hachés scrypt, session = cookie HttpOnly (`alk_session`), seule l'empreinte SHA-256 du jeton est en base. Schéma créé au démarrage (`pg-store.ts`) ; tests sur `MemoryStore`, sans base.
 - En développement : `docker compose -f docker-compose.yml -f compose.local.yml up -d db`, puis `pnpm dev:server` (port 3000) ; Vite relaie `/api` (`vite.config.ts`). Tests de bout en bout : `e2e/fixtures.ts` simule un joueur connecté (`connecte: false` pour l'écran de connexion) ; `E2E_PORT` si 5173 est pris.
 
+### Jeu en ligne (J1 contre J2)
+
+- Salon sur la page de garde (`src/garde/en-ligne.ts`) : choisir son peuple, créer une partie (Gué du Nil ou Côte), rejoindre une partie ouverte (peuple différent), reprendre ses parties. Partie : `jeu.html?mode=enligne&partie=<id>` ; `main.ts` attend l'état officiel (`src/online/session.ts`) avant de lancer Phaser.
+- Serveur (`apps/server/src/online.ts`, WebSocket `/api/jeu`, messages typés dans `packages/protocol`) : il garde l'état officiel, valide chaque action avec le moteur (camp qui a la main, action légale), l'enregistre (`parties_en_ligne`, rechargée au démarrage) et la transmet à l'adversaire. Abandon : victoire de l'adversaire.
+- Client : le contrôleur envoie ses actions (`execute` → `sendToRemote` ; un `MOVE` part avec l'action qui le suit, puisqu'on peut l'annuler) et rejoue celles de l'adversaire comme un tour d'IA (mode `remote`). Désaccord avec le serveur : la page se recharge, l'état du serveur fait foi.
+- Tests : `apps/server/test/online.test.ts` ; bout en bout à deux navigateurs `e2e/en-ligne.spec.ts`, avec le serveur en mémoire (`pnpm --filter @antiqua/server start:memoire`, lancé par `playwright.config.ts`, `API_PORT`).
+
 ### Client de jeu (`apps/game/src`)
 
-- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. Menu : Continuer, Campagne (bientôt), Battle → J1 vs CPU, J1 vs 3 CPU, J1 vs J2 online et JN (bientôt), Duel sur la côte, Défense de forteresse. La page de garde lance `jeu.html?mode=ia|deux|continuer&carte=…` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
+- Deux pages : `index.html` = page de garde (HTML/CSS, `src/garde/`, sans Phaser) ; `jeu.html` = le jeu. Menu : Continuer, Campagne (bientôt), Battle → J1 vs CPU, J1 vs 3 CPU, J1 vs J2 online (salon en ligne), JN (bientôt), Duel sur la côte, Défense de forteresse. La page de garde lance `jeu.html?mode=ia|deux|continuer&carte=…` (`src/launch.ts`) ; « Menu principal » en fin de partie y ramène. Images : `art/static/` → `public/assets/garde/` via `pnpm assets:cover`.
 
 - `controller/BattleController.ts` : seul endroit qui transforme les entrées en `Action`, appelle `applyAction` et remplace l'état courant. Annuler un déplacement = revenir à l'état d'avant le `MOVE` (le moteur n'a rien tiré au hasard).
 - `animation/EventPlayer.ts` : joue les `GameEvent` dans l'ordre, puis recale la vue sur l'état final (`sync`).
