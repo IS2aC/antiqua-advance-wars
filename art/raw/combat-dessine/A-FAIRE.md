@@ -11,13 +11,13 @@ Entre parenthèses : une planche propre à un peuple, sans version commune.
 
 | Unité | poses | repos | attaque | charge | chute | sonné |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Fantassin | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) |
-| Lancier | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) |
+| Fantassin | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
+| Lancier | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
 | Archers | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
 | Cavalerie | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
-| Char | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) |
+| Char | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
 | Catapulte | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
-| Convoi | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) | (Koush, Carthage, Ashanti, Almoravides, Dahomey) |
+| Convoi | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
 | Bateau | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) | (Koush, Carthage, Ashanti, Almoravides, Dahomey, Sosso) |
 
 ## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)
@@ -35,26 +35,31 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/ashanti/fantassin/repos`
 - `peuples/almoravides/fantassin/repos`
 - `peuples/dahomey/fantassin/repos`
+- `peuples/sosso/fantassin/repos`
 - `peuples/koush/fantassin/attaque`
 - `peuples/carthage/fantassin/attaque`
 - `peuples/ashanti/fantassin/attaque`
 - `peuples/almoravides/fantassin/attaque`
 - `peuples/dahomey/fantassin/attaque`
+- `peuples/sosso/fantassin/attaque`
 - `peuples/koush/fantassin/charge`
 - `peuples/carthage/fantassin/charge`
 - `peuples/ashanti/fantassin/charge`
 - `peuples/almoravides/fantassin/charge`
 - `peuples/dahomey/fantassin/charge`
+- `peuples/sosso/fantassin/charge`
 - `peuples/koush/fantassin/chute`
 - `peuples/carthage/fantassin/chute`
 - `peuples/ashanti/fantassin/chute`
 - `peuples/almoravides/fantassin/chute`
 - `peuples/dahomey/fantassin/chute`
+- `peuples/sosso/fantassin/chute`
 - `peuples/koush/fantassin/sonne`
 - `peuples/carthage/fantassin/sonne`
 - `peuples/ashanti/fantassin/sonne`
 - `peuples/almoravides/fantassin/sonne`
 - `peuples/dahomey/fantassin/sonne`
+- `peuples/sosso/fantassin/sonne`
 - `peuples/koush/lancier/poses`
 - `peuples/carthage/lancier/poses`
 - `peuples/ashanti/lancier/poses`
@@ -66,26 +71,31 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/ashanti/lancier/repos`
 - `peuples/almoravides/lancier/repos`
 - `peuples/dahomey/lancier/repos`
+- `peuples/sosso/lancier/repos`
 - `peuples/koush/lancier/attaque`
 - `peuples/carthage/lancier/attaque`
 - `peuples/ashanti/lancier/attaque`
 - `peuples/almoravides/lancier/attaque`
 - `peuples/dahomey/lancier/attaque`
+- `peuples/sosso/lancier/attaque`
 - `peuples/koush/lancier/charge`
 - `peuples/carthage/lancier/charge`
 - `peuples/ashanti/lancier/charge`
 - `peuples/almoravides/lancier/charge`
 - `peuples/dahomey/lancier/charge`
+- `peuples/sosso/lancier/charge`
 - `peuples/koush/lancier/chute`
 - `peuples/carthage/lancier/chute`
 - `peuples/ashanti/lancier/chute`
 - `peuples/almoravides/lancier/chute`
 - `peuples/dahomey/lancier/chute`
+- `peuples/sosso/lancier/chute`
 - `peuples/koush/lancier/sonne`
 - `peuples/carthage/lancier/sonne`
 - `peuples/ashanti/lancier/sonne`
 - `peuples/almoravides/lancier/sonne`
 - `peuples/dahomey/lancier/sonne`
+- `peuples/sosso/lancier/sonne`
 - `peuples/koush/archers/poses`
 - `peuples/carthage/archers/poses`
 - `peuples/ashanti/archers/poses`
@@ -169,26 +179,31 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/ashanti/char/repos`
 - `peuples/almoravides/char/repos`
 - `peuples/dahomey/char/repos`
+- `peuples/sosso/char/repos`
 - `peuples/koush/char/attaque`
 - `peuples/carthage/char/attaque`
 - `peuples/ashanti/char/attaque`
 - `peuples/almoravides/char/attaque`
 - `peuples/dahomey/char/attaque`
+- `peuples/sosso/char/attaque`
 - `peuples/koush/char/charge`
 - `peuples/carthage/char/charge`
 - `peuples/ashanti/char/charge`
 - `peuples/almoravides/char/charge`
 - `peuples/dahomey/char/charge`
+- `peuples/sosso/char/charge`
 - `peuples/koush/char/chute`
 - `peuples/carthage/char/chute`
 - `peuples/ashanti/char/chute`
 - `peuples/almoravides/char/chute`
 - `peuples/dahomey/char/chute`
+- `peuples/sosso/char/chute`
 - `peuples/koush/char/sonne`
 - `peuples/carthage/char/sonne`
 - `peuples/ashanti/char/sonne`
 - `peuples/almoravides/char/sonne`
 - `peuples/dahomey/char/sonne`
+- `peuples/sosso/char/sonne`
 - `peuples/koush/catapulte/poses`
 - `peuples/carthage/catapulte/poses`
 - `peuples/ashanti/catapulte/poses`
@@ -236,26 +251,31 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/ashanti/convoi/repos`
 - `peuples/almoravides/convoi/repos`
 - `peuples/dahomey/convoi/repos`
+- `peuples/sosso/convoi/repos`
 - `peuples/koush/convoi/attaque`
 - `peuples/carthage/convoi/attaque`
 - `peuples/ashanti/convoi/attaque`
 - `peuples/almoravides/convoi/attaque`
 - `peuples/dahomey/convoi/attaque`
+- `peuples/sosso/convoi/attaque`
 - `peuples/koush/convoi/charge`
 - `peuples/carthage/convoi/charge`
 - `peuples/ashanti/convoi/charge`
 - `peuples/almoravides/convoi/charge`
 - `peuples/dahomey/convoi/charge`
+- `peuples/sosso/convoi/charge`
 - `peuples/koush/convoi/chute`
 - `peuples/carthage/convoi/chute`
 - `peuples/ashanti/convoi/chute`
 - `peuples/almoravides/convoi/chute`
 - `peuples/dahomey/convoi/chute`
+- `peuples/sosso/convoi/chute`
 - `peuples/koush/convoi/sonne`
 - `peuples/carthage/convoi/sonne`
 - `peuples/ashanti/convoi/sonne`
 - `peuples/almoravides/convoi/sonne`
 - `peuples/dahomey/convoi/sonne`
+- `peuples/sosso/convoi/sonne`
 - `peuples/koush/bateau/poses`
 - `peuples/carthage/bateau/poses`
 - `peuples/ashanti/bateau/poses`
