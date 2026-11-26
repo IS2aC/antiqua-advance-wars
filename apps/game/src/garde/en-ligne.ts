@@ -30,6 +30,8 @@ export function setupOnlineLobby(): void {
   const peoples = $<HTMLElement>('#en-ligne-peuples');
   const mapSelect = $<HTMLSelectElement>('#en-ligne-carte');
   const create = $<HTMLButtonElement>('#en-ligne-creer-btn');
+  const openOption = $<HTMLElement>('#en-ligne-ouverte');
+  const openBox = openOption?.querySelector<HTMLInputElement>('input') ?? null;
   const openList = $<HTMLUListElement>('#parties-ouvertes');
   const mineList = $<HTMLUListElement>('#mes-parties');
   if (!dialog || !opener || !status || !peoples || !mapSelect || !create) return;
@@ -70,6 +72,11 @@ export function setupOnlineLobby(): void {
   const mapLabel = (map: OnlineMapId) =>
     map === JN_MAP ? `JN · ${MAPS[map].name} (4 camps, avec IA)` : `Duel · ${MAPS[map].name}`;
   for (const map of ONLINE_MAPS) mapSelect.append(new Option(mapLabel(map), map));
+  // JN : la partie reste invisible au salon tant que J1 ne l'ouvre pas aux autres joueurs.
+  const showOpenOption = () => {
+    if (openOption) openOption.hidden = mapSelect.value !== JN_MAP;
+  };
+  mapSelect.addEventListener('change', showOpenOption);
 
   // ——— Listes ———
   const peopleName = (id: PlayerId) => PEOPLE_CARDS[id].name;
@@ -169,8 +176,18 @@ export function setupOnlineLobby(): void {
       const others = game.seats.filter((seat) => seat.people !== game.me && !seat.cpu);
       return item(
         `JN · ${peopleName(game.me ?? 'koush')}${others.length ? ` avec ${others.map((s) => s.pseudo).join(', ')}` : ' contre 3 IA'}`,
-        `${MAPS[game.map].name} · ${myTurn ? 'à toi de jouer' : 'tour adverse'}`,
-        [button('Reprendre', () => window.location.assign(gameUrl(game.id)), myTurn)],
+        `${MAPS[game.map].name} · ${myTurn ? 'à toi de jouer' : 'tour adverse'} · ${game.open ? 'ouverte' : 'fermée'} aux autres`,
+        [
+          // J1 seul (il reçoit les demandes) ouvre ou ferme sa partie.
+          ...(game.seats.find((seat) => !seat.cpu)?.people === game.me
+            ? [
+                button(game.open ? 'Fermer' : 'Ouvrir', () =>
+                  connection?.send({ type: 'ouvrir', id: game.id, open: !game.open }),
+                ),
+              ]
+            : []),
+          button('Reprendre', () => window.location.assign(gameUrl(game.id)), myTurn),
+        ],
       );
     }
     const opponent = game.seats.find((seat) => seat.people !== game.me);
@@ -211,11 +228,12 @@ export function setupOnlineLobby(): void {
 
   create.addEventListener('click', () => {
     const map = ONLINE_MAPS.find((id) => id === mapSelect.value) ?? ONLINE_MAPS[0];
-    connection?.send({ type: 'creer', map, people });
+    connection?.send({ type: 'creer', map, people, open: openBox?.checked === true });
   });
   const open = (map: OnlineMapId | null) => {
     connect();
     if (map) mapSelect.value = map;
+    showOpenOption();
     dialog.showModal();
     peoples.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
   };

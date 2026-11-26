@@ -31,8 +31,9 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 ### 0.2 Nouveau menu de jeu — menu, J1 vs J2 online et JN faits
 
 > Fait (26/11/2026) : JN. J1 crée une partie à 4 sur le Carrefour, qui commence tout de
-> suite contre 3 IA jouées par le serveur. Un autre joueur (ou plusieurs) demande à prendre
-> la place d'une IA depuis le salon ; J1 accepte ou refuse (dans le jeu ou dans le salon).
+> suite contre 3 IA jouées par le serveur. Fermée par défaut : elle n'apparaît au salon que
+> si J1 l'ouvre (case à la création, ou bouton « Ouvrir / Fermer » en jeu et au salon).
+> Un autre joueur (ou plusieurs) demande alors à prendre la place d'une IA depuis le salon ; J1 accepte ou refuse (dans le jeu ou dans le salon).
 > Un joueur qui abandonne rend son camp à l'IA. Minuteur : dès que deux joueurs humains
 > jouent (duel ou JN), chacun a 3 min 30 pour commencer son tour (premier déplacement),
 > sinon le serveur passe son tour ; le compte repart de zéro quand son écran a fini de

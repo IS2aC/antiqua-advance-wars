@@ -41,9 +41,12 @@ export function createOnlineOverlay(session: RemoteSession): OnlineOverlay {
   clock.hidden = true;
   const requests = document.createElement('div');
   requests.style.display = 'contents';
+  const access = document.createElement('div');
+  access.className = 'enligne-demande';
+  access.hidden = true;
   const toast = document.createElement('div');
   toast.hidden = true;
-  root.append(clock, requests, toast);
+  root.append(clock, access, requests, toast);
   document.body.append(root);
 
   let hideToast = 0;
@@ -89,6 +92,24 @@ export function createOnlineOverlay(session: RemoteSession): OnlineOverlay {
     );
   };
 
+  // JN, pour J1 : ouvrir ou fermer la partie aux autres joueurs.
+  const renderAccess = () => {
+    const host = session.seats.find((seat) => !seat.cpu);
+    const isHost = session.seats.length > 2 && host?.people === session.me;
+    access.hidden = !isHost;
+    if (!isHost) return;
+    const text = document.createElement('span');
+    text.textContent = session.open
+      ? 'Partie ouverte : d’autres joueurs peuvent demander une place'
+      : 'Partie fermée aux autres joueurs';
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = session.open ? '' : 'oui';
+    toggle.textContent = session.open ? 'Fermer' : 'Ouvrir';
+    toggle.addEventListener('click', () => session.setOpen(!session.open));
+    access.replaceChildren(text, toggle);
+  };
+
   // Arrivées et départs (JN) : une IA remplacée par un joueur, ou l'inverse.
   let seats = session.seats;
   session.onChange(() => {
@@ -103,12 +124,14 @@ export function createOnlineOverlay(session: RemoteSession): OnlineOverlay {
     }
     seats = session.seats;
     tick();
+    renderAccess();
     renderRequests();
   });
   session.onTurnSkipped((player) => {
     if (player === session.me) notify('Temps écoulé : ton tour est passé');
   });
   tick();
+  renderAccess();
   renderRequests();
   window.setInterval(tick, 500);
 

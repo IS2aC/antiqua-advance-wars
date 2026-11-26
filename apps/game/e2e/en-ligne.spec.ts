@@ -95,8 +95,11 @@ test('JN : J1 contre 3 IA, un autre joueur prend la place d’une IA avec l’ac
   await expect(amina).toHaveURL(/mode=enligne/);
   await waitForScene(amina, 'Battle');
   await waitForMode(amina, 'idle');
-  // Seule contre l'IA : pas de minuteur.
+  // Seule contre l'IA : pas de minuteur. Partie fermée par défaut : Amina l'ouvre.
   await expect(amina.locator('.enligne-minuteur')).toBeHidden();
+  await expect(amina.getByText('Partie fermée aux autres joueurs')).toBeVisible();
+  await amina.getByRole('button', { name: 'Ouvrir', exact: true }).click();
+  await expect(amina.getByText(/Partie ouverte/)).toBeVisible();
 
   const kofi = await signUp(browser, 'Kofi', /JN/);
   const game = kofi.locator('.en-ligne__partie', { hasText: 'JN ·' });

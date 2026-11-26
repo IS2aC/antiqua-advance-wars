@@ -170,7 +170,7 @@ describe('jeu en ligne : JN (4 camps, places d’IA)', () => {
   /** Amina crée une partie JN (Koush) contre 3 IA. */
   async function jn() {
     const ctx = await setup();
-    await ctx.send(ctx.a, { type: 'creer', map: 'carrefour', people: 'koush' });
+    await ctx.send(ctx.a, { type: 'creer', map: 'carrefour', people: 'koush', open: true });
     const id = ctx.a.last('creee').id;
     expect(ctx.a.last('commencee').id).toBe(id);
     await ctx.send(ctx.a, { type: 'suivre', id });
@@ -212,6 +212,33 @@ describe('jeu en ligne : JN (4 camps, places d’IA)', () => {
     expect(a.last('minuteur').timer).toMatchObject({ player: 'koush' });
     await send(b, { type: 'suivre', id });
     expect(b.last('partie').me).toBe('carthage');
+    hub.close();
+  });
+
+  it('fermée par défaut : invisible au salon tant que J1 ne l’ouvre pas', async () => {
+    const { a, b, send } = await setup();
+    await send(a, { type: 'creer', map: 'carrefour', people: 'koush' });
+    const id = a.last('creee').id;
+    await send(a, { type: 'suivre', id });
+    expect(a.last('partie').open).toBe(false);
+    expect(b.last('salons').open).toHaveLength(0);
+    await send(b, { type: 'demander', id, people: 'carthage' });
+    expect(b.last('erreur').message).toMatch(/plus ouverte/);
+    // Seul J1 ouvre sa partie.
+    await send(b, { type: 'ouvrir', id, open: true });
+    expect(b.last('salons').open).toHaveLength(0);
+    await send(a, { type: 'ouvrir', id, open: true });
+    expect(a.last('acces').open).toBe(true);
+    expect(b.last('salons').open[0]).toMatchObject({ id, open: true });
+  });
+
+  it('fermer la partie refuse les demandes en attente', async () => {
+    const { hub, a, b, send, id } = await jn();
+    await send(b, { type: 'demander', id, people: 'carthage' });
+    await send(a, { type: 'ouvrir', id, open: false });
+    expect(b.last('erreur').message).toMatch(/fermé/);
+    expect(a.last('demandes').requests).toHaveLength(0);
+    expect(b.last('salons').open).toHaveLength(0);
     hub.close();
   });
 

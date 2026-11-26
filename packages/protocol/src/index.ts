@@ -59,6 +59,8 @@ export interface OnlineSummary {
   readonly requests: readonly SeatRequest[];
   /** JN : place demandée par celui qui reçoit la liste, en attente de réponse. */
   readonly requested: PlayerId | null;
+  /** JN : J1 a ouvert la partie aux autres joueurs (sinon elle n'apparaît pas au salon). */
+  readonly open: boolean;
 }
 
 /** Minuteur du tour en cours : `remainingMs` null quand il n'y en a pas (ou plus). */
@@ -69,8 +71,18 @@ export interface TurnTimer {
 
 export type ClientMessage =
   | { readonly type: 'salons' }
-  /** Duel : partie en attente ; JN (carte Carrefour) : partie commencée contre 3 IA. */
-  | { readonly type: 'creer'; readonly map: OnlineMapId; readonly people: PlayerId }
+  /**
+   * Duel : partie en attente ; JN (carte Carrefour) : partie commencée contre 3 IA, visible
+   * au salon seulement si `open` (J1 peut l'ouvrir ou la fermer ensuite).
+   */
+  | {
+      readonly type: 'creer';
+      readonly map: OnlineMapId;
+      readonly people: PlayerId;
+      readonly open?: boolean;
+    }
+  /** JN : J1 ouvre (ou ferme) la partie aux autres joueurs. */
+  | { readonly type: 'ouvrir'; readonly id: string; readonly open: boolean }
   | { readonly type: 'annuler'; readonly id: string }
   | { readonly type: 'rejoindre'; readonly id: string; readonly people: PlayerId }
   /** JN : demander la place de l'IA qui joue `people`. */
@@ -114,7 +126,11 @@ export type ServerMessage =
       readonly online: readonly PlayerId[];
       readonly requests: readonly SeatRequest[];
       readonly timer: TurnTimer | null;
+      /** JN : partie ouverte aux autres joueurs. */
+      readonly open: boolean;
     }
+  /** JN : J1 a ouvert ou fermé la partie aux autres joueurs. */
+  | { readonly type: 'acces'; readonly id: string; readonly open: boolean }
   /** Actions des autres camps (joueurs ou IA), à rejouer dans l'ordre. */
   | { readonly type: 'actions'; readonly id: string; readonly actions: readonly Action[] }
   /** Un camp change de mains (IA remplacée par un joueur, ou l'inverse). */

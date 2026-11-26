@@ -28,6 +28,8 @@ export interface RemoteSession {
   readonly online: ReadonlySet<PlayerId>;
   readonly timer: LocalTimer | null;
   readonly requests: readonly SeatRequest[];
+  /** JN : partie ouverte aux autres joueurs (J1 l'ouvre ou la ferme). */
+  readonly open: boolean;
   /** Actions validées sur cet écran (un MOVE part avec l'action qui le suit). */
   send(actions: readonly Action[]): void;
   /** Prochaine action d'un autre camp (attend qu'elle arrive). */
@@ -37,6 +39,8 @@ export interface RemoteSession {
   /** Le joueur a commencé son tour (le minuteur s'arrête). */
   active(): void;
   resign(): void;
+  /** JN : J1 ouvre ou ferme la partie aux autres joueurs. */
+  setOpen(open: boolean): void;
   /** JN : réponse de J1 à une demande de place. */
   answer(request: string, accept: boolean): void;
   /** Fin décidée par le serveur (abandon). */
@@ -78,6 +82,7 @@ export function openOnlineGame(id: string): Promise<OnlineStart> {
     let online = new Set<PlayerId>();
     let timer: LocalTimer | null = null;
     let requests: readonly SeatRequest[] = [];
+    let open = false;
 
     const deliver = (action: Action) => {
       const resolveNext = waiting.shift();
@@ -96,6 +101,7 @@ export function openOnlineGame(id: string): Promise<OnlineStart> {
           online = new Set(message.online);
           timer = localTimer(message.timer);
           requests = message.requests;
+          open = message.open;
           if (!started) {
             started = true;
             const session: RemoteSession = {
@@ -112,6 +118,9 @@ export function openOnlineGame(id: string): Promise<OnlineStart> {
               get requests() {
                 return requests;
               },
+              get open() {
+                return open;
+              },
               send: (actions) => connection.send({ type: 'actions', id, actions }),
               next: () =>
                 new Promise((resolveNext) => {
@@ -122,6 +131,7 @@ export function openOnlineGame(id: string): Promise<OnlineStart> {
               ready: () => connection.send({ type: 'pret', id }),
               active: () => connection.send({ type: 'actif', id }),
               resign: () => connection.send({ type: 'abandonner', id }),
+              setOpen: (value) => connection.send({ type: 'ouvrir', id, open: value }),
               answer: (request, accept) =>
                 connection.send({ type: 'repondre', id, request, accept }),
               onEnd: (listener) => endListeners.push(listener),
@@ -149,6 +159,9 @@ export function openOnlineGame(id: string): Promise<OnlineStart> {
           return;
         case 'places':
           seats = message.seats;
+          return changed();
+        case 'acces':
+          open = message.open;
           return changed();
         case 'demandes':
           requests = message.requests;

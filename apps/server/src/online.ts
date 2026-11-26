@@ -31,8 +31,9 @@ import type { Store } from './store';
 /**
  * Jeu en ligne : salons et parties.
  * - Duel (J1 contre J2) : créé en attente, commence quand un adversaire rejoint.
- * - JN (Carrefour, 4 camps) : commence tout de suite, J1 contre 3 IA jouées ici ; un autre
- *   joueur demande la place d'une IA, J1 (le premier joueur humain encore en jeu) accepte
+ * - JN (Carrefour, 4 camps) : commence tout de suite, J1 contre 3 IA jouées ici. Fermée par
+ *   défaut : elle n'apparaît au salon que si J1 l'ouvre. Un autre joueur demande la place
+ *   d'une IA, J1 (le premier joueur humain encore en jeu) accepte
  *   ou refuse. Un joueur qui abandonne rend sa place à l'IA.
  * Le serveur garde l'état officiel, valide chaque action avec le moteur, joue l'IA et
  * transmet le tout aux autres joueurs. Dès que deux humains jouent, chacun a
@@ -85,6 +86,8 @@ export interface OnlineGame {
   resigned: boolean;
   /** JN : demandes de place en attente de la réponse de J1. */
   requests: PendingRequest[];
+  /** JN : ouverte aux autres joueurs (visible au salon, places d'IA à demander). */
+  open: boolean;
   readonly createdAt: number;
 }
 
@@ -136,6 +139,7 @@ export class OnlineHub {
       // Parties enregistrées avant JN : pas d'IA, pas de demandes.
       game.seats = game.seats.map((seat) => ({ ...seat, cpu: seat.cpu ?? false }));
       game.requests = [];
+      game.open = game.open ?? false;
       this.games.set(game.id, game);
       this.refreshClock(game);
     }
@@ -174,7 +178,9 @@ export class OnlineHub {
       case 'salons':
         return this.send(socket, this.lobbyFor(player));
       case 'creer':
-        return this.create(socket, player, message.map, message.people);
+        return this.create(socket, player, message.map, message.people, message.open === true);
+      case 'ouvrir':
+        return this.setOpen(player, message.id, message.open === true);
       case 'annuler':
         return this.cancel(player, message.id);
       case 'rejoindre':
@@ -205,6 +211,7 @@ export class OnlineHub {
     player: Player,
     map: unknown,
     people: unknown,
+    open: boolean,
   ): Promise<void> {
     if (!isMap(map) || !isPeople(people)) {
       return this.send(socket, { type: 'erreur', message: 'Carte ou peuple inconnu.' });
@@ -219,6 +226,7 @@ export class OnlineHub {
       winner: null,
       resigned: false,
       requests: [],
+      open: kindOfMap(map) === 'jn' && open,
       createdAt: Date.now(),
     };
     if (kindOfMap(map) === 'jn') {
@@ -294,7 +302,7 @@ export class OnlineHub {
   /** JN : demander la place de l'IA qui joue `people`. */
   private request(socket: OnlineSocket, player: Player, id: string, people: unknown): void {
     const game = this.games.get(id);
-    if (!game || game.status !== 'en-cours' || kindOfMap(game.map) !== 'jn') {
+    if (!game || game.status !== 'en-cours' || kindOfMap(game.map) !== 'jn' || !game.open) {
       return this.send(socket, { type: 'erreur', message: 'Cette partie n’est plus ouverte.', id });
     }
     if (game.seats.some((seat) => seat.userId === player.id)) {
@@ -309,6 +317,30 @@ export class OnlineHub {
       { id: randomUUID(), userId: player.id, pseudo: player.pseudo, people },
     ];
     this.notifyRequests(game);
+    this.broadcastLobby();
+  }
+
+  /** JN : J1 ouvre ou ferme la partie ; fermer refuse les demandes en attente. */
+  private async setOpen(player: Player, id: string, open: boolean): Promise<void> {
+    const game = this.games.get(id);
+    if (!game || game.status !== 'en-cours' || kindOfMap(game.map) !== 'jn') return;
+    if (this.hostOf(game)?.userId !== player.id || game.open === open) return;
+    game.open = open;
+    if (!open) {
+      for (const request of game.requests) {
+        this.sendToUser(request.userId, {
+          type: 'erreur',
+          message: `${player.pseudo} a fermé sa partie.`,
+          id,
+        });
+      }
+      game.requests = [];
+      this.notifyRequests(game);
+    }
+    await this.save(game);
+    for (const socket of this.watchers.get(id) ?? []) {
+      this.send(socket, { type: 'acces', id, open });
+    }
     this.broadcastLobby();
   }
 
@@ -373,6 +405,7 @@ export class OnlineHub {
         .map((s) => s.people),
       requests: this.hostOf(game)?.userId === player.id ? game.requests.map(publicRequest) : [],
       timer: this.timerOf(game),
+      open: game.open,
     });
     if (game.status === 'finie') {
       this.send(socket, { type: 'fin', id, winner: game.winner, reason: this.reasonOf(game) });
@@ -697,6 +730,7 @@ export class OnlineHub {
       turn: game.status === 'en-cours' ? (game.state?.currentPlayer ?? null) : null,
       requests: isHost ? game.requests.map(publicRequest) : [],
       requested: game.requests.find((r) => r.userId === userId)?.people ?? null,
+      open: game.open,
     };
   }
 
@@ -712,6 +746,7 @@ export class OnlineHub {
             ((g.status === 'attente' && kindOfMap(g.map) === 'duel') ||
               (g.status === 'en-cours' &&
                 kindOfMap(g.map) === 'jn' &&
+                g.open &&
                 this.freeCpuSeats(g).length > 0)),
         )
         .map((g) => this.summary(g, player.id)),

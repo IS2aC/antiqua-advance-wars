@@ -989,6 +989,27 @@ body {
   flex: 1 1 220px;
 }
 
+.en-ligne__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-basis: 100%;
+  order: 1;
+  font: 500 0.95rem var(--font-ui);
+  color: var(--dark-brown);
+  cursor: pointer;
+}
+
+.en-ligne__option[hidden] {
+  display: none;
+}
+
+.en-ligne__option input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--gold, #a77c3c);
+}
+
 .en-ligne__carte select {
   min-height: 2.75rem;
   padding: 0 0.75rem;
