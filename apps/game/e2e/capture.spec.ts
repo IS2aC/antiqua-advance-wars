@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
 import type { GameState } from '@antiqua/engine';
 import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
 

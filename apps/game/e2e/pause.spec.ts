@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
 
 /** Clique sur le bouton pause du HUD (à gauche de « Fin de tour »), en coordonnées logiques. */

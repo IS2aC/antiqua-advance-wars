@@ -65,16 +65,16 @@ export const BASE_DAMAGE: Readonly<Record<UnitType, Readonly<Record<UnitType, nu
     convoi: 90,
     bateau: 60,
   },
-  // Le bateau tire comme une catapulte, un peu moins fort.
+  // Le bateau n'attaque pas : sa ligne ne sert jamais.
   bateau: {
-    fantassin: 80,
-    lancier: 75,
-    archers: 75,
-    cavalerie: 70,
-    char: 65,
-    catapulte: 70,
-    convoi: 85,
-    bateau: 55,
+    fantassin: 0,
+    lancier: 0,
+    archers: 0,
+    cavalerie: 0,
+    char: 0,
+    catapulte: 0,
+    convoi: 0,
+    bateau: 0,
   },
   // Le convoi n'attaque pas : sa ligne ne sert jamais.
   convoi: {

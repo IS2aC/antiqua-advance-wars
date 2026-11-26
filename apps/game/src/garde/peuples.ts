@@ -53,4 +53,22 @@ export const PEOPLE_CARDS: Readonly<Record<PlayerId, PeopleCard>> = {
     color: '#D1A72E',
     dark: '#8E6A1F',
   },
+  dahomey: {
+    id: 'dahomey',
+    name: 'Royaume du Dahomey',
+    leader: 'Béhanzin, roi d’Abomey',
+    traits: 'Agojié · Requin · Abomey',
+    text: 'Royaume fon d’Abomey, célèbre pour son armée de femmes guerrières, les Agojié.',
+    color: '#8A3FC4',
+    dark: '#5A2380',
+  },
+  sosso: {
+    id: 'sosso',
+    name: 'Royaume de Sosso',
+    leader: 'Soumaoro Kanté, roi-forgeron',
+    traits: 'Dozos · Fer · Balafon',
+    text: 'Royaume sahélien des rois-forgerons, dont les chasseurs dozos affrontèrent Soundiata à Kirina.',
+    color: '#D9711E',
+    dark: '#8E4214',
+  },
 };

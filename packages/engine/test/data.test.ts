@@ -27,7 +27,7 @@ describe('données (conformes à docs/game-design.md)', () => {
   it('archers (2 exactement) et catapulte (2–3) tirent à distance', () => {
     expect([UNITS.archers.minRange, UNITS.archers.maxRange]).toEqual([2, 2]);
     expect([UNITS.catapulte.minRange, UNITS.catapulte.maxRange]).toEqual([2, 3]);
-    expect(UNIT_TYPES.filter(isIndirect)).toEqual(['archers', 'catapulte', 'bateau']);
+    expect(UNIT_TYPES.filter(isIndirect)).toEqual(['archers', 'catapulte']);
   });
 
   it('les bâtiments rapportent 1 000 et les terrains naturels rien', () => {
@@ -41,8 +41,8 @@ describe('données (conformes à docs/game-design.md)', () => {
   });
 
   it('la table de dégâts est complète et reprend les valeurs du document', () => {
-    // Le convoi n'attaque pas : sa ligne est à zéro.
-    for (const attacker of UNIT_TYPES.filter((type) => type !== 'convoi')) {
+    // Les transports (convoi, bateau) n'attaquent pas : leur ligne est à zéro.
+    for (const attacker of UNIT_TYPES.filter((type) => !UNITS[type].transport)) {
       for (const defender of UNIT_TYPES) {
         expect(BASE_DAMAGE[attacker][defender]).toBeGreaterThan(0);
       }

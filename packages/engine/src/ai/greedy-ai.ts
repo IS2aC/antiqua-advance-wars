@@ -91,9 +91,9 @@ const CATEGORY_OF: Readonly<Record<UnitType, Category>> = {
   char: 'mobile',
   archers: 'indirect',
   catapulte: 'indirect',
-  // Le convoi ne combat pas : il n'entre pas dans la composition visée.
+  // Les transports ne combattent pas : ils n'entrent pas dans la composition visée.
   convoi: 'mobile',
-  bateau: 'indirect',
+  bateau: 'mobile',
 };
 
 const NEIGHBOURS: readonly Position[] = [

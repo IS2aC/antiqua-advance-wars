@@ -11,6 +11,7 @@ import { drawnStage } from '../drawn/DrawnStage';
 import type { CombatPresenter } from '../animation/EventPlayer';
 import { loadOptions } from '../persistence/options';
 import { BattleController } from '../controller/BattleController';
+import type { RemoteSession } from '../online/session';
 import { onKeyDown } from '../ui/keyboard';
 import { createPanelTextures } from '../ui/panels';
 import { ActionMenu } from '../view/ActionMenu';
@@ -37,6 +38,8 @@ export interface BattleData {
   readonly peoples?: readonly PlayerId[];
   /** Défense de forteresse : nombre de jours à tenir (carte de siège seulement). */
   readonly siegeDays?: number;
+  /** Partie en ligne (avec `state`, l'état officiel envoyé par le serveur). */
+  readonly online?: RemoteSession;
 }
 
 /** Développement : accès à l'état courant pour la console et les tests de bout en bout. */
@@ -53,6 +56,7 @@ export class BattleScene extends Phaser.Scene {
   private map: MapId = DEFAULT_MAP;
   private peoples: readonly PlayerId[] | null = null;
   private siegeDays: number | undefined;
+  private online: RemoteSession | null = null;
 
   constructor() {
     super('Battle');
@@ -65,6 +69,7 @@ export class BattleScene extends Phaser.Scene {
     // « Rejouer » relance avec les mêmes peuples, même après une reprise de sauvegarde.
     this.peoples = data.state?.players.map((player) => player.id) ?? data.peoples ?? null;
     this.siegeDays = data.state?.siege?.untilDay ?? data.siegeDays;
+    this.online = data.online ?? null;
   }
 
   create(): void {
@@ -105,7 +110,8 @@ export class BattleScene extends Phaser.Scene {
       state,
       { cursor, overlay, arrow, menu, hud, player, forecast, endScreen, pauseMenu },
       (choice) => {
-        if (choice === 'rejouer') {
+        // En ligne, pas de « Rejouer » ici : on repasse par le salon.
+        if (choice === 'rejouer' && !this.online) {
           this.scene.restart({
             aiPlayers: this.aiPlayers,
             map: this.map,
@@ -115,6 +121,7 @@ export class BattleScene extends Phaser.Scene {
         } else goToCover();
       },
       this.aiPlayers,
+      this.online,
     );
     const input = controller;
 

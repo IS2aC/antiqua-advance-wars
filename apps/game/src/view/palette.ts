@@ -35,6 +35,8 @@ export const TEAM_RAMPS: Readonly<Record<PlayerId, readonly [number, number, num
   koush: [0x16234a, 0x24418e, 0x3a73d1, 0x73b4f2],
   ashanti: [0x4a3512, 0x8e6a1f, 0xd1a72e, 0xf2d65a],
   almoravides: [0x123a1e, 0x1f6e34, 0x2eae4e, 0x6fde85],
+  dahomey: [0x2e1240, 0x5a2380, 0x8a3fc4, 0xc38af0],
+  sosso: [0x4a2208, 0x8e4214, 0xd9711e, 0xf7ae5e],
 };
 
 /** Couleur d'équipe : le ton moyen-clair de la rampe, le plus présent sur les sprites. */
@@ -43,6 +45,8 @@ export const TEAM_COLORS: Readonly<Record<PlayerId, number>> = {
   carthage: TEAM_RAMPS.carthage[2],
   ashanti: TEAM_RAMPS.ashanti[2],
   almoravides: TEAM_RAMPS.almoravides[2],
+  dahomey: TEAM_RAMPS.dahomey[2],
+  sosso: TEAM_RAMPS.sosso[2],
 };
 
 /**

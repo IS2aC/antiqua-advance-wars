@@ -26,6 +26,16 @@
       "regard": "droite",
       "chef": "Osei Tutu, first Asantehene of the Asante Empire, in his forties",
       "design": "Very dark brown skin, short black hair, clean-shaven, calm and majestic. Black headband with gold ornaments, heavy gold bead necklaces with a gold pendant, gold armlet, a kente cloth in team color, green and black worn toga-style over one shoulder."
+    },
+    "dahomey": {
+      "regard": "droite",
+      "chef": "King Béhanzin of Dahomey, king of Abomey, in his forties",
+      "design": "Very dark brown skin, round strong face, short black beard and moustache, calm and proud. A small white cotton cap, a team-color cloth with white and gold appliqué borders draped over one shoulder, a wide silver bracelet."
+    },
+    "sosso": {
+      "regard": "droite",
+      "chef": "Soumaoro Kanté, blacksmith-king of Sosso, in his fifties",
+      "design": "Very dark brown skin, strong jaw, short grey-flecked beard, piercing eyes. A tall dark cap ornamented with iron and gold, gold earrings, a team-color bogolan tunic with black patterns covered with small leather amulets and cowrie shells, heavy iron bracelets."
     }
   }
 }

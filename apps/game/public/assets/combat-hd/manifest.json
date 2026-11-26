@@ -1,5 +1,5 @@
 {
-  "version": "7c60308cef",
+  "version": "97d1c93760",
   "figures": {
     "koush": {
       "fantassin": {
@@ -108,6 +108,42 @@
         "down": {
           "w": 472,
           "h": 424
+        }
+      },
+      "convoi": {
+        "idle": {
+          "w": 346,
+          "h": 420
+        },
+        "attack": {
+          "w": 370,
+          "h": 424
+        },
+        "hit": {
+          "w": 375,
+          "h": 420
+        },
+        "down": {
+          "w": 383,
+          "h": 370
+        }
+      },
+      "bateau": {
+        "idle": {
+          "w": 414,
+          "h": 420
+        },
+        "attack": {
+          "w": 417,
+          "h": 420
+        },
+        "hit": {
+          "w": 416,
+          "h": 424
+        },
+        "down": {
+          "w": 429,
+          "h": 385
         }
       }
     },
@@ -219,6 +255,42 @@
           "w": 516,
           "h": 412
         }
+      },
+      "convoi": {
+        "idle": {
+          "w": 546,
+          "h": 420
+        },
+        "attack": {
+          "w": 549,
+          "h": 419
+        },
+        "hit": {
+          "w": 537,
+          "h": 430
+        },
+        "down": {
+          "w": 525,
+          "h": 406
+        }
+      },
+      "bateau": {
+        "idle": {
+          "w": 423,
+          "h": 420
+        },
+        "attack": {
+          "w": 418,
+          "h": 420
+        },
+        "hit": {
+          "w": 411,
+          "h": 413
+        },
+        "down": {
+          "w": 421,
+          "h": 395
+        }
       }
     },
     "ashanti": {
@@ -329,6 +401,42 @@
           "w": 491,
           "h": 425
         }
+      },
+      "convoi": {
+        "idle": {
+          "w": 302,
+          "h": 420
+        },
+        "attack": {
+          "w": 404,
+          "h": 419
+        },
+        "hit": {
+          "w": 335,
+          "h": 420
+        },
+        "down": {
+          "w": 385,
+          "h": 392
+        }
+      },
+      "bateau": {
+        "idle": {
+          "w": 511,
+          "h": 420
+        },
+        "attack": {
+          "w": 551,
+          "h": 421
+        },
+        "hit": {
+          "w": 503,
+          "h": 421
+        },
+        "down": {
+          "w": 522,
+          "h": 431
+        }
       }
     },
     "almoravides": {
@@ -438,6 +546,334 @@
         "down": {
           "w": 477,
           "h": 404
+        }
+      },
+      "convoi": {
+        "idle": {
+          "w": 388,
+          "h": 420
+        },
+        "attack": {
+          "w": 398,
+          "h": 434
+        },
+        "hit": {
+          "w": 374,
+          "h": 434
+        },
+        "down": {
+          "w": 414,
+          "h": 360
+        }
+      },
+      "bateau": {
+        "idle": {
+          "w": 390,
+          "h": 420
+        },
+        "attack": {
+          "w": 401,
+          "h": 420
+        },
+        "hit": {
+          "w": 368,
+          "h": 419
+        },
+        "down": {
+          "w": 387,
+          "h": 397
+        }
+      }
+    },
+    "dahomey": {
+      "fantassin": {
+        "idle": {
+          "w": 216,
+          "h": 420
+        },
+        "attack": {
+          "w": 396,
+          "h": 397
+        },
+        "hit": {
+          "w": 227,
+          "h": 400
+        },
+        "down": {
+          "w": 291,
+          "h": 317
+        }
+      },
+      "lancier": {
+        "idle": {
+          "w": 239,
+          "h": 420
+        },
+        "attack": {
+          "w": 452,
+          "h": 375
+        },
+        "hit": {
+          "w": 251,
+          "h": 415
+        },
+        "down": {
+          "w": 336,
+          "h": 289
+        }
+      },
+      "archers": {
+        "idle": {
+          "w": 200,
+          "h": 420
+        },
+        "attack": {
+          "w": 279,
+          "h": 457
+        },
+        "hit": {
+          "w": 283,
+          "h": 357
+        },
+        "down": {
+          "w": 351,
+          "h": 264
+        }
+      },
+      "cavalerie": {
+        "idle": {
+          "w": 327,
+          "h": 420
+        },
+        "attack": {
+          "w": 432,
+          "h": 399
+        },
+        "hit": {
+          "w": 322,
+          "h": 449
+        },
+        "down": {
+          "w": 347,
+          "h": 385
+        }
+      },
+      "char": {
+        "idle": {
+          "w": 331,
+          "h": 420
+        },
+        "attack": {
+          "w": 431,
+          "h": 358
+        },
+        "hit": {
+          "w": 356,
+          "h": 451
+        },
+        "down": {
+          "w": 355,
+          "h": 383
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "w": 434,
+          "h": 420
+        },
+        "attack": {
+          "w": 554,
+          "h": 415
+        },
+        "hit": {
+          "w": 484,
+          "h": 445
+        },
+        "down": {
+          "w": 452,
+          "h": 389
+        }
+      },
+      "convoi": {
+        "idle": {
+          "w": 350,
+          "h": 420
+        },
+        "attack": {
+          "w": 399,
+          "h": 417
+        },
+        "hit": {
+          "w": 357,
+          "h": 408
+        },
+        "down": {
+          "w": 466,
+          "h": 208
+        }
+      },
+      "bateau": {
+        "idle": {
+          "w": 513,
+          "h": 420
+        },
+        "attack": {
+          "w": 557,
+          "h": 421
+        },
+        "hit": {
+          "w": 513,
+          "h": 422
+        },
+        "down": {
+          "w": 528,
+          "h": 415
+        }
+      }
+    },
+    "sosso": {
+      "fantassin": {
+        "idle": {
+          "w": 205,
+          "h": 420
+        },
+        "attack": {
+          "w": 456,
+          "h": 363
+        },
+        "hit": {
+          "w": 263,
+          "h": 400
+        },
+        "down": {
+          "w": 282,
+          "h": 365
+        }
+      },
+      "lancier": {
+        "idle": {
+          "w": 255,
+          "h": 420
+        },
+        "attack": {
+          "w": 486,
+          "h": 378
+        },
+        "hit": {
+          "w": 281,
+          "h": 416
+        },
+        "down": {
+          "w": 350,
+          "h": 320
+        }
+      },
+      "archers": {
+        "idle": {
+          "w": 205,
+          "h": 420
+        },
+        "attack": {
+          "w": 294,
+          "h": 449
+        },
+        "hit": {
+          "w": 292,
+          "h": 379
+        },
+        "down": {
+          "w": 296,
+          "h": 276
+        }
+      },
+      "cavalerie": {
+        "idle": {
+          "w": 334,
+          "h": 420
+        },
+        "attack": {
+          "w": 405,
+          "h": 394
+        },
+        "hit": {
+          "w": 318,
+          "h": 447
+        },
+        "down": {
+          "w": 346,
+          "h": 399
+        }
+      },
+      "char": {
+        "idle": {
+          "w": 304,
+          "h": 420
+        },
+        "attack": {
+          "w": 406,
+          "h": 366
+        },
+        "hit": {
+          "w": 330,
+          "h": 448
+        },
+        "down": {
+          "w": 350,
+          "h": 354
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "w": 427,
+          "h": 420
+        },
+        "attack": {
+          "w": 567,
+          "h": 427
+        },
+        "hit": {
+          "w": 511,
+          "h": 424
+        },
+        "down": {
+          "w": 499,
+          "h": 413
+        }
+      },
+      "convoi": {
+        "idle": {
+          "w": 574,
+          "h": 420
+        },
+        "attack": {
+          "w": 635,
+          "h": 479
+        },
+        "hit": {
+          "w": 662,
+          "h": 407
+        },
+        "down": {
+          "w": 614,
+          "h": 362
+        }
+      },
+      "bateau": {
+        "idle": {
+          "w": 520,
+          "h": 420
+        },
+        "attack": {
+          "w": 555,
+          "h": 447
+        },
+        "hit": {
+          "w": 522,
+          "h": 440
+        },
+        "down": {
+          "w": 537,
+          "h": 397
         }
       }
     }
@@ -791,6 +1227,122 @@
           "originX": 0.3923,
           "originY": 1
         }
+      },
+      "convoi": {
+        "idle": {
+          "frames": 4,
+          "w": 407,
+          "h": 422,
+          "originX": 0.4642,
+          "originY": 0.9963
+        },
+        "attack": {
+          "frames": 4,
+          "w": 377,
+          "h": 444,
+          "originX": 0.4241,
+          "originY": 0.9983
+        },
+        "run": {
+          "frames": 2,
+          "w": 373,
+          "h": 404,
+          "originX": 0.4082,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 374,
+          "h": 403,
+          "originX": 0.332,
+          "originY": 0.9961
+        },
+        "fall": {
+          "frames": 2,
+          "w": 390,
+          "h": 408,
+          "originX": 0.2943,
+          "originY": 0.9867
+        },
+        "victory": {
+          "frames": 2,
+          "w": 356,
+          "h": 423,
+          "originX": 0.3867,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 390,
+          "h": 432,
+          "originX": 0.7067,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 384,
+          "h": 416,
+          "originX": 0.7551,
+          "originY": 0.9851
+        }
+      },
+      "bateau": {
+        "idle": {
+          "frames": 4,
+          "w": 437,
+          "h": 432,
+          "originX": 0.4772,
+          "originY": 0.9904
+        },
+        "attack": {
+          "frames": 4,
+          "w": 436,
+          "h": 418,
+          "originX": 0.4912,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 424,
+          "h": 426,
+          "originX": 0.451,
+          "originY": 0.9922
+        },
+        "hit": {
+          "frames": 2,
+          "w": 424,
+          "h": 420,
+          "originX": 0.4391,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 432,
+          "h": 408,
+          "originX": 0.4494,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 403,
+          "h": 418,
+          "originX": 0.4414,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 429,
+          "h": 423,
+          "originX": 0.4588,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 429,
+          "h": 420,
+          "originX": 0.4607,
+          "originY": 1
+        }
       }
     },
     "carthage": {
@@ -1139,6 +1691,122 @@
           "w": 483,
           "h": 414,
           "originX": 0.1934,
+          "originY": 1
+        }
+      },
+      "convoi": {
+        "idle": {
+          "frames": 4,
+          "w": 567,
+          "h": 420,
+          "originX": 0.4127,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 563,
+          "h": 426,
+          "originX": 0.5784,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 540,
+          "h": 410,
+          "originX": 0.255,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 538,
+          "h": 409,
+          "originX": 0.2551,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 548,
+          "h": 433,
+          "originX": 0.4603,
+          "originY": 0.9643
+        },
+        "victory": {
+          "frames": 2,
+          "w": 513,
+          "h": 441,
+          "originX": 0.5027,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 553,
+          "h": 523,
+          "originX": 0.6602,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 524,
+          "h": 464,
+          "originX": 0.6965,
+          "originY": 1.0024
+        }
+      },
+      "bateau": {
+        "idle": {
+          "frames": 4,
+          "w": 427,
+          "h": 427,
+          "originX": 0.4905,
+          "originY": 0.9942
+        },
+        "attack": {
+          "frames": 4,
+          "w": 444,
+          "h": 420,
+          "originX": 0.5103,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 437,
+          "h": 413,
+          "originX": 0.3896,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 418,
+          "h": 420,
+          "originX": 0.3235,
+          "originY": 0.9627
+        },
+        "fall": {
+          "frames": 2,
+          "w": 422,
+          "h": 419,
+          "originX": 0.6269,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 414,
+          "h": 416,
+          "originX": 0.4915,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 425,
+          "h": 414,
+          "originX": 0.483,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 426,
+          "h": 414,
+          "originX": 0.484,
           "originY": 1
         }
       }
@@ -1491,6 +2159,122 @@
           "originX": 0.2827,
           "originY": 1
         }
+      },
+      "convoi": {
+        "idle": {
+          "frames": 4,
+          "w": 318,
+          "h": 419,
+          "originX": 0.4885,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 392,
+          "h": 420,
+          "originX": 0.4124,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 367,
+          "h": 419,
+          "originX": 0.5011,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 368,
+          "h": 420,
+          "originX": 0.5303,
+          "originY": 0.9913
+        },
+        "fall": {
+          "frames": 2,
+          "w": 378,
+          "h": 428,
+          "originX": 0.5039,
+          "originY": 0.9812
+        },
+        "victory": {
+          "frames": 2,
+          "w": 342,
+          "h": 417,
+          "originX": 0.5131,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 351,
+          "h": 427,
+          "originX": 0.7726,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 376,
+          "h": 427,
+          "originX": 0.809,
+          "originY": 1
+        }
+      },
+      "bateau": {
+        "idle": {
+          "frames": 4,
+          "w": 501,
+          "h": 446,
+          "originX": 0.4782,
+          "originY": 0.9705
+        },
+        "attack": {
+          "frames": 4,
+          "w": 510,
+          "h": 418,
+          "originX": 0.4691,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 529,
+          "h": 423,
+          "originX": 0.3743,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 513,
+          "h": 451,
+          "originX": 0.281,
+          "originY": 0.9191
+        },
+        "fall": {
+          "frames": 2,
+          "w": 516,
+          "h": 453,
+          "originX": 0.3317,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 506,
+          "h": 443,
+          "originX": 0.4688,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 519,
+          "h": 422,
+          "originX": 0.4652,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 518,
+          "h": 422,
+          "originX": 0.4661,
+          "originY": 1
+        }
       }
     },
     "almoravides": {
@@ -1841,6 +2625,1054 @@
           "originX": 0.3533,
           "originY": 0.9977
         }
+      },
+      "convoi": {
+        "idle": {
+          "frames": 4,
+          "w": 408,
+          "h": 419,
+          "originX": 0.4139,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 428,
+          "h": 429,
+          "originX": 0.4748,
+          "originY": 0.9981
+        },
+        "run": {
+          "frames": 2,
+          "w": 396,
+          "h": 419,
+          "originX": 0.3554,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 400,
+          "h": 414,
+          "originX": 0.3453,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 399,
+          "h": 411,
+          "originX": 0.4821,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 357,
+          "h": 437,
+          "originX": 0.3915,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 408,
+          "h": 477,
+          "originX": 0.7267,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 386,
+          "h": 448,
+          "originX": 0.8125,
+          "originY": 1
+        }
+      },
+      "bateau": {
+        "idle": {
+          "frames": 4,
+          "w": 385,
+          "h": 427,
+          "originX": 0.4492,
+          "originY": 0.9963
+        },
+        "attack": {
+          "frames": 4,
+          "w": 404,
+          "h": 417,
+          "originX": 0.4303,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 400,
+          "h": 420,
+          "originX": 0.4457,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 385,
+          "h": 426,
+          "originX": 0.3744,
+          "originY": 0.9832
+        },
+        "fall": {
+          "frames": 2,
+          "w": 391,
+          "h": 419,
+          "originX": 0.3932,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 373,
+          "h": 418,
+          "originX": 0.4452,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 390,
+          "h": 418,
+          "originX": 0.4548,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 387,
+          "h": 418,
+          "originX": 0.4503,
+          "originY": 1
+        }
+      }
+    },
+    "dahomey": {
+      "fantassin": {
+        "idle": {
+          "frames": 4,
+          "w": 215,
+          "h": 421,
+          "originX": 0.4464,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 412,
+          "h": 383,
+          "originX": 0.4837,
+          "originY": 0.9983
+        },
+        "run": {
+          "frames": 2,
+          "w": 349,
+          "h": 406,
+          "originX": 0.4424,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 283,
+          "h": 401,
+          "originX": 0.3298,
+          "originY": 0.9984
+        },
+        "fall": {
+          "frames": 2,
+          "w": 305,
+          "h": 387,
+          "originX": 0.4256,
+          "originY": 0.9867
+        },
+        "victory": {
+          "frames": 2,
+          "w": 240,
+          "h": 430,
+          "originX": 0.5175,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 338,
+          "h": 417,
+          "originX": 0.5101,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 312,
+          "h": 314,
+          "originX": 0.5181,
+          "originY": 1
+        }
+      },
+      "lancier": {
+        "idle": {
+          "frames": 4,
+          "w": 227,
+          "h": 416,
+          "originX": 0.5324,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 414,
+          "h": 396,
+          "originX": 0.5287,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 325,
+          "h": 366,
+          "originX": 0.4777,
+          "originY": 0.9949
+        },
+        "hit": {
+          "frames": 2,
+          "w": 263,
+          "h": 409,
+          "originX": 0.4764,
+          "originY": 0.997
+        },
+        "fall": {
+          "frames": 2,
+          "w": 295,
+          "h": 353,
+          "originX": 0.3961,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 287,
+          "h": 424,
+          "originX": 0.4097,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 318,
+          "h": 424,
+          "originX": 0.37,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 318,
+          "h": 322,
+          "originX": 0.3692,
+          "originY": 1
+        }
+      },
+      "archers": {
+        "idle": {
+          "frames": 4,
+          "w": 215,
+          "h": 422,
+          "originX": 0.4441,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 297,
+          "h": 459,
+          "originX": 0.5084,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 234,
+          "h": 411,
+          "originX": 0.8069,
+          "originY": 0.9968
+        },
+        "hit": {
+          "frames": 2,
+          "w": 263,
+          "h": 415,
+          "originX": 0.4987,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 304,
+          "h": 374,
+          "originX": 0.3439,
+          "originY": 0.9808
+        },
+        "victory": {
+          "frames": 2,
+          "w": 224,
+          "h": 450,
+          "originX": 0.5048,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 340,
+          "h": 407,
+          "originX": 0.4407,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 321,
+          "h": 317,
+          "originX": 0.4463,
+          "originY": 0.9959
+        }
+      },
+      "cavalerie": {
+        "idle": {
+          "frames": 4,
+          "w": 368,
+          "h": 417,
+          "originX": 0.5197,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 431,
+          "h": 449,
+          "originX": 0.2914,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 379,
+          "h": 386,
+          "originX": 0.0829,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 338,
+          "h": 449,
+          "originX": 0.4869,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 347,
+          "h": 402,
+          "originX": 0.5524,
+          "originY": 0.969
+        },
+        "victory": {
+          "frames": 2,
+          "w": 329,
+          "h": 477,
+          "originX": 0.4463,
+          "originY": 0.9985
+        },
+        "sit": {
+          "frames": 2,
+          "w": 370,
+          "h": 459,
+          "originX": 0.8225,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 367,
+          "h": 315,
+          "originX": 0.8191,
+          "originY": 1
+        }
+      },
+      "char": {
+        "idle": {
+          "frames": 4,
+          "w": 345,
+          "h": 428,
+          "originX": 0.5335,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 419,
+          "h": 409,
+          "originX": 0.4886,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 389,
+          "h": 346,
+          "originX": 0.0358,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 362,
+          "h": 451,
+          "originX": 0.3913,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 358,
+          "h": 434,
+          "originX": 0.3698,
+          "originY": 0.9967
+        },
+        "victory": {
+          "frames": 2,
+          "w": 359,
+          "h": 463,
+          "originX": 0.3552,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 345,
+          "h": 479,
+          "originX": 0.6291,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 323,
+          "h": 327,
+          "originX": 0.6707,
+          "originY": 1
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "frames": 4,
+          "w": 474,
+          "h": 414,
+          "originX": 0.5164,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 484,
+          "h": 416,
+          "originX": 0.4917,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 468,
+          "h": 419,
+          "originX": 0.5225,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 457,
+          "h": 439,
+          "originX": 0.4485,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 468,
+          "h": 440,
+          "originX": 0.6459,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 469,
+          "h": 465,
+          "originX": 0.4593,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 483,
+          "h": 426,
+          "originX": 0.3079,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 480,
+          "h": 426,
+          "originX": 0.3039,
+          "originY": 1
+        }
+      },
+      "convoi": {
+        "idle": {
+          "frames": 4,
+          "w": 349,
+          "h": 418,
+          "originX": 0.4955,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 388,
+          "h": 419,
+          "originX": 0.4846,
+          "originY": 0.9981
+        },
+        "run": {
+          "frames": 2,
+          "w": 394,
+          "h": 422,
+          "originX": 0.4898,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 367,
+          "h": 411,
+          "originX": 0.5341,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 398,
+          "h": 403,
+          "originX": 0.4444,
+          "originY": 0.9587
+        },
+        "victory": {
+          "frames": 2,
+          "w": 361,
+          "h": 433,
+          "originX": 0.4853,
+          "originY": 0.9982
+        },
+        "sit": {
+          "frames": 2,
+          "w": 388,
+          "h": 414,
+          "originX": 0.5463,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 366,
+          "h": 414,
+          "originX": 0.5794,
+          "originY": 1
+        }
+      },
+      "bateau": {
+        "idle": {
+          "frames": 4,
+          "w": 516,
+          "h": 425,
+          "originX": 0.4273,
+          "originY": 0.9904
+        },
+        "attack": {
+          "frames": 4,
+          "w": 515,
+          "h": 419,
+          "originX": 0.4175,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 531,
+          "h": 424,
+          "originX": 0.4137,
+          "originY": 0.9952
+        },
+        "hit": {
+          "frames": 2,
+          "w": 521,
+          "h": 442,
+          "originX": 0.4603,
+          "originY": 0.977
+        },
+        "fall": {
+          "frames": 2,
+          "w": 533,
+          "h": 453,
+          "originX": 0.3317,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 515,
+          "h": 440,
+          "originX": 0.4303,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 525,
+          "h": 428,
+          "originX": 0.4318,
+          "originY": 0.9929
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 524,
+          "h": 415,
+          "originX": 0.4327,
+          "originY": 1
+        }
+      }
+    },
+    "sosso": {
+      "fantassin": {
+        "idle": {
+          "frames": 4,
+          "w": 233,
+          "h": 417,
+          "originX": 0.6084,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 426,
+          "h": 337,
+          "originX": 0.4863,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 337,
+          "h": 365,
+          "originX": 0.535,
+          "originY": 0.9947
+        },
+        "hit": {
+          "frames": 2,
+          "w": 296,
+          "h": 397,
+          "originX": 0.282,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 314,
+          "h": 369,
+          "originX": 0.3634,
+          "originY": 0.9824
+        },
+        "victory": {
+          "frames": 2,
+          "w": 275,
+          "h": 430,
+          "originX": 0.5978,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 336,
+          "h": 408,
+          "originX": 0.3816,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 324,
+          "h": 323,
+          "originX": 0.3761,
+          "originY": 1
+        }
+      },
+      "lancier": {
+        "idle": {
+          "frames": 4,
+          "w": 247,
+          "h": 420,
+          "originX": 0.5814,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 427,
+          "h": 394,
+          "originX": 0.4855,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 412,
+          "h": 379,
+          "originX": 0.5648,
+          "originY": 0.9981
+        },
+        "hit": {
+          "frames": 2,
+          "w": 323,
+          "h": 410,
+          "originX": 0.5093,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 343,
+          "h": 394,
+          "originX": 0.3597,
+          "originY": 0.9981
+        },
+        "victory": {
+          "frames": 2,
+          "w": 339,
+          "h": 457,
+          "originX": 0.4661,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 377,
+          "h": 414,
+          "originX": 0.3485,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 374,
+          "h": 333,
+          "originX": 0.3474,
+          "originY": 1
+        }
+      },
+      "archers": {
+        "idle": {
+          "frames": 4,
+          "w": 243,
+          "h": 421,
+          "originX": 0.5358,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 310,
+          "h": 449,
+          "originX": 0.5036,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 233,
+          "h": 415,
+          "originX": 0.6063,
+          "originY": 0.9984
+        },
+        "hit": {
+          "frames": 2,
+          "w": 285,
+          "h": 436,
+          "originX": 0.5443,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 307,
+          "h": 379,
+          "originX": 0.3282,
+          "originY": 0.9795
+        },
+        "victory": {
+          "frames": 2,
+          "w": 254,
+          "h": 449,
+          "originX": 0.5099,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 340,
+          "h": 401,
+          "originX": 0.5543,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 314,
+          "h": 310,
+          "originX": 0.5691,
+          "originY": 1
+        }
+      },
+      "cavalerie": {
+        "idle": {
+          "frames": 4,
+          "w": 386,
+          "h": 419,
+          "originX": 0.5434,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 423,
+          "h": 442,
+          "originX": 0.3387,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 369,
+          "h": 384,
+          "originX": 0.1281,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 354,
+          "h": 435,
+          "originX": 0.4758,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 340,
+          "h": 351,
+          "originX": 0.6011,
+          "originY": 0.9639
+        },
+        "victory": {
+          "frames": 2,
+          "w": 332,
+          "h": 457,
+          "originX": 0.4829,
+          "originY": 0.9969
+        },
+        "sit": {
+          "frames": 2,
+          "w": 351,
+          "h": 462,
+          "originX": 0.6583,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 358,
+          "h": 322,
+          "originX": 0.6984,
+          "originY": 1
+        }
+      },
+      "char": {
+        "idle": {
+          "frames": 4,
+          "w": 319,
+          "h": 439,
+          "originX": 0.434,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 410,
+          "h": 412,
+          "originX": 0.4248,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 384,
+          "h": 348,
+          "originX": 0.0854,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 328,
+          "h": 443,
+          "originX": 0.3861,
+          "originY": 0.9954
+        },
+        "fall": {
+          "frames": 2,
+          "w": 347,
+          "h": 415,
+          "originX": 0.3565,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 337,
+          "h": 447,
+          "originX": 0.3793,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 340,
+          "h": 417,
+          "originX": 0.3892,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 329,
+          "h": 336,
+          "originX": 0.3667,
+          "originY": 1.002
+        }
+      },
+      "catapulte": {
+        "idle": {
+          "frames": 4,
+          "w": 435,
+          "h": 420,
+          "originX": 0.4579,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 556,
+          "h": 417,
+          "originX": 0.5396,
+          "originY": 0.9953
+        },
+        "run": {
+          "frames": 2,
+          "w": 475,
+          "h": 420,
+          "originX": 0.5335,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 486,
+          "h": 426,
+          "originX": 0.4064,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 487,
+          "h": 443,
+          "originX": 0.5373,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 490,
+          "h": 433,
+          "originX": 0.5086,
+          "originY": 0.9977
+        },
+        "sit": {
+          "frames": 2,
+          "w": 494,
+          "h": 433,
+          "originX": 0.2267,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 491,
+          "h": 433,
+          "originX": 0.2221,
+          "originY": 1
+        }
+      },
+      "convoi": {
+        "idle": {
+          "frames": 4,
+          "w": 614,
+          "h": 425,
+          "originX": 0.7325,
+          "originY": 1
+        },
+        "attack": {
+          "frames": 4,
+          "w": 668,
+          "h": 483,
+          "originX": 0.5564,
+          "originY": 0.9918
+        },
+        "run": {
+          "frames": 2,
+          "w": 628,
+          "h": 395,
+          "originX": 0.5144,
+          "originY": 1
+        },
+        "hit": {
+          "frames": 2,
+          "w": 650,
+          "h": 409,
+          "originX": 0.7461,
+          "originY": 1
+        },
+        "fall": {
+          "frames": 2,
+          "w": 658,
+          "h": 424,
+          "originX": 0.4869,
+          "originY": 0.9658
+        },
+        "victory": {
+          "frames": 2,
+          "w": 644,
+          "h": 495,
+          "originX": 0.5163,
+          "originY": 0.992
+        },
+        "sit": {
+          "frames": 2,
+          "w": 679,
+          "h": 423,
+          "originX": 0.7319,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 646,
+          "h": 421,
+          "originX": 0.7692,
+          "originY": 1
+        }
+      },
+      "bateau": {
+        "idle": {
+          "frames": 4,
+          "w": 527,
+          "h": 438,
+          "originX": 0.4875,
+          "originY": 0.9678
+        },
+        "attack": {
+          "frames": 4,
+          "w": 533,
+          "h": 456,
+          "originX": 0.4871,
+          "originY": 1
+        },
+        "run": {
+          "frames": 2,
+          "w": 535,
+          "h": 420,
+          "originX": 0.4885,
+          "originY": 0.9974
+        },
+        "hit": {
+          "frames": 2,
+          "w": 522,
+          "h": 415,
+          "originX": 0.4246,
+          "originY": 0.9974
+        },
+        "fall": {
+          "frames": 2,
+          "w": 558,
+          "h": 422,
+          "originX": 0.5808,
+          "originY": 1
+        },
+        "victory": {
+          "frames": 2,
+          "w": 527,
+          "h": 422,
+          "originX": 0.486,
+          "originY": 1
+        },
+        "sit": {
+          "frames": 2,
+          "w": 543,
+          "h": 418,
+          "originX": 0.481,
+          "originY": 1
+        },
+        "dazed": {
+          "frames": 2,
+          "w": 543,
+          "h": 417,
+          "originX": 0.481,
+          "originY": 1
+        }
       }
     }
   },
@@ -1850,6 +3682,7 @@
     "desert",
     "foret",
     "marais",
+    "mer",
     "montagne",
     "plaine",
     "riviere",

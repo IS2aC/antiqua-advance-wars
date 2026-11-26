@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
 
 test('un fantassin monte dans un convoi, puis le convoi le dépose à côté', async ({ page }) => {

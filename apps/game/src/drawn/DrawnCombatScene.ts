@@ -628,7 +628,8 @@ export class DrawnCombatScene extends StagedScene {
     const count = Math.min(SLOTS.length, drawnFigureCount(side.unitType, side.hpBefore));
     const figures: Figure[] = [];
     for (let i = 0; i < count; i++) {
-      const slot = SLOTS[i];
+      // Un bateau seul, large : centré dans sa moitié d'écran (sinon sa proue passe la ligne).
+      const slot = side.unitType === 'bateau' && SLOTS[0] ? { ...SLOTS[0], dx: 0 } : SLOTS[i];
       if (!slot) break;
       const homeX = x0 + DRAWN_HALF + slot.dx * dir;
       const pose = poseTexture(this, side.owner, side.unitType, 'idle', FIGURE_SCREEN_H);

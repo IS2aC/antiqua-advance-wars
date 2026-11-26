@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "@antiqua/engine": "workspace:*",
-    "phaser": "4.2.1"
+    "phaser": "4.2.1",
+    "@antiqua/protocol": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",

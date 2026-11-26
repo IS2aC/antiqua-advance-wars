@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 import { SAVE_KEY, clickTile, state, waitForMode, waitForScene } from './helpers';
 
 test('la catapulte tire sur un rempart et l’entame', async ({ page }) => {

@@ -37,6 +37,8 @@ const COLORS: Record<PlayerId, string> = {
   carthage: '\x1b[31m',
   ashanti: '\x1b[33m',
   almoravides: '\x1b[32m',
+  dahomey: '\x1b[35m',
+  sosso: '\x1b[33m',
 };
 const RESET = '\x1b[0m';
 const TERRAIN_LETTERS = new Map(

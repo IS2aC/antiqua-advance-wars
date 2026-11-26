@@ -21,7 +21,14 @@ import { drawnStage } from './DrawnStage';
  * (ralenti compris), puis on rejoue le combat autant de fois que nécessaire.
  */
 
-const PEOPLES: readonly PlayerId[] = ['carthage', 'koush', 'almoravides', 'ashanti'];
+const PEOPLES: readonly PlayerId[] = [
+  'carthage',
+  'koush',
+  'almoravides',
+  'ashanti',
+  'dahomey',
+  'sosso',
+];
 const TERRAIN_TYPES = Object.keys(TERRAINS) as TerrainType[];
 
 const CSS = `
