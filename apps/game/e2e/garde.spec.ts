@@ -25,7 +25,7 @@ test('à deux joueurs : on choisit son peuple et celui de l’IA', async ({ page
 
   await openBattle(page);
   await expect(page.getByRole('button', { name: /J1 vs J2 online/ })).toBeEnabled();
-  await expect(page.getByRole('button', { name: /JN/ })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /JN/ })).toBeEnabled();
   await page.getByRole('link', { name: /J1 vs CPU/ }).click();
   // Duel : son peuple parmi les 4, puis celui de l'IA parmi les 3 autres.
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });

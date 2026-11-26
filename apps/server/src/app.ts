@@ -158,6 +158,7 @@ export async function buildApp({
   });
 
   app.addHook('onClose', async () => {
+    online.close();
     await store.close();
   });
 

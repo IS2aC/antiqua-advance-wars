@@ -7,6 +7,7 @@ import { startProtoBench } from './drawn/ProtoBench';
 import { loadFonts } from './ui/font';
 import { fetchMe } from './compte/api';
 import { goToCover, setOnlineStart } from './launch';
+import { createOnlineOverlay } from './online/overlay';
 import { openOnlineGame } from './online/session';
 
 // Pas de partie sans compte : retour à la page de garde, qui affiche le formulaire.
@@ -25,7 +26,9 @@ await loadFonts();
 const params = new URLSearchParams(window.location.search);
 if (params.get('mode') === 'enligne') {
   try {
-    setOnlineStart(await openOnlineGame(params.get('partie') ?? ''));
+    const start = await openOnlineGame(params.get('partie') ?? '');
+    setOnlineStart(start);
+    createOnlineOverlay(start.session);
   } catch (error) {
     window.alert(`Partie en ligne indisponible : ${(error as Error).message}`);
     goToCover();

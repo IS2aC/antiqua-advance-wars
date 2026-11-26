@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import type { ServerMessage } from '@antiqua/protocol';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { TURN_TIME_MS, type ServerMessage } from '@antiqua/protocol';
 import { OnlineHub, type OnlineSocket } from '../src/online';
 import { MemoryStore } from '../src/store';
 
@@ -45,7 +45,11 @@ describe('jeu en ligne : salons', () => {
     const { a, b, send } = await setup();
     await send(a, { type: 'creer', map: 'cote', people: 'koush' });
     expect(b.last('salons').open).toHaveLength(1);
-    expect(b.last('salons').open[0]?.seats[0]).toEqual({ pseudo: 'Amina', people: 'koush' });
+    expect(b.last('salons').open[0]?.seats[0]).toEqual({
+      pseudo: 'Amina',
+      people: 'koush',
+      cpu: false,
+    });
     expect(a.last('salons').open).toHaveLength(0);
     expect(a.last('salons').mine[0]?.status).toBe('attente');
   });
@@ -77,7 +81,7 @@ describe('jeu en ligne : partie', () => {
     expect(b.last('partie').me).toBe('sosso');
     expect(a.last('partie').state.currentPlayer).toBe('dahomey');
     // Kofi arrive après Amina : il la voit en ligne, elle est prévenue de son arrivée.
-    expect(b.last('partie').opponentOnline).toBe(true);
+    expect(b.last('partie').online).toEqual(['dahomey', 'sosso']);
     expect(a.last('adversaire').online).toBe(true);
   });
 
@@ -121,5 +125,134 @@ describe('jeu en ligne : partie', () => {
     const restarted = await setup(store);
     await restarted.send(restarted.b, { type: 'suivre', id });
     expect(restarted.b.last('partie').state.currentPlayer).toBe('sosso');
+  });
+});
+
+describe('jeu en ligne : minuteur du tour', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('passe le tour du joueur qui ne commence pas à temps', async () => {
+    vi.useFakeTimers();
+    const { a, b } = await started();
+    expect(a.last('partie').timer).toMatchObject({ player: 'dahomey' });
+    await vi.advanceTimersByTimeAsync(TURN_TIME_MS + 10);
+    expect(a.last('tour-passe').player).toBe('dahomey');
+    expect(b.last('actions').actions).toEqual([{ type: 'END_TURN' }]);
+    // Au tour de Kofi, son minuteur démarre.
+    expect(b.last('minuteur').timer).toMatchObject({ player: 'sosso' });
+    expect(a.received.some((m) => m.type === 'actions')).toBe(false);
+  });
+
+  it('s’arrête dès que le joueur commence son tour', async () => {
+    vi.useFakeTimers();
+    const { a, b, send, id } = await started();
+    await send(a, { type: 'actif', id });
+    expect(b.last('minuteur').timer?.remainingMs).toBeNull();
+    await vi.advanceTimersByTimeAsync(TURN_TIME_MS + 10);
+    expect(a.received.some((m) => m.type === 'tour-passe')).toBe(false);
+  });
+
+  it('repart de zéro quand l’écran du joueur arrive à son tour', async () => {
+    vi.useFakeTimers();
+    const { a, send, id } = await started();
+    await vi.advanceTimersByTimeAsync(TURN_TIME_MS - 1000);
+    await send(a, { type: 'pret', id });
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(a.received.some((m) => m.type === 'tour-passe')).toBe(false);
+    await vi.advanceTimersByTimeAsync(TURN_TIME_MS);
+    expect(a.last('tour-passe').player).toBe('dahomey');
+  });
+});
+
+describe('jeu en ligne : JN (4 camps, places d’IA)', () => {
+  const ZARA = { id: 'u3', pseudo: 'Zara' };
+
+  /** Amina crée une partie JN (Koush) contre 3 IA. */
+  async function jn() {
+    const ctx = await setup();
+    await ctx.send(ctx.a, { type: 'creer', map: 'carrefour', people: 'koush' });
+    const id = ctx.a.last('creee').id;
+    expect(ctx.a.last('commencee').id).toBe(id);
+    await ctx.send(ctx.a, { type: 'suivre', id });
+    return { ...ctx, id };
+  }
+
+  it('commence tout de suite, J1 contre 3 IA, sans minuteur', async () => {
+    const { a } = await jn();
+    const game = a.last('partie');
+    expect(game.seats.filter((s) => s.cpu)).toHaveLength(3);
+    expect(game.seats.find((s) => !s.cpu)).toMatchObject({ pseudo: 'Amina', people: 'koush' });
+    expect(game.timer).toBeNull();
+  });
+
+  it('l’IA joue ses tours sur le serveur, puis la main revient au joueur', async () => {
+    const { a, send, id } = await jn();
+    await send(a, { type: 'actions', id, actions: [{ type: 'END_TURN' }] });
+    const cpu = a.last('actions').actions;
+    expect(cpu.filter((action) => action.type === 'END_TURN')).toHaveLength(3);
+    await send(a, { type: 'suivre', id });
+    expect(a.last('partie').state).toMatchObject({ currentPlayer: 'koush', day: 2 });
+  });
+
+  it('un autre joueur demande une place d’IA ; J1 accepte ; minuteur à deux humains', async () => {
+    const { hub, a, b, send, id } = await jn();
+    const open = b.last('salons').open.find((g) => g.id === id);
+    expect(open?.kind).toBe('jn');
+    await send(b, { type: 'demander', id, people: 'carthage' });
+    expect(b.last('salons').open.find((g) => g.id === id)?.requested).toBe('carthage');
+    const request = a.last('demandes').requests[0];
+    expect(request).toMatchObject({ pseudo: 'Kofi', people: 'carthage' });
+    await send(a, { type: 'repondre', id, request: request?.id, accept: true });
+    expect(b.last('commencee').id).toBe(id);
+    expect(a.last('places').seats.find((s) => s.people === 'carthage')).toMatchObject({
+      pseudo: 'Kofi',
+      cpu: false,
+    });
+    // Deux humains : le minuteur démarre pour Amina, qui a la main.
+    expect(a.last('minuteur').timer).toMatchObject({ player: 'koush' });
+    await send(b, { type: 'suivre', id });
+    expect(b.last('partie').me).toBe('carthage');
+    hub.close();
+  });
+
+  it('J1 peut refuser ; une place déjà prise ne peut plus être demandée', async () => {
+    const { hub, a, b, send, id } = await jn();
+    const c = new FakeSocket();
+    hub.connect(c, ZARA);
+    await send(b, { type: 'demander', id, people: 'carthage' });
+    await send(a, {
+      type: 'repondre',
+      id,
+      request: a.last('demandes').requests[0]?.id,
+      accept: false,
+    });
+    expect(b.last('erreur').message).toMatch(/refusé/);
+    await send(c, { type: 'demander', id, people: 'carthage' });
+    await send(a, {
+      type: 'repondre',
+      id,
+      request: a.last('demandes').requests[0]?.id,
+      accept: true,
+    });
+    await send(b, { type: 'demander', id, people: 'carthage' });
+    expect(b.last('erreur').message).toMatch(/plus libre/);
+    hub.close();
+  });
+
+  it('abandon en JN : l’IA reprend le camp, la partie continue', async () => {
+    const { hub, a, b, send, id } = await jn();
+    await send(b, { type: 'demander', id, people: 'carthage' });
+    await send(a, {
+      type: 'repondre',
+      id,
+      request: a.last('demandes').requests[0]?.id,
+      accept: true,
+    });
+    await send(b, { type: 'suivre', id });
+    await send(b, { type: 'abandonner', id });
+    expect(b.last('fin')).toMatchObject({ reason: 'abandon' });
+    expect(a.last('places').seats.find((s) => s.people === 'carthage')?.cpu).toBe(true);
+    expect(a.last('salons').mine.find((g) => g.id === id)?.status).toBe('en-cours');
+    hub.close();
   });
 });

@@ -67,9 +67,9 @@ export async function state(page: Page): Promise<GameState> {
   });
 }
 
-export async function waitForMode(page: Page, mode: string): Promise<void> {
+export async function waitForMode(page: Page, mode: string, timeout = 10_000): Promise<void> {
   await expect
-    .poll(() => page.evaluate(() => (window as DebugWindow).__ANTIQUA__?.mode()))
+    .poll(() => page.evaluate(() => (window as DebugWindow).__ANTIQUA__?.mode()), { timeout })
     .toBe(mode);
 }
 

@@ -117,7 +117,6 @@ export class BattleController {
   private fast = false;
   /** En ligne : déplacement pas encore envoyé (il part avec l'action qui le suit). */
   private pendingMove: Action | null = null;
-  private opponentOnline = true;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -154,6 +153,7 @@ export class BattleController {
     // Reprise d'une sauvegarde faite pendant le tour de l'IA.
     if (this.isAiTurn()) await this.runAiTurns();
     else if (this.isRemoteTurn()) await this.runRemoteTurns();
+    else this.remote?.ready();
   }
 
   // ——— Entrées ———
@@ -760,10 +760,10 @@ export class BattleController {
 
   private listenRemote(remote: RemoteSession): void {
     remote.bindLocalState(() => this.state);
-    remote.onOpponent((online) => {
-      this.opponentOnline = online;
+    remote.onChange(() => {
       if (this.mode === 'remote') this.views.hud.setButtonLabel(this.remoteLabel());
     });
+    remote.onTurnSkipped((player) => void this.turnSkipped(player));
     // Abandon (de l'un ou de l'autre) : écran de fin, même au milieu du tour adverse.
     remote.onEnd((winner, reason) => {
       if (this.mode === 'over' || reason !== 'abandon') return;
@@ -776,8 +776,33 @@ export class BattleController {
     return this.mode === 'over';
   }
 
+  /** Bouton du HUD pendant le tour d'un autre camp (le bandeau en ligne dit qui joue). */
   private remoteLabel(): string {
-    return this.opponentOnline ? 'Tour adverse' : 'Adversaire absent';
+    const seat = this.remote?.seats.find((s) => s.people === this.state.currentPlayer);
+    if (seat?.cpu) return 'Tour de l’IA';
+    return !seat || this.remote?.online.has(seat.people) ? 'Tour adverse' : 'Adversaire absent';
+  }
+
+  /**
+   * Temps écoulé : le serveur a passé le tour de ce joueur, qui n'avait encore rien joué.
+   * L'écran rejoue cette fin de tour ; s'il était au milieu d'un choix (menu, pause), on
+   * repart de l'état du serveur.
+   */
+  private async turnSkipped(player: PlayerId): Promise<void> {
+    if (!this.remote || player !== this.remote.me || this.isOver()) return;
+    // Écran en retard (tours précédents pas encore rejoués) ou au milieu d'un choix.
+    const busy = this.mode !== 'idle' && this.mode !== 'selected' && this.mode !== 'inspecting';
+    if (this.state.currentPlayer !== player || busy) {
+      window.location.reload();
+      return;
+    }
+    this.clearSelection();
+    this.pendingMove = null;
+    if (!(await this.execute({ type: 'END_TURN' }, true))) {
+      window.location.reload();
+      return;
+    }
+    if (this.isRemoteTurn()) await this.runRemoteTurns();
   }
 
   /** Rejoue les actions de l'adversaire, reçues du serveur, jusqu'à ce que la main revienne. */
@@ -806,12 +831,15 @@ export class BattleController {
     if (this.state.status === 'finished') return;
     this.mode = 'idle';
     this.focusCurrentPlayer();
+    this.remote?.ready();
   }
 
   /** Envoie au serveur une action jouée sur cet écran (un MOVE attend l'action suivante). */
   private sendToRemote(action: Action): void {
     if (!this.remote) return;
     if (action.type === 'MOVE') {
+      // Premier déplacement : le joueur a commencé son tour, le minuteur s'arrête.
+      if (!this.pendingMove) this.remote.active();
       this.pendingMove = action;
       return;
     }
@@ -855,7 +883,7 @@ export class BattleController {
     this.mode = 'busy';
     await this.views.player.play(result.events, result.state, before);
     this.views.hud.inspect(this.state, this.views.cursor.position);
-    if (this.state.status === 'finished' || this.humansDefeated()) {
+    if (this.state.status === 'finished' || this.humansDefeated() || this.remoteDefeated()) {
       if (!this.remote) clearSave();
       void this.showEnd();
       return true;
@@ -874,6 +902,12 @@ export class BattleController {
     if (this.aiPlayers.length === 0) return false;
     const humans = this.state.players.filter((player) => !this.aiPlayers.includes(player.id));
     return humans.length > 0 && humans.every((player) => player.defeated);
+  }
+
+  /** En ligne à 4 (JN) : le camp de ce joueur est vaincu, la partie continue sans lui. */
+  private remoteDefeated(): boolean {
+    const me = this.remote?.me;
+    return me !== undefined && this.state.players.some((p) => p.id === me && p.defeated);
   }
 
   private async showEnd(heading: string | null = null): Promise<void> {

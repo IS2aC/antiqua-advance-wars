@@ -7,7 +7,7 @@ import { clickEndTurnButton, clickTile, state, waitForMode, waitForScene } from 
  * playwright.config.ts). Amina (Dahomey) crée la partie, Kofi (Sosso) la rejoint.
  */
 
-async function signUp(browser: Browser, name: string): Promise<Page> {
+async function signUp(browser: Browser, name: string, entry = /J1 vs J2 online/): Promise<Page> {
   const context = await browser.newContext();
   const page = await context.newPage();
   const stamp = `${Date.now() % 1_000_000}${Math.floor(Math.random() * 100)}`;
@@ -18,7 +18,7 @@ async function signUp(browser: Browser, name: string): Promise<Page> {
   await page.getByLabel('Mot de passe').fill('motdepasse');
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
   await page.getByRole('button', { name: /Battle/ }).click();
-  await page.getByRole('button', { name: /J1 vs J2 online/ }).click();
+  await page.getByRole('button', { name: entry }).click();
   return page;
 }
 
@@ -83,4 +83,46 @@ test('duel en ligne : créer, rejoindre, jouer un coup, passer la main', async (
   await waitForMode(amina, 'idle');
   const back = await sameState(amina, kofi);
   expect(back).toMatchObject({ currentPlayer: 'dahomey', day: 2 });
+});
+
+test('JN : J1 contre 3 IA, un autre joueur prend la place d’une IA avec l’accord de J1', async ({
+  browser,
+}) => {
+  test.setTimeout(300_000);
+  const amina = await signUp(browser, 'Amina', /JN/);
+  await amina.locator('.en-ligne__peuple[data-peuple=koush]').click();
+  await amina.getByRole('button', { name: 'Créer', exact: true }).click();
+  await expect(amina).toHaveURL(/mode=enligne/);
+  await waitForScene(amina, 'Battle');
+  await waitForMode(amina, 'idle');
+  // Seule contre l'IA : pas de minuteur.
+  await expect(amina.locator('.enligne-minuteur')).toBeHidden();
+
+  const kofi = await signUp(browser, 'Kofi', /JN/);
+  const game = kofi.locator('.en-ligne__partie', { hasText: 'JN ·' });
+  await game.getByRole('button', { name: 'Prendre Carthage' }).click();
+  await expect(kofi.getByText(/demande envoyée pour Carthage/)).toBeVisible();
+
+  // Amina accepte depuis l'écran de jeu ; Kofi y est emmené.
+  await amina.getByRole('button', { name: 'Accepter' }).click();
+  await expect(kofi).toHaveURL(/mode=enligne/);
+  await waitForScene(kofi, 'Battle');
+  await waitForMode(kofi, 'remote');
+  const start = await sameState(amina, kofi);
+  expect(start.currentPlayer).toBe('koush');
+  // Deux joueurs humains : le minuteur de 3 min 30 tourne.
+  await expect(amina.locator('.enligne-minuteur')).toContainText(/À toi de jouer · 3:\d\d/);
+  await expect(kofi.locator('.enligne-minuteur')).toContainText(/Tour de Amina/);
+
+  await clickEndTurnButton(amina);
+  await waitForMode(kofi, 'idle');
+  expect((await sameState(amina, kofi)).currentPlayer).toBe('carthage');
+  await expect(kofi.locator('.enligne-minuteur')).toContainText(/À toi de jouer/);
+
+  // Après Kofi, les deux IA jouent (sur le serveur), puis la main revient à Amina.
+  await clickEndTurnButton(kofi);
+  await clickEndTurnButton(amina); // « Accélérer »
+  await waitForMode(amina, 'idle', 180_000);
+  const back = await sameState(amina, kofi);
+  expect(back).toMatchObject({ currentPlayer: 'koush', day: 2 });
 });

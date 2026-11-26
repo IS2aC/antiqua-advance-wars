@@ -1,10 +1,18 @@
 /**
- * Salon du jeu en ligne (J1 contre J2) : choix de son peuple, création d'une partie, liste
- * des parties ouvertes par les autres joueurs et de ses propres parties. Quand la partie
- * commence, les deux joueurs passent sur `jeu.html?mode=enligne&partie=…`.
+ * Salon du jeu en ligne : choix de son peuple, création d'une partie (duel J1 contre J2, ou
+ * JN sur le Carrefour : J1 contre 3 IA), liste des parties ouvertes par les autres joueurs
+ * (duels à rejoindre, places d'IA à demander en JN) et de ses propres parties, avec les
+ * demandes reçues. Quand la partie commence (ou qu'une place est accordée), le joueur passe
+ * sur `jeu.html?mode=enligne&partie=…`.
  */
 import type { PlayerId } from '@antiqua/engine';
-import { ONLINE_MAPS, type OnlineSummary, type ServerMessage } from '@antiqua/protocol';
+import {
+  JN_MAP,
+  ONLINE_MAPS,
+  type OnlineMapId,
+  type OnlineSummary,
+  type ServerMessage,
+} from '@antiqua/protocol';
 import { MAPS } from '../maps';
 import { OnlineConnection } from '../online/connection';
 import { PEOPLE_CARDS } from './peuples';
@@ -17,6 +25,7 @@ export const gameUrl = (id: string) => `./jeu.html?mode=enligne&partie=${encodeU
 export function setupOnlineLobby(): void {
   const dialog = $<HTMLDialogElement>('#salon-en-ligne');
   const opener = $<HTMLButtonElement>('#ouvrir-en-ligne');
+  const jnOpener = $<HTMLButtonElement>('#ouvrir-jn');
   const status = $<HTMLElement>('#en-ligne-etat');
   const peoples = $<HTMLElement>('#en-ligne-peuples');
   const mapSelect = $<HTMLSelectElement>('#en-ligne-carte');
@@ -58,7 +67,9 @@ export function setupOnlineLobby(): void {
     }
   };
   renderPeoples();
-  for (const map of ONLINE_MAPS) mapSelect.append(new Option(MAPS[map].name, map));
+  const mapLabel = (map: OnlineMapId) =>
+    map === JN_MAP ? `JN · ${MAPS[map].name} (4 camps, avec IA)` : `Duel · ${MAPS[map].name}`;
+  for (const map of ONLINE_MAPS) mapSelect.append(new Option(mapLabel(map), map));
 
   // ——— Listes ———
   const peopleName = (id: PlayerId) => PEOPLE_CARDS[id].name;
@@ -93,6 +104,7 @@ export function setupOnlineLobby(): void {
   }
 
   function renderOpen(game: OnlineSummary): HTMLLIElement {
+    if (game.kind === 'jn') return renderOpenJn(game);
     const host = game.seats[0];
     const samePeople = host?.people === people;
     const join = button(
@@ -109,6 +121,41 @@ export function setupOnlineLobby(): void {
     );
   }
 
+  /** JN en cours : une place par IA, à demander à J1. */
+  function renderOpenJn(game: OnlineSummary): HTMLLIElement {
+    const humans = game.seats.filter((seat) => !seat.cpu);
+    const title = `JN · ${humans.map((seat) => seat.pseudo).join(', ')}`;
+    const detail = `${MAPS[game.map].name} · ${humans.length}/4 joueurs`;
+    if (game.requested) {
+      return item(title, `${detail} · demande envoyée pour ${peopleName(game.requested)}…`, []);
+    }
+    const take = game.seats
+      .filter((seat) => seat.cpu)
+      .map((seat) =>
+        button(`Prendre ${peopleName(seat.people)}`, () =>
+          connection?.send({ type: 'demander', id: game.id, people: seat.people }),
+        ),
+      );
+    return item(title, detail, take);
+  }
+
+  /** Demandes reçues par J1 (JN) : accepter ou refuser. */
+  function renderRequests(game: OnlineSummary): HTMLLIElement[] {
+    return game.requests.map((request) =>
+      item(`${request.pseudo} demande ${peopleName(request.people)}`, 'Place d’IA, JN', [
+        button(
+          'Accepter',
+          () =>
+            connection?.send({ type: 'repondre', id: game.id, request: request.id, accept: true }),
+          true,
+        ),
+        button('Refuser', () =>
+          connection?.send({ type: 'repondre', id: game.id, request: request.id, accept: false }),
+        ),
+      ]),
+    );
+  }
+
   function renderMine(game: OnlineSummary): HTMLLIElement {
     if (game.status === 'attente') {
       return item(
@@ -117,8 +164,16 @@ export function setupOnlineLobby(): void {
         [button('Annuler', () => connection?.send({ type: 'annuler', id: game.id }))],
       );
     }
-    const opponent = game.seats.find((seat) => seat.people !== game.me);
     const myTurn = game.turn !== null && game.turn === game.me;
+    if (game.kind === 'jn') {
+      const others = game.seats.filter((seat) => seat.people !== game.me && !seat.cpu);
+      return item(
+        `JN · ${peopleName(game.me ?? 'koush')}${others.length ? ` avec ${others.map((s) => s.pseudo).join(', ')}` : ' contre 3 IA'}`,
+        `${MAPS[game.map].name} · ${myTurn ? 'à toi de jouer' : 'tour adverse'}`,
+        [button('Reprendre', () => window.location.assign(gameUrl(game.id)), myTurn)],
+      );
+    }
+    const opponent = game.seats.find((seat) => seat.people !== game.me);
     return item(
       `Contre ${opponent?.pseudo ?? '?'} (${opponent ? peopleName(opponent.people) : ''})`,
       `${MAPS[game.map].name} · ${myTurn ? 'à toi de jouer' : 'tour adverse'}`,
@@ -134,9 +189,12 @@ export function setupOnlineLobby(): void {
         : [empty('Aucune partie ouverte pour l’instant : crée la tienne.')]),
     );
     mineList?.replaceChildren(
-      ...(lobby.mine.length > 0 ? lobby.mine.map(renderMine) : [empty('Aucune partie en cours.')]),
+      ...(lobby.mine.length > 0
+        ? lobby.mine.flatMap((game) => [renderMine(game), ...renderRequests(game)])
+        : [empty('Aucune partie en cours.')]),
     );
-    if (status) status.textContent = 'Duel au tour par tour contre un autre joueur connecté.';
+    if (status)
+      status.textContent = 'Duel ou JN (4 camps) au tour par tour avec d’autres joueurs connectés.';
   }
 
   // ——— Connexion au salon, seulement quand il est ouvert ———
@@ -155,11 +213,14 @@ export function setupOnlineLobby(): void {
     const map = ONLINE_MAPS.find((id) => id === mapSelect.value) ?? ONLINE_MAPS[0];
     connection?.send({ type: 'creer', map, people });
   });
-  opener.addEventListener('click', () => {
+  const open = (map: OnlineMapId | null) => {
     connect();
+    if (map) mapSelect.value = map;
     dialog.showModal();
     peoples.querySelector<HTMLElement>('[aria-checked="true"]')?.focus();
-  });
+  };
+  opener.addEventListener('click', () => open(mapSelect.value === JN_MAP ? ONLINE_MAPS[0] : null));
+  jnOpener?.addEventListener('click', () => open(JN_MAP));
   dialog.querySelector('.choix__fermer')?.addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) dialog.close();
