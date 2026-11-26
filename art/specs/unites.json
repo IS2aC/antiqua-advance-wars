@@ -75,6 +75,60 @@
           "base": "#6A3A1C",
           "ombre": "#4A2711"
         }
+      },
+      "dahomey": {
+        "sujet": "Agojie woman soldier of the Kingdom of Dahomey, a woman warrior (female, not a man)",
+        "design": "Very dark brown skin, short black hair, a white cotton cap with a small team-color crocodile emblem. A knee-length sleeveless tunic with team-color and white vertical stripes, a brown leather belt, gold armlets. Barefoot. A short curved iron sword in the right hand and a small wooden club in the left hand.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: ready stance, sword held up, club in the other hand.",
+            "Attack: lunging forward with a strong sword slash, weight on the front leg.",
+            "Hit: recoiling backward, head turned away, club raised, off balance.",
+            "Defeated: down on one knee, head lowered, sword on the ground."
+          ],
+          "repos": [
+            "Neutral ready stance, sword upright in the right hand, club in the other hand.",
+            "Inhale: chest slightly raised, shoulders up a little, head a touch higher.",
+            "Exhale: shoulders relaxed, the tunic hem swing slightly backward.",
+            "The tunic hem swing slightly forward. Subtle idle breathing loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Anticipation: weight on the back leg, sword pulled back at shoulder height, club tucked, body coiled, determined face. The back foot stays planted at the same spot in all 4 frames.",
+            "Motion smear frame, like in classic hand-drawn animation: body lunging forward, the arm and sword stretched into a fast elongated shape with a few speed lines in the same ink style.",
+            "Full extension: deep lunge, front knee bent, sword fully thrust forward, shouting, tunic hem flying behind.",
+            "Follow-through: still extended but settling, sword tip lowering slightly."
+          ],
+          "charge": [
+            "Running charge: left leg forward, right leg pushing off behind, body leaning forward, sword held forward at waist height, club in the other hand.",
+            "Running: legs passing under the body, one foot on the ground, body slightly higher.",
+            "Getting hit: head snapped back, eyes squeezed, club knocked upward, body jolted, standing in place.",
+            "Recoil: stumbling one step backward, off balance, free arm out, sword still in hand."
+          ],
+          "chute": [
+            "Defeat: staggering, knees buckling, leaning backward, sword slipping from the hand, club lowered.",
+            "Down: kneeling on the ground, head lowered, sword lying on the ground.",
+            "Victory: sword raised high above the head, club held up, proud and confident.",
+            "Victory shout: mouth wide open, sword still raised, chest out."
+          ],
+          "sonne": [
+            "Losing balance: knocked backward, arms flailing, sword flying out of the hand.",
+            "Landing: sitting down hard on the ground, legs stretched forward, club fallen flat beside him, sword lying on the ground, headband slipped over one eye.",
+            "Dazed: still sitting, upper body swaying to the left, eyes dizzy and half closed, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "sosso": {
+        "sujet": "young spearman of the Sosso kingdom of the Sahel",
+        "design": "Very dark brown skin, short black hair. A team-color cotton tunic with black and cream bogolan mud-cloth patterns, a small necklace of leather amulets, iron armlets. Leather sandals. A round brown leather shield with a team-color rim, an iron-tipped spear with a dark wooden shaft.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
       }
     }
   },
@@ -149,6 +203,22 @@
       "ashanti": {
         "sujet": "heavy Asante (Ashanti) spearman, a veteran warrior of the Akan",
         "design": "Very dark brown skin, short black hair under a team-color cloth cap, gold earrings. A brown cotton war shirt (batakari) covered with small square leather amulet pouches, a team-color kente skirt with black and gold stripes, a brown belt. Brown leather sandals. A large round dark-brown wooden shield with a gold four-pointed cross emblem, a gold boss and a team-color rim. A long heavy spear with a dark wooden shaft and a steel spearhead.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "dahomey": {
+        "sujet": "heavy Agojie spearwoman of Dahomey, front-rank veteran, a woman warrior (female, not a man)",
+        "design": "Very dark brown skin, a white cotton cap with a small team-color crocodile emblem, a team-color padded cotton vest over a knee-length tunic with team-color and white vertical stripes, gold armlets. Barefoot. A large round leather shield with a team-color rim, a long iron-tipped spear.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "sosso": {
+        "sujet": "heavy spearman of Sosso, front-rank veteran",
+        "design": "Very dark brown skin, a small iron skullcap, a thick team-color quilted cotton armor with black bogolan patterns and small leather amulets, iron armlets. Leather sandals. A tall round hide shield with a team-color rim and an iron boss, a long heavy iron-tipped spear.",
         "peau": {
           "base": "#6A3A1C",
           "ombre": "#4A2711"
@@ -231,6 +301,22 @@
           "base": "#6A3A1C",
           "ombre": "#4A2711"
         }
+      },
+      "dahomey": {
+        "sujet": "Agojie archer of Dahomey, a woman warrior (female, not a man)",
+        "design": "Very dark brown skin, a white cotton cap with a small team-color crocodile emblem, a knee-length sleeveless tunic with team-color and white vertical stripes, a brown leather belt, gold armlets. Barefoot. A long wooden bow in warm brown wood, a leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "sosso": {
+        "sujet": "dozo hunter-archer of Sosso, from the Mande hunters' brotherhood",
+        "design": "Very dark brown skin, a wide brimmed conical straw hunter's hat with a team-color band, a brown mud-cloth hunter's tunic with team-color patterns, covered with many small leather amulets and cowrie shells. Leather sandals. A long wooden bow in warm brown wood, a leather quiver on the back, arrows with team-color fletching.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
       }
     }
   },
@@ -305,6 +391,22 @@
       "ashanti": {
         "sujet": "Asante (Ashanti) horseman of the Akan, riding a horse",
         "design": "Rider: very dark brown skin, a team-color cloth cap, a gold bead necklace, a team-color kente robe with black and gold stripes, a spear with a dark shaft and a steel spearhead. Horse: dark bay horse, black mane and tail, black hooves, a gold bridle, a team-color kente saddle cloth with a gold hem. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "dahomey": {
+        "sujet": "Dahomey woman scout on horseback, a woman warrior (female, not a man)",
+        "design": "Rider: very dark brown skin, a white cotton cap with a small team-color crocodile emblem, a tunic with team-color and white vertical stripes, holding a light javelin. Mount: a small brown horse with a team-color saddle cloth. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "sosso": {
+        "sujet": "Sahelian light horseman of Sosso",
+        "design": "Rider: very dark brown skin, a team-color turban, a team-color tunic with black bogolan patterns, holding a light javelin. Mount: a slim brown Sahel horse with a team-color saddle cloth. Horse and rider are ONE drawing; the horse faces right.",
         "peau": {
           "base": "#6A3A1C",
           "ombre": "#4A2711"
@@ -463,6 +565,22 @@
             "Dazed: same sitting position, upper body swaying to the right, same dizzy face; the buffalo barely moves."
           ]
         }
+      },
+      "dahomey": {
+        "sujet": "royal guard of Dahomey on a big war horse, a woman warrior (female, not a man)",
+        "design": "Rider: very dark brown skin, a white cotton cap with a gold crocodile emblem, a team-color padded cotton armor, holding a long iron lance. Mount: a big dark horse with a team-color quilted caparison with white stripes and a gold shark ornament on the chest. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "sosso": {
+        "sujet": "heavy Sahelian cavalryman of Sosso",
+        "design": "Rider: very dark brown skin, an iron helmet, a thick team-color quilted cotton armor, holding a long iron lance. Mount: a big dark horse with a team-color quilted caparison with black bogolan patterns and iron ornaments. Horse and rider are ONE drawing; the horse faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
       }
     }
   },
@@ -537,6 +655,22 @@
       "ashanti": {
         "sujet": "Asante (Ashanti) wooden catapult on wheels, with its crewman",
         "design": "A wooden catapult on four wooden wheels with gold rims, gold metal fittings, a team-color panel with a gold adinkra emblem on its side, a team-color banner with a gold adinkra emblem on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: very dark brown skin, short black hair with a team-color headband, bare chest, a gold bead necklace, a team-color kente loincloth with black and gold stripes, brown sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "dahomey": {
+        "sujet": "wooden war engine of Dahomey on wheels, with its Agojie crewwoman",
+        "design": "A wooden throwing engine on four wooden wheels with gold rims, a team-color cloth wrapped on the frame, a team-color banner with a gold shark on a pole, a throwing arm ending in a cup holding a grey stone. One crewwoman behind it on the left, pushing it: very dark brown skin, a white cotton cap, a tunic with team-color and white vertical stripes, barefoot. Catapult and crewwoman are ONE drawing; the catapult throws to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        }
+      },
+      "sosso": {
+        "sujet": "wooden war engine of the blacksmith kingdom of Sosso, with its blacksmith crewman",
+        "design": "A wooden throwing engine on four wooden wheels with heavy iron fittings, a team-color banner with a black blacksmith hammer on a pole, a throwing arm ending in a cup holding a grey stone. One crewman behind it on the left, pushing it: very dark brown skin, a leather apron over a team-color tunic, leather sandals. Catapult and crewman are ONE drawing; the catapult throws to the right.",
         "peau": {
           "base": "#6A3A1C",
           "ombre": "#4A2711"
@@ -771,6 +905,98 @@
             "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
           ]
         }
+      },
+      "dahomey": {
+        "sujet": "royal hammock of Dahomey carried by two bearers",
+        "design": "A woven hammock hanging from one long wooden pole carried on the shoulders of two bearers, one in front and one behind (very dark brown skin, white cotton caps, team-color waist cloths, bare chest, barefoot), under a large team-color royal parasol with a gold fringe held above the hammock, a royal récade scepter tied to the pole. Hammock, parasol and bearers are ONE drawing, moving to the right. No weapons.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the two bearers standing still with the pole on their shoulders, the empty hammock hanging between them under the parasol.",
+            "Urging: the front bearer calling out and stepping boldly forward, the hammock swinging.",
+            "Hit: the bearers staggering backward, the parasol tilting, the hammock swinging wildly.",
+            "Defeated: the bearers kneeling, the pole and hammock resting on the ground, the parasol fallen on its side, heads lowered."
+          ],
+          "repos": [
+            "The bearers standing still with the pole on their shoulders, the hammock hanging.",
+            "The bearers breathing in, the hammock swaying slightly forward.",
+            "The bearers shifting their weight, the parasol fringe fluttering.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Bracing: the bearers planting their feet, gripping the pole. The back bearer's feet stay at the same spot in all 4 frames.",
+            "The front bearer raising a fist defiantly, shouting.",
+            "Bluff: both bearers stamping forward with a loud call.",
+            "Settling: the bearers steady again, watchful."
+          ],
+          "charge": [
+            "Moving: the bearers walking forward briskly, front legs reaching forward, the hammock swinging back.",
+            "Moving: legs passing under the bodies, the hammock and parasol slightly higher.",
+            "Getting hit: the bearers jolted, eyes squeezed, the parasol shaking.",
+            "Recoil: the bearers stepping one step backward, off balance, the hammock swinging."
+          ],
+          "chute": [
+            "Defeat: the bearers stumbling, the pole slipping from their shoulders.",
+            "Down: the pole and hammock on the ground, the bearers sitting beside it, heads lowered.",
+            "Victory: the bearers standing proudly with the pole on their shoulders, the front bearer raising a fist.",
+            "Victory cheer: both bearers shouting, the parasol held high."
+          ],
+          "sonne": [
+            "Knocked back: the front bearer tumbling backward, arms flailing, the pole dropping on that side.",
+            "Landing: the front bearer sitting on the ground, legs stretched forward, cap askew over one eye.",
+            "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "sosso": {
+        "sujet": "Sosso pack ox caravan with its drover",
+        "design": "A sturdy humped zebu ox seen from the side carrying two large woven baskets and bundles, a team-color saddle cloth with black bogolan patterns, led by a Sosso drover walking beside it on the far side (very dark brown skin, team-color tunic, straw hat, leather sandals) holding a stick. No weapons. Ox and drover are ONE drawing; the ox faces right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ox standing calmly, the drover seated upright, relaxed.",
+            "Urging: the drover raising the goad, the ox stepping boldly forward.",
+            "Hit: the ox shying backward, the drover thrown back, off balance.",
+            "Defeated: the ox sinking down, the drover slumped forward, head lowered."
+          ],
+          "repos": [
+            "The ox standing, the drover seated upright.",
+            "The ox breathing in, head slightly up, the drover breathing in.",
+            "The ox shifting its weight, tail swishing, cloth fluttering.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Bracing: the ox planting its feet, the drover pulling back on the reins. The back feet stay at the same spot in all 4 frames.",
+            "The ox rearing its head up defiantly, the drover raising the goad.",
+            "Bluff: the ox stamping forward with a loud call, the drover shouting.",
+            "Settling: the ox back on its feet, the drover watchful."
+          ],
+          "charge": [
+            "Moving: the ox walking forward briskly, front leg reaching forward, the drover leaning forward.",
+            "Moving: legs passing under the body, the ox slightly higher.",
+            "Getting hit: the ox jolted, head thrown up, the drover ducking with eyes squeezed.",
+            "Recoil: the ox stepping one step backward, the drover off balance."
+          ],
+          "chute": [
+            "Defeat: the ox stumbling, the drover losing grip.",
+            "Down: the ox lying down, the drover sitting beside it, head lowered.",
+            "Victory: the ox standing proudly, the drover raising both fists.",
+            "Victory cheer: the drover shouting and waving the goad, the ox raising its head."
+          ],
+          "sonne": [
+            "Knocked off: the drover tumbling backward off the ox, arms flailing, the ox startled.",
+            "Landing: the drover sitting on the ground beside the ox, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the ox standing still behind.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
       }
     }
   },
@@ -993,6 +1219,98 @@
             "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
             "Victory: the ship upright, sail full, the two Asante archers raising their bows high.",
             "Victory cheer: the two Asante archers shouting and waving, pennant flying."
+          ],
+          "sonne": [
+            "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+            "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "dahomey": {
+        "sujet": "Dahomey lagoon war canoe with its Agojie crew",
+        "design": "A long dugout canoe seen from the side, with a carved gold shark figurehead at the prow, a team-color and white striped cloth awning in the middle, and an Agojie crew of women (very dark brown skin, white cotton caps with a small team-color crocodile, team-color and white striped tunics): one paddler at the stern, two archers in front holding bows. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Canoe and crew are ONE drawing; the prow points right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ship afloat, sail full, the two Agojie archers on deck ready with their bows.",
+            "Attack: the two Agojie archers loosing arrows upward to the right, the ship leaning slightly forward.",
+            "Hit: the ship rocking backward, sail flapping, the two Agojie archers ducking.",
+            "Defeated: the ship listing to one side, sail torn and sagging, the two Agojie archers slumped on deck."
+          ],
+          "repos": [
+            "The ship afloat, sail full.",
+            "The ship bobbing up a little, sail swelling.",
+            "The ship bobbing down a little, pennant fluttering the other way.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Draw: the two Agojie archers drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+            "Release: the two Agojie archers loosing the arrows, a few speed lines.",
+            "The arrows flying away upward to the right, bows still raised.",
+            "Follow-through: the two Agojie archers reaching for new arrows, the ship steady."
+          ],
+          "charge": [
+            "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+            "Sailing forward: prow slightly lowered, sail full.",
+            "Getting hit: the ship jolted, mast swaying, the two Agojie archers ducking with eyes squeezed.",
+            "Recoil: the ship pushed back and tilted, the two Agojie archers off balance."
+          ],
+          "chute": [
+            "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+            "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+            "Victory: the ship upright, sail full, the two Agojie archers raising their bows high.",
+            "Victory cheer: the two Agojie archers shouting and waving, pennant flying."
+          ],
+          "sonne": [
+            "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+            "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "sosso": {
+        "sujet": "Niger river pirogue of Sosso with its boatman and dozo archer",
+        "design": "A long plank canoe seen from the side with a curved prow, a team-color woven reed-mat awning in the middle, a boatman with a long pole at the stern and a dozo archer in front (very dark brown skin, wide brimmed straw hat with a team-color band, mud-cloth tunic with amulets) holding a bow. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Pirogue and crew are ONE drawing; the prow points right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ship afloat, sail full, the dozo archer on deck ready with their bows.",
+            "Attack: the dozo archer loosing arrows upward to the right, the ship leaning slightly forward.",
+            "Hit: the ship rocking backward, sail flapping, the dozo archer ducking.",
+            "Defeated: the ship listing to one side, sail torn and sagging, the dozo archer slumped on deck."
+          ],
+          "repos": [
+            "The ship afloat, sail full.",
+            "The ship bobbing up a little, sail swelling.",
+            "The ship bobbing down a little, pennant fluttering the other way.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Draw: the dozo archer drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+            "Release: the dozo archer loosing the arrows, a few speed lines.",
+            "The arrows flying away upward to the right, bows still raised.",
+            "Follow-through: the dozo archer reaching for new arrows, the ship steady."
+          ],
+          "charge": [
+            "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+            "Sailing forward: prow slightly lowered, sail full.",
+            "Getting hit: the ship jolted, mast swaying, the dozo archer ducking with eyes squeezed.",
+            "Recoil: the ship pushed back and tilted, the dozo archer off balance."
+          ],
+          "chute": [
+            "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+            "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+            "Victory: the ship upright, sail full, the dozo archer raising their bows high.",
+            "Victory cheer: the dozo archer shouting and waving, pennant flying."
           ],
           "sonne": [
             "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",

@@ -3,8 +3,8 @@
  * seul le reducer produit un nouvel état, à partir d'une copie interne.
  */
 
-/** Factions jouables (Stage 1 : Koush contre Carthage). */
-export type PlayerId = 'koush' | 'carthage' | 'ashanti' | 'almoravides';
+/** Peuples jouables. */
+export type PlayerId = 'koush' | 'carthage' | 'ashanti' | 'almoravides' | 'dahomey' | 'sosso';
 
 export type UnitType =
   'fantassin' | 'lancier' | 'archers' | 'cavalerie' | 'char' | 'catapulte' | 'convoi' | 'bateau';

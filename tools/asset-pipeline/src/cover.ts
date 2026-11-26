@@ -39,6 +39,9 @@ const KING_CROPS: Readonly<
   carthage: { left: 10, top: 130, width: 600, height: 570 },
   almoravides: { left: 40, top: 150, width: 600, height: 490 },
   ashanti: { left: 12, top: 152, width: 488, height: 530 },
+  // Planches de Codex, en 1672×941.
+  dahomey: { left: 12, top: 168, width: 530, height: 575 },
+  sosso: { left: 12, top: 168, width: 530, height: 575 },
 };
 
 /** Fond blanc relié aux bords → transparent (le blanc à l'intérieur de l'écusson reste). */

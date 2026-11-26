@@ -29,10 +29,10 @@ test('à deux joueurs : on choisit son peuple et celui de l’IA', async ({ page
   // Duel : son peuple parmi les 4, puis celui de l'IA parmi les 3 autres.
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
   await expect(choice).toBeVisible();
-  await expect(choice.getByRole('link')).toHaveCount(4);
+  await expect(choice.getByRole('link')).toHaveCount(6);
   await choice.getByRole('link', { name: /Empire ashanti/ }).click();
   const rival = page.getByRole('dialog', { name: "Choisis le peuple de l'IA" });
-  await expect(rival.getByRole('link')).toHaveCount(3);
+  await expect(rival.getByRole('link')).toHaveCount(5);
   await expect(rival.getByRole('link', { name: /Empire ashanti/ })).toHaveCount(0);
   await rival.getByRole('link', { name: /Almoravides/ }).click();
   await expect(page).toHaveURL(/jeu\.html\?mode=continuer.*repli=ia/);
@@ -90,7 +90,7 @@ test('la page de garde lance la carte à 4 royaumes, Koush contre 3 IA', async (
   await openBattle(page);
   await page.getByRole('link', { name: /J1 vs 3 CPU/ }).click();
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
-  await expect(choice.getByRole('link')).toHaveCount(4);
+  await expect(choice.getByRole('link')).toHaveCount(6);
   await choice.getByRole('link', { name: /Royaume de Koush/ }).click();
   await expect(page).toHaveURL(/carte=carrefour/);
   await waitForScene(page, 'Battle');
@@ -149,7 +149,7 @@ test('Échap revient au choix de son peuple, puis ferme sans lancer de partie', 
   await expect(page.getByRole('dialog', { name: "Choisis le peuple de l'IA" })).toBeVisible();
   await page.keyboard.press('Escape');
   const choice = page.getByRole('dialog', { name: 'Choisis ton peuple' });
-  await expect(choice.getByRole('link')).toHaveCount(4);
+  await expect(choice.getByRole('link')).toHaveCount(6);
   await page.keyboard.press('Escape');
   await expect(choice).toBeHidden();
   await expect(page).toHaveURL(/\/$/);
@@ -199,4 +199,44 @@ test('défense de forteresse : peuples, difficulté, compte à rebours', async (
   const current = await state(page);
   expect(current.map.name).toBe('La Forteresse');
   expect(current.siege).toMatchObject({ defender: 'koush', untilDay: 10 });
+});
+
+test('Sosso sur la carte à 4 royaumes : il prend le premier camp, contre 3 IA', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await openBattle(page);
+  await page.getByRole('link', { name: /J1 vs 3 CPU/ }).click();
+  await page
+    .getByRole('dialog', { name: 'Choisis ton peuple' })
+    .getByRole('link', { name: /Royaume de Sosso/ })
+    .click();
+  await expect(page).toHaveURL(/peuple=sosso/);
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  const current = await state(page);
+  expect(current.players.map((player) => player.id)).toEqual([
+    'sosso',
+    'carthage',
+    'almoravides',
+    'ashanti',
+  ]);
+  expect(current.currentPlayer).toBe('sosso');
+});
+
+test('duel : Dahomey contre Sosso', async ({ page }) => {
+  await page.goto('/');
+  await openBattle(page);
+  await page.getByRole('link', { name: /J1 vs CPU/ }).click();
+  await page
+    .getByRole('dialog', { name: 'Choisis ton peuple' })
+    .getByRole('link', { name: /Royaume du Dahomey/ })
+    .click();
+  await page
+    .getByRole('dialog', { name: "Choisis le peuple de l'IA" })
+    .getByRole('link', { name: /Royaume de Sosso/ })
+    .click();
+  await waitForScene(page, 'Battle');
+  await waitForMode(page, 'idle');
+  expect((await state(page)).players.map((player) => player.id)).toEqual(['dahomey', 'sosso']);
 });

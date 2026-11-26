@@ -37,7 +37,14 @@ function isGameState(value: unknown): value is GameState {
   );
 }
 
-const PLAYER_IDS: readonly string[] = ['koush', 'carthage', 'ashanti', 'almoravides'];
+const PLAYER_IDS: readonly string[] = [
+  'koush',
+  'carthage',
+  'ashanti',
+  'almoravides',
+  'dahomey',
+  'sosso',
+];
 
 function isPlayerList(value: unknown): value is PlayerId[] {
   return Array.isArray(value) && value.every((id) => PLAYER_IDS.includes(String(id)));

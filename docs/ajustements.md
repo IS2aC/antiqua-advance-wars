@@ -71,7 +71,12 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
   charge, chute, sonné). Valider une unité avant de lancer les autres.
 - Plus un décor de mer pour les combats en mer.
 
-### 0.5 Deux nouveaux peuples : Dahomey et Sosso
+### 0.5 Deux nouveaux peuples : Dahomey et Sosso — fait
+
+> Fait (26/11/2026), tout via Codex : planches de référence, écussons, sprites de carte des
+> 8 unités, combats dessinés (8 unités × 6 planches). Dahomey en violet royal (armée de
+> femmes, les Agojié), Sosso en orange terre cuite (dozos). Jouables en duel et sur le
+> Carrefour (un peuple absent de la carte prend le premier camp).
 
 - **Dahomey** — chef : **Béhanzin** ; armée **principalement féminine** (les Agojié, les
   guerrières du roi). Sprites et combats dessinés en conséquence.

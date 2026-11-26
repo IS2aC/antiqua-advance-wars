@@ -150,10 +150,11 @@ function showStep(next: ChoiceStep): void {
     href = (id) => `${launch}&peuple=${human}&adversaire=${id}`;
   } else {
     title.textContent = 'Choisis ton peuple';
-    ids = next.duel ? ALL_PEOPLES : [...MAPS[next.map].players];
+    // Tous les peuples : un peuple absent de la carte prend le premier camp (launch.ts).
+    ids = ALL_PEOPLES;
     subtitle.textContent = next.duel
       ? `${name} · duel contre l'IA`
-      : `${name} · toi contre ${ids.length - 1} IA`;
+      : `${name} · toi contre ${MAPS[next.map].players.length - 1} IA`;
     href = (id) => `${launch}&peuple=${id}`;
   }
   back.hidden = !(next.duel && next.human);

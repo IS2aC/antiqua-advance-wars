@@ -83,7 +83,7 @@ describe('prompts', () => {
     const jobs = planJobs(specs, ALL, COMBAT_UNITS, PEOPLES, UNIT_SHEETS);
     // 8 unités (dont convoi et bateau) × 6 planches communes.
     expect(jobs.filter((job) => job.kind === 'unit')).toHaveLength(48);
-    expect(jobs.filter((job) => job.kind === 'portrait')).toHaveLength(4);
+    expect(jobs.filter((job) => job.kind === 'portrait')).toHaveLength(6); // 6 peuples
     expect(jobs[0]).toMatchObject({
       id: 'unites/fantassin/poses',
       references: ['depot:art/raw/sprites-unités/fantassins-rouge.png'],

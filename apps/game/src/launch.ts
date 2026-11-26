@@ -59,6 +59,13 @@ function newGame(mode: string | null, params: URLSearchParams): BattleData | nul
   if (mode === 'ia') {
     const duel = duelPeoples(map, params);
     if (duel) return { aiPlayers: [duel[1]], map, peoples: duel, ...siegeDaysOf(map, params) };
+    // Peuple absent de la carte (Dahomey, Sosso sur le Carrefour) : il prend le premier camp.
+    const chosen = params.get('peuple');
+    const players = MAPS[map].players;
+    if (isPeople(chosen) && !players.includes(chosen)) {
+      const peoples = [chosen, ...players.slice(1)];
+      return { aiPlayers: peoples.slice(1), map, peoples };
+    }
     return { aiPlayers: aiPlayersOf(map, humanFromParam(params.get('peuple'), map)), map };
   }
   if (mode === 'deux') return { map };

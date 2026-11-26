@@ -13,6 +13,8 @@ export const PLAYERS_WITH_ART: readonly PlayerId[] = [
   'carthage',
   'ashanti',
   'almoravides',
+  'dahomey',
+  'sosso',
 ];
 export const unitAtlas = (owner: PlayerId) => `units-${owner}`;
 

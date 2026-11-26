@@ -5,8 +5,8 @@ le dirigeant (grand portrait, vues sous 4 angles, expressions), les guerriers ty
 peuple, l'écusson, la palette et les objets marquants. Elles servent de **référence visuelle**
 pour la suite (sprites de la carte, combats dessinés, portraits, site).
 
-Peuples retenus : **Koush, Carthage, Almoravides, Ashanti**. Kemet et Aksoum viendront après
-(voir `docs/ajustements.md`).
+Peuples retenus : **Koush, Carthage, Almoravides, Ashanti**, puis **Dahomey et Sosso**
+(demandés le 26/11/2026). Kemet et Aksoum viendront après (voir `docs/ajustements.md`).
 
 Les prompts sont en anglais (les générateurs d'images le suivent mieux) ; les textes affichés
 sur la planche sont en français et donnés mot pour mot. Format conseillé : 16:9 (1536×864 ou
@@ -23,6 +23,8 @@ Une couleur par peuple, nettement différente des trois autres pour rester lisib
 | Koush       | bleu roi                         | #16234A · #24418E · #3A73D1 · #73B4F2 | déjà en place ; faïence bleue et lapis des parures nubiennes               |
 | Almoravides | vert émeraude                    | #123A1E · #1F6E34 · #2EAE4E · #6FDE85 | bannières des dynasties du Maghreb ; voile indigo sombre en complément    |
 | Ashanti     | jaune or                         | #4A3512 · #8E6A1F · #D1A72E · #F2D65A | l'or de la Côte de l'Or et du Tabouret d'or ; kente or, vert et noir       |
+| Dahomey     | violet royal                     | #2E1240 · #5A2380 · #8A3FC4 · #C38AF0 | couleur libre, lisible à côté des quatre autres                            |
+| Sosso       | orange terre cuite               | #4A2208 · #8E4214 · #D9711E · #F7AE5E | la terre et le fer du Sahel ; bogolan noir et crème en complément          |
 
 Les rampes vert et jaune reprennent celles des sprites actuels (ex-Aksoum et ex-Kemet) : rien à
 redessiner côté couleurs de la carte.
@@ -96,6 +98,32 @@ Objects: the Golden Stool, an akrafena state sword with gold-leaf handle, a stri
 Homeland background: the dense tropical forest of Kumasi with red earth paths and a palace of carved walls.
 ```
 
+## Dahomey
+
+```text
+People: the Kingdom of Dahomey (the Fon people, capital Abomey, in present-day Benin), 17th–19th century, famous for its royal army of women soldiers, the Agojie (also called Mino, "our mothers"), and for the royal appliqué cloths and clay bas-reliefs of the palaces of Abomey.
+Team color: royal violet (#5A2380, #8A3FC4), with gold, white cotton and indigo accents.
+Text: title "Royaume du Dahomey", subtitle "Béhanzin, roi d'Abomey · Agojié · Requin · Abomey".
+Leader: King Béhanzin (Gbèhanzin), a Fon king in his forties, very dark brown skin, round strong face, short black beard and moustache, calm and proud. A large team-violet cloth with white and gold appliqué borders draped toga-style over one shoulder, a small white cotton cap, a silver bracelet, sandals, holding a récade (a carved wooden royal scepter with a curved head inlaid with silver).
+Warriors: three Agojie women soldiers, strong and dignified, very dark brown skin, short hair: one with a short curved sword and a wooden club, a white cotton cap with a small team-violet crocodile emblem, a knee-length sleeveless tunic with team-violet and white vertical stripes, a leather belt; one archer with a bow and a quiver; one with a long spear. Women warriors, not men.
+Emblem: Béhanzin's symbol, a gold shark above an egg, on a team-violet field with a white appliqué border.
+Objects: the récade royal scepter, an Abomey appliqué cloth with animal figures, a royal parasol.
+Homeland background: the royal palace of Abomey with red clay walls decorated with bas-reliefs, palm trees and a red earth courtyard.
+```
+
+## Sosso
+
+```text
+People: the Sosso kingdom (Soso), 12th–13th century, in the Sahel of present-day Mali, a Soninke kingdom of blacksmith kings; its king Soumaoro Kanté, the blacksmith-sorcerer king of the Mande epic, fought Sundiata Keita at the battle of Kirina; his warriors included the dozos, the brotherhood of Mande hunters in mud-cloth tunics covered with amulets.
+Team color: terracotta orange (#8E4214, #D9711E), with bogolan mud-cloth black and cream, ochre and iron grey.
+Text: title "Royaume de Sosso", subtitle "Soumaoro Kanté, roi-forgeron · Dozos · Fer · Balafon".
+Leader: Soumaoro Kanté, an imposing Sahelian king in his fifties, very dark brown skin, strong jaw, short grey-flecked beard, piercing eyes, powerful and mysterious. A tall dark hunter-king cap ornamented with iron and gold, a long team-orange bogolan tunic with black geometric mud-cloth patterns, covered with small leather amulets (gris-gris) and cowrie shells, heavy iron bracelets, holding a staff with an iron head shaped like a blacksmith's hammer.
+Warriors: a dozo hunter with a brown mud-cloth tunic covered with small leather amulets and cowries, a brimmed conical hunter's hat, a bow and a quiver; a Sosso spearman with an iron-headed spear, a round leather shield and a team-orange tunic; a Sahelian horseman with an iron lance and a quilted team-orange horse cloth. Skin dark brown to very dark brown. Bows, spears and lances only, no firearms.
+Emblem: a crossed iron blacksmith hammer and hunting bow above an anvil, on a team-orange field with a black-and-cream bogolan border.
+Objects: the Sosso Bala (a large wooden balafon with gourd resonators), a blacksmith's anvil with tongs, a dozo hunter's tunic covered with amulets.
+Homeland background: the Sahel savanna with baobabs, rocky hills, a village of mud-brick houses and round granaries, the smoke of a forge.
+```
+
 ## Points d'attention
 
 - **Époques** : Koush et Carthage sont antiques ; les Almoravides (XIe–XIIe s.) et l'empire
@@ -107,6 +135,8 @@ Homeland background: the dense tropical forest of Kumasi with red earth paths an
   actuelle « un seul sprite rouge recoloré pour tous » : une fois les planches validées, il
   faudra des sprites et des dessins de combat propres à chaque peuple (voir
   `docs/ajustements.md`).
+- **Dahomey et Sosso** : armes blanches et arcs seulement (pas de fusils), comme pour les
+  Ashanti. L'armée du Dahomey est représentée surtout par des femmes (les Agojié).
 - **Symboles** : pas d'écriture sacrée ni de calligraphie sur les écussons (le modèle
   l'écorcherait) ; motifs géométriques et objets à la place.
 
