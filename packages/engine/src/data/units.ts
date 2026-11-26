@@ -90,14 +90,15 @@ export const UNITS: Readonly<Record<UnitType, UnitStats>> = {
     canCapture: false,
     transport: { capacity: 2, carries: ['fantassin', 'lancier', 'archers'] },
   },
-  // Bateau de guerre et de transport : tire comme une catapulte, porte 3 unités.
+  // Transport maritime : comme le convoi, n'attaque pas et ne riposte pas (portée 0) ; il
+  // encaisse les coups. Porte 3 unités.
   bateau: {
     name: 'Bateau',
     cost: 6000,
     move: 5,
     moveType: 'naval',
-    minRange: 2,
-    maxRange: 3,
+    minRange: 0,
+    maxRange: 0,
     canCapture: false,
     transport: {
       capacity: 3,
@@ -106,7 +107,7 @@ export const UNITS: Readonly<Record<UnitType, UnitStats>> = {
   },
 };
 
-/** Une unité qui peut attaquer (le convoi, lui, ne combat pas). */
+/** Une unité qui peut attaquer (les transports, convoi et bateau, ne combattent pas). */
 export function canAttack(type: UnitType): boolean {
   return UNITS[type].maxRange > 0;
 }

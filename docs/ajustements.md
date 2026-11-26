@@ -61,7 +61,8 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 > Fait (26/11/2026) : 42 planches Codex (convoi de Koush, Carthage et des Almoravides,
 > bateau des 4 peuples) et le décor de mer ; le convoi ashanti reprend le palanquin déjà
 > dessiné. Fiches dans `art/specs/unites.json`, commandes dans `art/codex/commandes/`.
-> Le bateau est dessiné seul et centré ; il tire des volées de flèches.
+> Le bateau est dessiné seul et centré. Règle (26/11/2026) : convoi et bateau sont des
+> transports, ils n'attaquent jamais et ne ripostent pas ; attaqués, ils encaissent.
 
 - Quand un convoi ou un bateau attaque ou est attaqué, un vrai combat dessiné, comme les
   6 autres unités (avant : silhouettes provisoires).
@@ -215,7 +216,7 @@ et garder un rendu fluide.
 > sprites de carte des 4 peuples via Codex, buffle ashanti à la place de leur char.
 > Reste : l'IA qui produit et utilise des convois.
 >
-> Fait (étape 2) : le **bateau** (quota 3, tous types, tir comme une catapulte), la **mer**,
+> Fait (étape 2) : le **bateau** (quota 3, tous types ; n'attaque pas depuis le 26/11/2026), la **mer**,
 > le **port**, la carte « La Côte des Comptoirs » (« Duel sur la côte » sur la page de garde),
 > images via Codex. Reste : l'IA des transports (convoi et bateau). Combats dessinés et décor de mer : faits (§ 0.4).
 

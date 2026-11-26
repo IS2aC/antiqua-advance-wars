@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { canLoad, producesUnit, reachableTiles, targetsInRange } from '../src/index';
-import { C, K, act, errorOf, setup } from './helpers';
+import { C, K, act, errorOf, eventsOfType, setup } from './helpers';
 
 // Côte : terre en haut, mer en bas, un port de Koush sur la côte.
 const COAST = ['..C...', '.P....', 'wwwwww', 'wwwwww'];
@@ -103,7 +103,7 @@ describe('bateau : transport', () => {
 });
 
 describe('bateau : combat', () => {
-  it('tire de 2 à 3 cases, pas après avoir bougé, et sans riposte', () => {
+  it('n’attaque pas : aucune cible, au contact comme à distance', () => {
     const state = setup(['......', 'wwwwww'], {
       units: [
         { type: 'bateau', owner: K, x: 0, y: 1 },
@@ -111,11 +111,41 @@ describe('bateau : combat', () => {
         { type: 'fantassin', owner: C, x: 0, y: 0 },
       ],
     });
-    // Portée 2 à 3 : la cible au contact (distance 1) est hors de portée.
-    expect(targetsInRange(state, 1).map((u) => u.id)).toEqual([2]);
-    const moved = act(state, { type: 'MOVE', unitId: 1, to: { x: 1, y: 1 } }).state;
-    expect(errorOf(moved, { type: 'ATTACK', unitId: 1, targetId: 2 })).toBe(
-      'CANNOT_FIRE_AFTER_MOVING',
+    expect(targetsInRange(state, 1)).toEqual([]);
+    expect(errorOf(state, { type: 'ATTACK', unitId: 1, targetId: 3 })).toBe('TARGET_OUT_OF_RANGE');
+    expect(errorOf(state, { type: 'ATTACK', unitId: 1, targetId: 2 })).toBe('TARGET_OUT_OF_RANGE');
+  });
+
+  it('encaisse les coups sans riposter ; coulé, il emporte ses passagers', () => {
+    let state = setup(['...', 'www'], {
+      units: [
+        { type: 'bateau', owner: K, x: 1, y: 1 },
+        { type: 'fantassin', owner: K, x: 0, y: 1 },
+        { type: 'lancier', owner: C, x: 1, y: 0 },
+      ],
+    });
+    state = act(state, { type: 'LOAD', unitId: 2, transportId: 1 }).state;
+    state = act(state, { type: 'END_TURN' }).state;
+    const hit = act(state, { type: 'ATTACK', unitId: 3, targetId: 1 });
+    expect(eventsOfType(hit.events, 'counterResolved')).toEqual([]);
+    const before = state.units.find((u) => u.id === 1)?.hp ?? 0;
+    expect(hit.state.units.find((u) => u.id === 1)?.hp).toBeLessThan(before);
+    expect(hit.state.units.find((u) => u.id === 3)?.hp).toBe(
+      state.units.find((u) => u.id === 3)?.hp,
     );
+
+    // Presque coulé (1 PV sur 100), le coup suivant le coule, passager compris.
+    const weak = {
+      ...hit.state,
+      units: hit.state.units.map((u) => (u.id === 1 ? { ...u, hp: 1 } : u)),
+    };
+    const next = act(
+      {
+        ...weak,
+        units: weak.units.map((u) => (u.id === 3 ? { ...u, hasActed: false, hasMoved: false } : u)),
+      },
+      { type: 'ATTACK', unitId: 3, targetId: 1 },
+    ).state;
+    expect(next.units.some((u) => u.id === 1 || u.id === 2)).toBe(false);
   });
 });

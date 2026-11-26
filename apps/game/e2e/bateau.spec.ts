@@ -53,8 +53,8 @@ test('sur la côte : un fantassin monte dans un bateau depuis le rivage, puis d�
   await waitForMode(page, 'selected');
   await clickTile(page, 5, 10);
   await waitForMode(page, 'menu');
-  // Le bateau peut tirer : « Débarquer » vient après « Attaquer » s'il y a une cible.
-  await page.keyboard.press('Enter'); // « Débarquer » (aucune cible à portée)
+  // Le bateau n'attaque pas : « Débarquer » est le premier choix.
+  await page.keyboard.press('Enter'); // « Débarquer »
   await page.keyboard.press('Enter'); // seule case de terre voisine
   await waitForMode(page, 'menu');
   await page.keyboard.press('Enter'); // « Attendre »
