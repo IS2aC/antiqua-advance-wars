@@ -23,10 +23,12 @@ const LARGE_UNITS: ReadonlySet<UnitType> = new Set(['cavalerie', 'char', 'catapu
 
 /**
  * Figurants dessinés : un pour 2 PV (5 au plus) ; montures et engins, un pour 4 PV
- * (3 au plus). Les personnages sont grands : 10 à l'écran deviendraient illisibles.
+ * (3 au plus) ; le bateau, trop large pour en mettre plusieurs, un seul tant qu'il flotte.
+ * Les personnages sont grands : 10 à l'écran deviendraient illisibles.
  */
 export function drawnFigureCount(unitType: UnitType, hp: number): number {
   if (hp <= 0) return 0;
+  if (unitType === 'bateau') return 1;
   return LARGE_UNITS.has(unitType) ? Math.ceil(hp / 4) : Math.ceil(hp / 2);
 }
 
@@ -57,11 +59,11 @@ export function decorCandidates(terrain: TerrainType): string[] {
     terrain === 'caserne' ||
     terrain === 'qg'
       ? 'plaine'
-      : // Mer et port : en attendant leur propre décor, celui du fleuve.
-        terrain === 'mer' || terrain === 'port'
-        ? 'riviere'
+      : // Le port donne sur la mer ; sans décor de mer, celui du fleuve.
+        terrain === 'port'
+        ? 'mer'
         : terrain;
-  return [name, 'savane'];
+  return name === 'mer' ? ['mer', 'riviere', 'savane'] : [name, 'savane'];
 }
 
 /**

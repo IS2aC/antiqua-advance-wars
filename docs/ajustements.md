@@ -56,10 +56,15 @@ où elle se branchera dans le code actuel. On la sort de cette liste quand on la
 - Une fois connecté, le joueur voit **combien de joueurs sont en ligne** (compteur sur la
   page de garde). Même service temps réel que le jeu en ligne (présence par WebSocket).
 
-### 0.4 Combats dessinés du convoi et du bateau (images Codex)
+### 0.4 Combats dessinés du convoi et du bateau (images Codex) — fait
+
+> Fait (26/11/2026) : 42 planches Codex (convoi de Koush, Carthage et des Almoravides,
+> bateau des 4 peuples) et le décor de mer ; le convoi ashanti reprend le palanquin déjà
+> dessiné. Fiches dans `art/specs/unites.json`, commandes dans `art/codex/commandes/`.
+> Le bateau est dessiné seul et centré ; il tire des volées de flèches.
 
 - Quand un convoi ou un bateau attaque ou est attaqué, un vrai combat dessiné, comme les
-  6 autres unités (aujourd'hui : silhouettes provisoires).
+  6 autres unités (avant : silhouettes provisoires).
 - Sprites et animations **obligatoirement générés par Codex** (`art/codex/`), jamais à la
   main ni par l'API payante : 2 unités × 4 peuples × 6 planches (poses, repos, attaque,
   charge, chute, sonné). Valider une unité avant de lancer les autres.
@@ -208,13 +213,11 @@ et garder un rendu fluide.
 
 > Fait (étape 1) : le **convoi** (règles dans `docs/game-design.md`), embarquer et débarquer,
 > sprites de carte des 4 peuples via Codex, buffle ashanti à la place de leur char.
-> Reste : l'IA qui produit et utilise des convois ; les combats dessinés du convoi (le
-> palanquin ashanti est archivé dans `art/raw/combat-dessine/archives/`).
+> Reste : l'IA qui produit et utilise des convois.
 >
 > Fait (étape 2) : le **bateau** (quota 3, tous types, tir comme une catapulte), la **mer**,
 > le **port**, la carte « La Côte des Comptoirs » (« Duel sur la côte » sur la page de garde),
-> images via Codex. Reste : l'IA des transports (convoi et bateau), les combats dessinés
-> du convoi et du bateau (silhouettes provisoires), un décor de mer.
+> images via Codex. Reste : l'IA des transports (convoi et bateau). Combats dessinés et décor de mer : faits (§ 0.4).
 
 
 Nouvelles unités de transport, avec **un quota** (nombre d'unités embarquées) pour chacune,

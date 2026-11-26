@@ -544,6 +544,466 @@
       }
     }
   },
+  "convoi": {
+    "nom": "Convoi",
+    "sprite": "art/raw/sprites-unités/peuples/koush/convoi-rouge.png",
+    "sujet": "Kushite transport elephant with its Nubian mahout",
+    "design": "A grey African elephant seen from the side, carrying on its back a wooden howdah cabin with a team-color canopy and gold trim. A Nubian mahout with very dark brown skin, short curly black hair, a team-color headband with one white feather, bare chest, white linen kilt, sits on its neck holding a short goad. No weapons, no soldiers in the cabin. Elephant, howdah and mahout are ONE drawing; the elephant faces right.",
+    "planches": {
+      "poses": [
+        "Idle: the elephant standing calmly, the mahout seated upright, relaxed.",
+        "Urging: the mahout raising the goad, the elephant stepping boldly forward.",
+        "Hit: the elephant shying backward, the mahout thrown back, off balance.",
+        "Defeated: the elephant sinking down, the mahout slumped forward, head lowered."
+      ],
+      "repos": [
+        "The elephant standing, the mahout seated upright.",
+        "The elephant breathing in, head slightly up, the mahout breathing in.",
+        "The elephant shifting its weight, tail swishing, cloth fluttering.",
+        "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Bracing: the elephant planting its feet, the mahout pulling back on the reins. The back feet stay at the same spot in all 4 frames.",
+        "The elephant rearing its head up defiantly, the mahout raising the goad.",
+        "Bluff: the elephant stamping forward with a loud call, the mahout shouting.",
+        "Settling: the elephant back on its feet, the mahout watchful."
+      ],
+      "charge": [
+        "Moving: the elephant walking forward briskly, front leg reaching forward, the mahout leaning forward.",
+        "Moving: legs passing under the body, the elephant slightly higher.",
+        "Getting hit: the elephant jolted, head thrown up, the mahout ducking with eyes squeezed.",
+        "Recoil: the elephant stepping one step backward, the mahout off balance."
+      ],
+      "chute": [
+        "Defeat: the elephant stumbling, the mahout losing grip.",
+        "Down: the elephant lying down, the mahout sitting beside it, head lowered.",
+        "Victory: the elephant standing proudly, the mahout raising both fists.",
+        "Victory cheer: the mahout shouting and waving the goad, the elephant raising its head."
+      ],
+      "sonne": [
+        "Knocked off: the mahout tumbling backward off the elephant, arms flailing, the elephant startled.",
+        "Landing: the mahout sitting on the ground beside the elephant, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+        "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the elephant standing still behind.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "Kushite transport elephant with its Nubian mahout",
+        "design": "A grey African elephant seen from the side, carrying on its back a wooden howdah cabin with a team-color canopy and gold trim. A Nubian mahout with very dark brown skin, short curly black hair, a team-color headband with one white feather, bare chest, white linen kilt, sits on its neck holding a short goad. No weapons, no soldiers in the cabin. Elephant, howdah and mahout are ONE drawing; the elephant faces right.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the elephant standing calmly, the mahout seated upright, relaxed.",
+            "Urging: the mahout raising the goad, the elephant stepping boldly forward.",
+            "Hit: the elephant shying backward, the mahout thrown back, off balance.",
+            "Defeated: the elephant sinking down, the mahout slumped forward, head lowered."
+          ],
+          "repos": [
+            "The elephant standing, the mahout seated upright.",
+            "The elephant breathing in, head slightly up, the mahout breathing in.",
+            "The elephant shifting its weight, tail swishing, cloth fluttering.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Bracing: the elephant planting its feet, the mahout pulling back on the reins. The back feet stay at the same spot in all 4 frames.",
+            "The elephant rearing its head up defiantly, the mahout raising the goad.",
+            "Bluff: the elephant stamping forward with a loud call, the mahout shouting.",
+            "Settling: the elephant back on its feet, the mahout watchful."
+          ],
+          "charge": [
+            "Moving: the elephant walking forward briskly, front leg reaching forward, the mahout leaning forward.",
+            "Moving: legs passing under the body, the elephant slightly higher.",
+            "Getting hit: the elephant jolted, head thrown up, the mahout ducking with eyes squeezed.",
+            "Recoil: the elephant stepping one step backward, the mahout off balance."
+          ],
+          "chute": [
+            "Defeat: the elephant stumbling, the mahout losing grip.",
+            "Down: the elephant lying down, the mahout sitting beside it, head lowered.",
+            "Victory: the elephant standing proudly, the mahout raising both fists.",
+            "Victory cheer: the mahout shouting and waving the goad, the elephant raising its head."
+          ],
+          "sonne": [
+            "Knocked off: the mahout tumbling backward off the elephant, arms flailing, the elephant startled.",
+            "Landing: the mahout sitting on the ground beside the elephant, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the elephant standing still behind.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "carthage": {
+        "sujet": "Carthaginian covered transport carriage pulled by a mule",
+        "design": "A four-wheeled wooden carriage with an enclosed cabin (team-color cloth roof and curtains, the gold sign of Tanit on the side), pulled by one brown mule with a team-color blanket, driven by an olive-skinned driver with short black curly hair and a team-color tunic, seated in front holding the reins and a short goad. No weapons. Mule, carriage and driver are ONE drawing, moving to the right.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the mule standing calmly, the driver seated upright, relaxed.",
+            "Urging: the driver raising the goad, the mule stepping boldly forward.",
+            "Hit: the mule shying backward, the driver thrown back, off balance.",
+            "Defeated: the mule sinking down, the driver slumped forward, head lowered."
+          ],
+          "repos": [
+            "The mule standing, the driver seated upright.",
+            "The mule breathing in, head slightly up, the driver breathing in.",
+            "The mule shifting its weight, tail swishing, cloth fluttering.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Bracing: the mule planting its feet, the driver pulling back on the reins. The back feet stay at the same spot in all 4 frames.",
+            "The mule rearing its head up defiantly, the driver raising the goad.",
+            "Bluff: the mule stamping forward with a loud call, the driver shouting.",
+            "Settling: the mule back on its feet, the driver watchful."
+          ],
+          "charge": [
+            "Moving: the mule walking forward briskly, front leg reaching forward, the driver leaning forward.",
+            "Moving: legs passing under the body, the mule slightly higher.",
+            "Getting hit: the mule jolted, head thrown up, the driver ducking with eyes squeezed.",
+            "Recoil: the mule stepping one step backward, the driver off balance."
+          ],
+          "chute": [
+            "Defeat: the mule stumbling, the driver losing grip.",
+            "Down: the mule lying down, the driver sitting beside it, head lowered.",
+            "Victory: the mule standing proudly, the driver raising both fists.",
+            "Victory cheer: the driver shouting and waving the goad, the mule raising its head."
+          ],
+          "sonne": [
+            "Knocked off: the driver tumbling backward off the mule, arms flailing, the mule startled.",
+            "Landing: the driver sitting on the ground beside the mule, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the mule standing still behind.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "almoravides": {
+        "sujet": "Almoravid camel transport with its veiled rider",
+        "design": "A tan dromedary carrying on its hump a covered cabin saddle (a small rounded tent of team-color cloth with a white fringe on a wooden frame), with a veiled rider seated in front of the cabin: deep indigo-blue litham veil (#36427F) covering the lower face, team-color turban, white robe, brown sandals, holding a short stick. No weapons. Camel, cabin and rider are ONE drawing; the camel faces right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the camel standing calmly, the rider seated upright, relaxed.",
+            "Urging: the rider raising the goad, the camel stepping boldly forward.",
+            "Hit: the camel shying backward, the rider thrown back, off balance.",
+            "Defeated: the camel sinking down, the rider slumped forward, head lowered."
+          ],
+          "repos": [
+            "The camel standing, the rider seated upright.",
+            "The camel breathing in, head slightly up, the rider breathing in.",
+            "The camel shifting its weight, tail swishing, cloth fluttering.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Bracing: the camel planting its feet, the rider pulling back on the reins. The back feet stay at the same spot in all 4 frames.",
+            "The camel rearing its head up defiantly, the rider raising the goad.",
+            "Bluff: the camel stamping forward with a loud call, the rider shouting.",
+            "Settling: the camel back on its feet, the rider watchful."
+          ],
+          "charge": [
+            "Moving: the camel walking forward briskly, front leg reaching forward, the rider leaning forward.",
+            "Moving: legs passing under the body, the camel slightly higher.",
+            "Getting hit: the camel jolted, head thrown up, the rider ducking with eyes squeezed.",
+            "Recoil: the camel stepping one step backward, the rider off balance."
+          ],
+          "chute": [
+            "Defeat: the camel stumbling, the rider losing grip.",
+            "Down: the camel lying down, the rider sitting beside it, head lowered.",
+            "Victory: the camel standing proudly, the rider raising both fists.",
+            "Victory cheer: the rider shouting and waving the goad, the camel raising its head."
+          ],
+          "sonne": [
+            "Knocked off: the rider tumbling backward off the camel, arms flailing, the camel startled.",
+            "Landing: the rider sitting on the ground beside the camel, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile; the camel standing still behind.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante (Ashanti) war chief carried in a royal palanquin by two bearers",
+        "design": "A gold-and-wood palanquin carried on two long poles by two bearers, one in front and one behind, the poles resting on their shoulders. Above it, a large team-color ceremonial umbrella with a gold fringe and a gold finial. The chief sits in the palanquin: very dark brown skin, a gold-and-black crown band, heavy gold necklaces, a team-color kente toga with black and gold stripes over one shoulder, holding a spear with a gold spearhead. The palanquin side has a gold adinkra emblem on a team-color panel. The bearers: very dark brown skin, a gold headband, a team-color loincloth, bare chest. Palanquin, chief and bearers are ONE drawing, moving to the right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the two bearers stand still with the poles on their shoulders, the chief seated upright in the palanquin under the umbrella, spear held up.",
+            "Attack: the bearers lunge forward, the chief leans out of the palanquin and thrusts the spear forward.",
+            "Hit: the bearers stagger backward, the palanquin tilting, the chief thrown back, off balance.",
+            "Defeated: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, head lowered."
+          ],
+          "repos": [
+            "The bearers stand still with the poles on their shoulders, the chief seated upright, spear held up.",
+            "The bearers shift their weight a little, the chief breathing in.",
+            "The umbrella fringe sways, the chief's toga moves slightly.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Anticipation: the chief pulls the spear back, the bearers brace. The bearers' back feet stay at the same spot in all 4 frames.",
+            "Motion smear frame: the chief lunges out of the palanquin, the spear stretched into a fast elongated shape with a few speed lines.",
+            "Full extension: spear thrust forward, the chief shouting, the bearers leaning forward.",
+            "Follow-through: the chief settling back into his seat, spear tip lowering."
+          ],
+          "charge": [
+            "Running: the two bearers run forward in step carrying the palanquin, the chief leaning forward with the spear forward.",
+            "Running: the bearers' feet passing under their bodies, the palanquin bouncing slightly.",
+            "Getting hit: the bearers jolted, the palanquin tilting back, the chief thrown back, eyes squeezed.",
+            "Recoil: the bearers stumbling one step backward, the chief off balance, spear still in hand."
+          ],
+          "chute": [
+            "Defeat: the bearers stumbling, the palanquin tilting, the chief losing grip.",
+            "Down: the bearers kneeling, the palanquin resting tilted on the ground, the chief slumped over its side, spear lying on the ground.",
+            "Victory: the chief standing up in the palanquin raising the spear high, the bearers cheering.",
+            "Victory shout: the chief shouting with the spear raised, the bearers raising a fist."
+          ],
+          "sonne": [
+            "Thrown out: the chief tumbling backward out of the palanquin, arms flailing, the bearers startled.",
+            "Landing: the chief sitting on the ground in front of the palanquin, legs stretched forward, his crown band tilted over one eye; the bearers stand still behind him holding the palanquin.",
+            "Dazed: the chief still sitting, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      }
+    }
+  },
+  "bateau": {
+    "nom": "Bateau",
+    "sprite": "art/raw/sprites-unités/peuples/koush/bateau-rouge.png",
+    "sujet": "Kushite Nile war boat with its Nubian archer crew",
+    "design": "A long wooden river boat seen from the side, with a high curved prow decorated with a gold ram head, one large square team-color sail on a mast, and two Nubian archers on deck: very dark brown skin, short curly black hair, team-color headbands with a white feather, white linen kilts, holding bows. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Boat and crew are ONE drawing; the prow points right.",
+    "planches": {
+      "poses": [
+        "Idle: the ship afloat, sail full, the two Nubian archers on deck ready with their bows.",
+        "Attack: the two Nubian archers loosing arrows upward to the right, the ship leaning slightly forward.",
+        "Hit: the ship rocking backward, sail flapping, the two Nubian archers ducking.",
+        "Defeated: the ship listing to one side, sail torn and sagging, the two Nubian archers slumped on deck."
+      ],
+      "repos": [
+        "The ship afloat, sail full.",
+        "The ship bobbing up a little, sail swelling.",
+        "The ship bobbing down a little, pennant fluttering the other way.",
+        "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+      ],
+      "attaque": [
+        "Draw: the two Nubian archers drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+        "Release: the two Nubian archers loosing the arrows, a few speed lines.",
+        "The arrows flying away upward to the right, bows still raised.",
+        "Follow-through: the two Nubian archers reaching for new arrows, the ship steady."
+      ],
+      "charge": [
+        "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+        "Sailing forward: prow slightly lowered, sail full.",
+        "Getting hit: the ship jolted, mast swaying, the two Nubian archers ducking with eyes squeezed.",
+        "Recoil: the ship pushed back and tilted, the two Nubian archers off balance."
+      ],
+      "chute": [
+        "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+        "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+        "Victory: the ship upright, sail full, the two Nubian archers raising their bows high.",
+        "Victory cheer: the two Nubian archers shouting and waving, pennant flying."
+      ],
+      "sonne": [
+        "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+        "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+        "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+        "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+      ]
+    },
+    "peuples": {
+      "koush": {
+        "sujet": "Kushite Nile war boat with its Nubian archer crew",
+        "design": "A long wooden river boat seen from the side, with a high curved prow decorated with a gold ram head, one large square team-color sail on a mast, and two Nubian archers on deck: very dark brown skin, short curly black hair, team-color headbands with a white feather, white linen kilts, holding bows. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Boat and crew are ONE drawing; the prow points right.",
+        "peau": {
+          "base": "#7A4420",
+          "ombre": "#5A2E14"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ship afloat, sail full, the two Nubian archers on deck ready with their bows.",
+            "Attack: the two Nubian archers loosing arrows upward to the right, the ship leaning slightly forward.",
+            "Hit: the ship rocking backward, sail flapping, the two Nubian archers ducking.",
+            "Defeated: the ship listing to one side, sail torn and sagging, the two Nubian archers slumped on deck."
+          ],
+          "repos": [
+            "The ship afloat, sail full.",
+            "The ship bobbing up a little, sail swelling.",
+            "The ship bobbing down a little, pennant fluttering the other way.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Draw: the two Nubian archers drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+            "Release: the two Nubian archers loosing the arrows, a few speed lines.",
+            "The arrows flying away upward to the right, bows still raised.",
+            "Follow-through: the two Nubian archers reaching for new arrows, the ship steady."
+          ],
+          "charge": [
+            "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+            "Sailing forward: prow slightly lowered, sail full.",
+            "Getting hit: the ship jolted, mast swaying, the two Nubian archers ducking with eyes squeezed.",
+            "Recoil: the ship pushed back and tilted, the two Nubian archers off balance."
+          ],
+          "chute": [
+            "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+            "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+            "Victory: the ship upright, sail full, the two Nubian archers raising their bows high.",
+            "Victory cheer: the two Nubian archers shouting and waving, pennant flying."
+          ],
+          "sonne": [
+            "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+            "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "carthage": {
+        "sujet": "Punic war galley of Carthage with its marines",
+        "design": "A wooden war galley seen from the side, with a row of oars along its hull, a bronze ram at the bow, a curved stern, one square team-color sail with the gold sign of Tanit, an olive-skinned helmsman at the stern wearing a gold-bronze crested helmet with a team-color crest, and two olive-skinned marines on deck with team-color tunics holding bows. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Galley and crew are ONE drawing; the bow points right.",
+        "peau": {
+          "base": "#A86B3C",
+          "ombre": "#7E4C26"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ship afloat, sail full, the two marines on deck ready with their bows.",
+            "Attack: the two marines loosing arrows upward to the right, the ship leaning slightly forward.",
+            "Hit: the ship rocking backward, sail flapping, the two marines ducking.",
+            "Defeated: the ship listing to one side, sail torn and sagging, the two marines slumped on deck."
+          ],
+          "repos": [
+            "The ship afloat, sail full.",
+            "The ship bobbing up a little, sail swelling.",
+            "The ship bobbing down a little, pennant fluttering the other way.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Draw: the two marines drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+            "Release: the two marines loosing the arrows, a few speed lines.",
+            "The arrows flying away upward to the right, bows still raised.",
+            "Follow-through: the two marines reaching for new arrows, the ship steady."
+          ],
+          "charge": [
+            "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+            "Sailing forward: prow slightly lowered, sail full.",
+            "Getting hit: the ship jolted, mast swaying, the two marines ducking with eyes squeezed.",
+            "Recoil: the ship pushed back and tilted, the two marines off balance."
+          ],
+          "chute": [
+            "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+            "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+            "Victory: the ship upright, sail full, the two marines raising their bows high.",
+            "Victory cheer: the two marines shouting and waving, pennant flying."
+          ],
+          "sonne": [
+            "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+            "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "almoravides": {
+        "sujet": "Almoravid dhow with its veiled sailors",
+        "design": "A wooden sailing ship seen from the side, with one large triangular lateen team-color sail with a white trim, a raised stern, a veiled sailor at the tiller and a veiled archer on deck: deep indigo-blue litham veils (#36427F) over the lower face, team-color turbans, white robes, the archer holding a bow. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Ship and crew are ONE drawing; the bow points right.",
+        "peau": {
+          "base": "#8E5A34",
+          "ombre": "#6A3F22"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ship afloat, sail full, the veiled archer on deck ready with their bows.",
+            "Attack: the veiled archer loosing arrows upward to the right, the ship leaning slightly forward.",
+            "Hit: the ship rocking backward, sail flapping, the veiled archer ducking.",
+            "Defeated: the ship listing to one side, sail torn and sagging, the veiled archer slumped on deck."
+          ],
+          "repos": [
+            "The ship afloat, sail full.",
+            "The ship bobbing up a little, sail swelling.",
+            "The ship bobbing down a little, pennant fluttering the other way.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Draw: the veiled archer drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+            "Release: the veiled archer loosing the arrows, a few speed lines.",
+            "The arrows flying away upward to the right, bows still raised.",
+            "Follow-through: the veiled archer reaching for new arrows, the ship steady."
+          ],
+          "charge": [
+            "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+            "Sailing forward: prow slightly lowered, sail full.",
+            "Getting hit: the ship jolted, mast swaying, the veiled archer ducking with eyes squeezed.",
+            "Recoil: the ship pushed back and tilted, the veiled archer off balance."
+          ],
+          "chute": [
+            "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+            "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+            "Victory: the ship upright, sail full, the veiled archer raising their bows high.",
+            "Victory cheer: the veiled archer shouting and waving, pennant flying."
+          ],
+          "sonne": [
+            "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+            "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      },
+      "ashanti": {
+        "sujet": "Asante war canoe with its paddlers and archers",
+        "design": "A very long carved wooden dugout canoe seen from the side, with gold ornaments on the prow, a team-color kente canopy in the middle, and a crew of Asante warriors with very dark brown skin, gold headbands and team-color kente waist cloths: one paddler at the stern with a paddle, two archers in front holding bows. The hull bottom sits on an invisible straight waterline at the bottom of the drawing: draw NO water, no waves, no splash under it (the sea is in the background painting). Canoe and crew are ONE drawing; the prow points right.",
+        "peau": {
+          "base": "#6A3A1C",
+          "ombre": "#4A2711"
+        },
+        "planches": {
+          "poses": [
+            "Idle: the ship afloat, sail full, the two Asante archers on deck ready with their bows.",
+            "Attack: the two Asante archers loosing arrows upward to the right, the ship leaning slightly forward.",
+            "Hit: the ship rocking backward, sail flapping, the two Asante archers ducking.",
+            "Defeated: the ship listing to one side, sail torn and sagging, the two Asante archers slumped on deck."
+          ],
+          "repos": [
+            "The ship afloat, sail full.",
+            "The ship bobbing up a little, sail swelling.",
+            "The ship bobbing down a little, pennant fluttering the other way.",
+            "Back almost to the first frame. Subtle idle loop: the changes between the 4 frames are small."
+          ],
+          "attaque": [
+            "Draw: the two Asante archers drawing their bows, aiming upward to the right. The hull stays at the same spot in all 4 frames.",
+            "Release: the two Asante archers loosing the arrows, a few speed lines.",
+            "The arrows flying away upward to the right, bows still raised.",
+            "Follow-through: the two Asante archers reaching for new arrows, the ship steady."
+          ],
+          "charge": [
+            "Sailing forward: sail full, prow slightly raised, a few speed lines behind the stern.",
+            "Sailing forward: prow slightly lowered, sail full.",
+            "Getting hit: the ship jolted, mast swaying, the two Asante archers ducking with eyes squeezed.",
+            "Recoil: the ship pushed back and tilted, the two Asante archers off balance."
+          ],
+          "chute": [
+            "Defeat: the ship tilting hard, the mast cracking, the crew losing grip.",
+            "Down: the ship listing, sail torn, the crew slumped on deck, heads lowered.",
+            "Victory: the ship upright, sail full, the two Asante archers raising their bows high.",
+            "Victory cheer: the two Asante archers shouting and waving, pennant flying."
+          ],
+          "sonne": [
+            "Knocked back: one crewman tumbling backward on the deck, arms flailing, the ship rocking.",
+            "Landing: the crewman sitting on the deck, legs stretched forward, hair messed up over one eye (do not add any headgear he does not wear).",
+            "Dazed: still sitting on deck, upper body swaying to the left, dizzy half-closed eyes, silly dazed smile.",
+            "Dazed: same sitting position, upper body swaying to the right, same dizzy face."
+          ]
+        }
+      }
+    }
+  },
   "_archives": {
     "ashanti-palanquin": {
       "sujet": "Asante (Ashanti) war chief carried in a royal palanquin by two bearers",

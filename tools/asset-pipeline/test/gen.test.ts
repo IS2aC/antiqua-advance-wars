@@ -81,7 +81,8 @@ describe('prompts', () => {
   });
   it('liste les poses avant les séquences, puis portraits et décors', () => {
     const jobs = planJobs(specs, ALL, COMBAT_UNITS, PEOPLES, UNIT_SHEETS);
-    expect(jobs.filter((job) => job.kind === 'unit')).toHaveLength(36);
+    // 8 unités (dont convoi et bateau) × 6 planches communes.
+    expect(jobs.filter((job) => job.kind === 'unit')).toHaveLength(48);
     expect(jobs.filter((job) => job.kind === 'portrait')).toHaveLength(4);
     expect(jobs[0]).toMatchObject({
       id: 'unites/fantassin/poses',

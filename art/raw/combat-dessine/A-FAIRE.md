@@ -3,7 +3,7 @@
 > Fichier généré par `pnpm assets:dessin` : ne pas le modifier à la main.
 > Génération automatique : `pnpm art:generer` (fiches dans `art/specs/`, règles dans `docs/proto-combat.md`).
 
-**Planches communes : 0 / 36** · portraits : 0 / 4 · décors : 8
+**Planches communes : 0 / 48** · portraits : 0 / 4 · décors : 9
 
 Comme les sprites de la carte, chaque unité est dessinée une seule fois, en rouge, dans
 `unites/<unité>/` (6 fichiers aux noms fixes), puis recolorée pour chaque peuple.
@@ -17,6 +17,8 @@ Entre parenthèses : une planche propre à un peuple, sans version commune.
 | Cavalerie | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) |
 | Char | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) |
 | Catapulte | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) |
+| Convoi | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) |
+| Bateau | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) | (Koush, Carthage, Ashanti, Almoravides) |
 
 ## Planches propres à un peuple (`peuples/<peuple>/<unité>/`)
 
@@ -166,6 +168,54 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 - `peuples/carthage/catapulte/sonne`
 - `peuples/ashanti/catapulte/sonne`
 - `peuples/almoravides/catapulte/sonne`
+- `peuples/koush/convoi/poses`
+- `peuples/carthage/convoi/poses`
+- `peuples/ashanti/convoi/poses`
+- `peuples/almoravides/convoi/poses`
+- `peuples/koush/convoi/repos`
+- `peuples/carthage/convoi/repos`
+- `peuples/ashanti/convoi/repos`
+- `peuples/almoravides/convoi/repos`
+- `peuples/koush/convoi/attaque`
+- `peuples/carthage/convoi/attaque`
+- `peuples/ashanti/convoi/attaque`
+- `peuples/almoravides/convoi/attaque`
+- `peuples/koush/convoi/charge`
+- `peuples/carthage/convoi/charge`
+- `peuples/ashanti/convoi/charge`
+- `peuples/almoravides/convoi/charge`
+- `peuples/koush/convoi/chute`
+- `peuples/carthage/convoi/chute`
+- `peuples/ashanti/convoi/chute`
+- `peuples/almoravides/convoi/chute`
+- `peuples/koush/convoi/sonne`
+- `peuples/carthage/convoi/sonne`
+- `peuples/ashanti/convoi/sonne`
+- `peuples/almoravides/convoi/sonne`
+- `peuples/koush/bateau/poses`
+- `peuples/carthage/bateau/poses`
+- `peuples/ashanti/bateau/poses`
+- `peuples/almoravides/bateau/poses`
+- `peuples/koush/bateau/repos`
+- `peuples/carthage/bateau/repos`
+- `peuples/ashanti/bateau/repos`
+- `peuples/almoravides/bateau/repos`
+- `peuples/koush/bateau/attaque`
+- `peuples/carthage/bateau/attaque`
+- `peuples/ashanti/bateau/attaque`
+- `peuples/almoravides/bateau/attaque`
+- `peuples/koush/bateau/charge`
+- `peuples/carthage/bateau/charge`
+- `peuples/ashanti/bateau/charge`
+- `peuples/almoravides/bateau/charge`
+- `peuples/koush/bateau/chute`
+- `peuples/carthage/bateau/chute`
+- `peuples/ashanti/bateau/chute`
+- `peuples/almoravides/bateau/chute`
+- `peuples/koush/bateau/sonne`
+- `peuples/carthage/bateau/sonne`
+- `peuples/ashanti/bateau/sonne`
+- `peuples/almoravides/bateau/sonne`
 
 ## Portraits (`portraits/<peuple>.png`)
 
@@ -173,4 +223,4 @@ Prioritaires sur la planche commune pour ce peuple ; dessinées en rouge et reco
 
 ## Décors (`decors/<nom>.png`)
 
-colline · desert · foret · marais · montagne · plaine · riviere · savane
+colline · desert · foret · marais · mer · montagne · plaine · riviere · savane

@@ -30,6 +30,8 @@ export const COMBAT_UNITS: readonly UnitType[] = [
   'cavalerie',
   'char',
   'catapulte',
+  'convoi',
+  'bateau',
 ];
 
 /** Décors attendus. route → plaine et pont → riviere, côté jeu. */
@@ -41,6 +43,7 @@ export const DECOR_TERRAINS = [
   'desert',
   'marais',
   'riviere',
+  'mer',
   'village',
   'caserne',
   'qg',
