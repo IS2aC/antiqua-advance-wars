@@ -213,18 +213,34 @@ export class BattleController {
     this.pointAt({ x: Math.floor(worldX / T), y: Math.floor(worldY / T) }, 0);
   }
 
-  onPointerDown(worldX: number, worldY: number, rightButton: boolean): void {
+  /**
+   * Clic (ou toucher) sur la carte. `rightButton` : clic droit ou appui long, qui annule.
+   * Au doigt (`touch`), viser une cible demande deux touchers : le premier montre la
+   * prévision du combat, le second attaque (une attaque ne s'annule pas).
+   */
+  onPointerDown(worldX: number, worldY: number, rightButton: boolean, touch = false): void {
     if (this.mode === 'ai' || this.mode === 'remote' || this.mode === 'paused') return;
-    if (rightButton) {
+    // Clic droit, appui long, ou clic hors d'un menu : on annule.
+    if (rightButton || this.mode === 'menu') {
       if (this.mode === 'menu') this.views.menu.cancel();
       else this.cancel();
       return;
     }
-    if (this.mode === 'menu') return;
     const tile = { x: Math.floor(worldX / T), y: Math.floor(worldY / T) };
     if (!inBounds(this.state.map, tile.x, tile.y)) return;
+    const aimed = same(tile, this.views.cursor.position);
     this.pointAt(tile, 0);
+    if (touch && this.mode === 'targeting' && !aimed) return;
     void this.confirm(tile);
+  }
+
+  /** Glisser la carte au doigt : la caméra suit (dans les limites de la carte). */
+  onDrag(dx: number, dy: number): void {
+    if (this.mode === 'paused' || this.mode === 'over') return;
+    this.cameraTween?.stop();
+    this.cameraTween = null;
+    const camera = this.scene.cameras.main;
+    camera.setScroll(camera.scrollX - dx, camera.scrollY - dy);
   }
 
   /**
