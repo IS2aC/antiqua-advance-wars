@@ -3,8 +3,9 @@ import { LOGICAL_HEIGHT, LOGICAL_WIDTH } from '../config';
 import { GRID, panel } from '../ui/panels';
 import { pinToScreen, uiText } from './text';
 
-const WIDTH = LOGICAL_WIDTH - GRID * 8;
 const HEIGHT = GRID * 6;
+/** Largeur du bandeau : la taille logique n'est connue qu'au lancement du jeu. */
+const bannerWidth = () => LOGICAL_WIDTH - GRID * 8;
 
 /** Bandeau « Jour N — Koush » entre les tours. */
 export class TurnBanner {
@@ -13,6 +14,7 @@ export class TurnBanner {
   private readonly label: Phaser.GameObjects.Text;
 
   constructor(private readonly scene: Phaser.Scene) {
+    const WIDTH = bannerWidth();
     const background = panel(scene, 0, 0, WIDTH, HEIGHT);
     // Liserés à la couleur du camp qui commence son tour.
     this.stripes = [GRID, HEIGHT - GRID - 2].map((y) =>
@@ -30,7 +32,7 @@ export class TurnBanner {
 
   /** Fait glisser le bandeau, le garde `holdMs` ms, puis le retire. */
   show(text: string, color: number, holdMs = 900): Promise<void> {
-    const baseX = (LOGICAL_WIDTH - WIDTH) / 2;
+    const baseX = (LOGICAL_WIDTH - bannerWidth()) / 2;
     this.label.setText(text);
     for (const stripe of this.stripes) stripe.setFillStyle(color);
     this.container

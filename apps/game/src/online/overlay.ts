@@ -10,7 +10,7 @@ export interface OnlineOverlay {
 }
 
 const STYLE = `
-.enligne-bandeau { position: fixed; top: 8px; left: 50%; transform: translateX(-50%);
+.enligne-bandeau { position: fixed; top: calc(8px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 10;
   font: 600 14px/1.3 system-ui, sans-serif; color: #f6ead2; pointer-events: none; }
 .enligne-bandeau > * { pointer-events: auto; background: rgba(26, 20, 16, 0.92);

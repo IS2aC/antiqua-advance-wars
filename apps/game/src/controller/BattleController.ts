@@ -28,7 +28,7 @@ import {
   type Unit,
   type UnitType,
 } from '@antiqua/engine';
-import { TILE_SIZE, VIEW_TILES_X, VIEW_TILES_Y } from '../config';
+import { TILE_SIZE } from '../config';
 import type { EventPlayer } from '../animation/EventPlayer';
 import { combatSetting, loadOptions, saveOptions, withCombatSetting } from '../persistence/options';
 import type { RemoteSession } from '../online/session';
@@ -299,8 +299,9 @@ export class BattleController {
       else if (value > first + view - 1 - margin) target = value - view + 1 + margin;
       return Math.max(0, Math.min(size - view, target)) * T;
     };
-    const scrollX = fit(tile.x, camera.scrollX, VIEW_TILES_X, width);
-    const scrollY = fit(tile.y, camera.scrollY, VIEW_TILES_Y, height);
+    // Cases entièrement visibles : la vue suit l'écran (moins de cases sur téléphone).
+    const scrollX = fit(tile.x, camera.scrollX, Math.floor(camera.width / T), width);
+    const scrollY = fit(tile.y, camera.scrollY, Math.floor(camera.height / T), height);
     if (scrollX === camera.scrollX && scrollY === camera.scrollY) return { x: scrollX, y: scrollY };
     this.cameraTween?.stop();
     this.cameraTween = this.scene.tweens.add({

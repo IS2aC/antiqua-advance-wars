@@ -1,10 +1,18 @@
 import Phaser from 'phaser';
-import { BACKGROUND_COLOR, LOGICAL_HEIGHT, LOGICAL_WIDTH, integerZoom } from './config';
+import {
+  BACKGROUND_COLOR,
+  LOGICAL_HEIGHT,
+  LOGICAL_WIDTH,
+  chooseView,
+  configureView,
+  displayZoom,
+} from './config';
 import { CaptureScene } from './combat/CaptureScene';
 import { BattleScene } from './scenes/BattleScene';
 import { TitleScene } from './scenes/TitleScene';
 import { startProtoBench } from './drawn/ProtoBench';
 import { loadFonts } from './ui/font';
+import { fullscreenOnFirstTouch, measureScreen, waitForLandscape } from './ui/screen';
 import { fetchMe } from './compte/api';
 import { goToCover, setOnlineStart } from './launch';
 import { createOnlineOverlay } from './online/overlay';
@@ -41,10 +49,16 @@ if (params.get('mode') === 'enligne') {
 if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('mode') === 'proto') {
   startProtoBench();
 } else {
+  await waitForLandscape();
   startGame();
 }
 
 function startGame(): void {
+  // Taille logique choisie une fois, d'après l'écran (téléphone : moins de cases, plus
+  // grandes) ; ensuite, seul le zoom suit la fenêtre.
+  const view = chooseView(measureScreen());
+  configureView(view.width, view.height);
+  fullscreenOnFirstTouch();
   const game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'game',
@@ -55,14 +69,14 @@ function startGame(): void {
     roundPixels: true,
     scale: {
       mode: Phaser.Scale.NONE,
-      zoom: integerZoom(window.innerWidth, window.innerHeight),
+      zoom: displayZoom(measureScreen()),
     },
     // Combat et capture en dernier : ces scènes s'affichent par-dessus la bataille.
     scene: [TitleScene, BattleScene, CaptureScene],
   });
 
   window.addEventListener('resize', () => {
-    game.scale.setZoom(integerZoom(window.innerWidth, window.innerHeight));
+    game.scale.setZoom(displayZoom(measureScreen()));
   });
 
   // Développement uniquement : accès au jeu depuis la console et les tests de bout en bout.
