@@ -57,7 +57,9 @@ Monorepo pnpm :
 
 - Phaser 4.2.1 est patché (`patches/phaser@4.2.1.patch`, `pnpm patch`) : le shader de teinte divisait par un alpha nul (0/0) sur les pixels transparents, ce qui affichait des carrés noirs derrière les sprites sur les vieux iPhone/iPad (issue phaserjs/phaser#7392). À retirer quand une version de Phaser intègre le correctif.
 - `TILE_SIZE = 32` (constante unique dans `apps/game/src/config.ts`, jamais de 32 en dur ailleurs).
-- Résolution logique 640×384 (20×12 cases), zoom **entier** uniquement (×1, ×2, ×3), `pixelArt: true`, `roundPixels: true`.
+- Résolution logique choisie au lancement d'après l'écran (`chooseView`, `config.ts`) : jusqu'à 640×384 (20×12 cases) sur ordinateur, moins de cases mais plus grandes au doigt sur téléphone (au moins 8 cases de haut). Zoom **entier en pixels physiques** (`zoom / devicePixelRatio` en pixels CSS), `pixelArt: true`, `roundPixels: true`. `LOGICAL_WIDTH`/`LOGICAL_HEIGHT` ne se lisent qu'au moment de dessiner, jamais au chargement d'un module.
+- Téléphone : paysage seulement (`jeu.html` affiche « Tourne ton téléphone » en portrait, le jeu attend le paysage pour démarrer), marges d'encoche (`env(safe-area-inset-*)`), plein écran au premier toucher là où le navigateur le permet (`src/ui/screen.ts`).
+- Gestes au doigt (`src/input/touch.ts`) : toucher = clic, glisser = déplacer la carte, appui long = clic droit (annuler). Viser une cible au doigt demande deux touchers (prévision, puis attaque). Toucher ou cliquer hors d'un menu l'annule. La souris garde ses événements (`BattleScene`), le doigt n'a pas de survol.
 
 ## Conventions
 

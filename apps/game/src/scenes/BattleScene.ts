@@ -26,6 +26,7 @@ import { PathArrow } from '../view/PathArrow';
 import { RangeOverlay } from '../view/RangeOverlay';
 import { TurnBanner } from '../view/TurnBanner';
 import { UnitLayer } from '../view/UnitLayer';
+import { setupTouch } from '../input/touch';
 
 export interface BattleData {
   /** Partie sauvegardée à reprendre ; sinon, nouvelle partie. */
@@ -126,7 +127,10 @@ export class BattleScene extends Phaser.Scene {
     const input = controller;
 
     this.input.mouse?.disableContextMenu();
+    setupTouch(this, controller);
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      // Au doigt, pas de survol : le curseur suit les touchers (setupTouch).
+      if (pointer.wasTouch) return;
       // Survoler le HUD ou un menu ne déplace pas le curseur de case.
       if (this.input.hitTestPointer(pointer).length > 0) return;
       input.onPointerMove(pointer.worldX, pointer.worldY);
@@ -134,6 +138,7 @@ export class BattleScene extends Phaser.Scene {
     this.input.on(
       'pointerdown',
       (pointer: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => {
+        if (pointer.wasTouch) return;
         // Un clic sur un menu ou un bouton ne compte pas comme un clic sur la carte.
         if (over.length > 0 && !pointer.rightButtonDown()) return;
         input.onPointerDown(pointer.worldX, pointer.worldY, pointer.rightButtonDown());
