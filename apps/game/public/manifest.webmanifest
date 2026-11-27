@@ -1,0 +1,23 @@
+{
+  "name": "Alkébulan — Rise of Kingdoms",
+  "short_name": "Alkébulan",
+  "description": "Tactique au tour par tour en Afrique : six royaumes s'affrontent.",
+  "lang": "fr",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#341e0f",
+  "theme_color": "#341e0f",
+  "icons": [
+    { "src": "assets/garde/icones/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/garde/icones/icone-512.png", "sizes": "512x512", "type": "image/png" },
+    {
+      "src": "assets/garde/icones/icone-masquable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

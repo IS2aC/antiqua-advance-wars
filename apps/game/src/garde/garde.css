@@ -355,6 +355,56 @@ body {
   color: var(--muted);
 }
 
+/* ——— Installer le jeu (écran d'accueil) ——— */
+
+.installer {
+  margin-top: 1rem;
+}
+
+.installer__bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gold-border);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--noble-brown);
+  font: 700 0.875rem var(--font-ui);
+  cursor: pointer;
+}
+
+.installer__bouton svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.installer__bouton:hover,
+.installer__bouton:focus-visible {
+  background: var(--ivory);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.35);
+}
+
+.installer__aide {
+  max-width: 22rem;
+  margin: 0.6rem auto 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--noble-brown);
+}
+
+.installer__bouton[hidden],
+.installer__aide[hidden] {
+  display: none;
+}
+
 /* ——— Écrans étroits et portrait : l'illustration passe au-dessus ——— */
 
 @media (max-width: 860px), (orientation: portrait) {

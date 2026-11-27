@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Alkébulan — Rise of Kingdoms</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/garde/icones/favicon-32.png" />
+    <link rel="apple-touch-icon" href="./assets/garde/icones/apple-touch-icon.png" />
+    <!-- iPhone : écran d'accueil sans barre du navigateur (le jeu gère les marges d'encoche). -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Alkébulan" />
     <meta
       name="description"
       content="Tactique au tour par tour en Afrique : six royaumes, de Koush au Dahomey, s'affrontent pour le Gué du Nil."
@@ -182,6 +190,25 @@
               <span class="action__detail">tiens ton QG face aux vagues</span>
             </a>
           </nav>
+
+          <div class="installer">
+            <button
+              class="installer__bouton"
+              type="button"
+              id="installer"
+              aria-expanded="false"
+              hidden
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+              </svg>
+              Installer le jeu
+            </button>
+            <p class="installer__aide" id="installer-aide" hidden>
+              Dans Safari, touche <strong>Partager</strong> puis
+              <strong>« Sur l’écran d’accueil »</strong> : le jeu s’ouvrira en plein écran.
+            </p>
+          </div>
 
           <p class="garde__hint">
             Souris ou clavier : flèches pour déplacer le curseur, Entrée pour valider, Échap pour

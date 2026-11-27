@@ -8,6 +8,9 @@
  * Écran de choix du peuple : portrait du dirigeant découpé dans la planche du peuple
  * (`art/reference/peuples/<peuple>.png`) et écusson (`art/static/peuples/<peuple>-ecusson.png`,
  * fond blanc rendu transparent) → `peuples/<peuple>-roi.webp` et `-ecusson.webp`.
+ *
+ * Icônes de l'application installée (manifeste `public/manifest.webmanifest`) et de l'onglet :
+ * le logo sur fond brun → `icones/*.png`.
  */
 import { mkdir, stat } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -88,9 +91,42 @@ async function writePeoples(): Promise<void> {
   }
 }
 
+/** Fond des icônes : le brun sombre de la page de garde (`--dark-brown`). */
+const ICON_BACKGROUND = { r: 52, g: 30, b: 15, alpha: 1 };
+
+/**
+ * `size` : côté de l'icône ; `logo` : largeur du logo, en part du côté. L'icône « masquable »
+ * (Android la découpe en cercle ou en goutte) garde le logo dans les 80 % du centre.
+ */
+const ICONS: readonly { output: string; size: number; logo: number }[] = [
+  { output: 'icone-192.png', size: 192, logo: 0.88 },
+  { output: 'icone-512.png', size: 512, logo: 0.88 },
+  { output: 'icone-masquable-512.png', size: 512, logo: 0.72 },
+  { output: 'apple-touch-icon.png', size: 180, logo: 0.88 },
+  { output: 'favicon-32.png', size: 32, logo: 0.96 },
+];
+
+async function writeIcons(): Promise<void> {
+  const out = join(OUT, 'icones');
+  await mkdir(out, { recursive: true });
+  for (const icon of ICONS) {
+    const logo = await sharp(join(SOURCE, 'logo-alkebulan.png'))
+      .resize({ width: Math.round(icon.size * icon.logo) })
+      .toBuffer();
+    await sharp({
+      create: { width: icon.size, height: icon.size, channels: 4, background: ICON_BACKGROUND },
+    })
+      .composite([{ input: logo, gravity: 'center' }])
+      .png({ compressionLevel: 9 })
+      .toFile(join(out, icon.output));
+  }
+  console.log(`[garde] icônes : ${ICONS.map((icon) => icon.output).join(', ')}`);
+}
+
 async function main(): Promise<void> {
   await mkdir(OUT, { recursive: true });
   await writePeoples();
+  await writeIcons();
   for (const image of IMAGES) {
     const input = join(SOURCE, image.source);
     const output = join(OUT, image.output);
