@@ -8,6 +8,7 @@ import { loadGame } from '../persistence/save';
 import './garde.css';
 import { requireAccount } from './compte';
 import { setupOnlineLobby } from './en-ligne';
+import { setupInstall } from './installer';
 import { PEOPLE_CARDS } from './peuples';
 
 const save = loadGame();
@@ -38,6 +39,7 @@ document.querySelector('#retour-menu')?.addEventListener('click', () => showMenu
 
 // Pas d'accès au menu sans compte : une partie en cours passe en premier, sinon « Battle ».
 requireAccount(() => showMenu(false));
+setupInstall();
 setupOnlineLobby();
 
 // ——— Choix du peuple ———
